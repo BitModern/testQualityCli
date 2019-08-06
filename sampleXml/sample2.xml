@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<testsuite name="Chrome 54.0.2840 (Mac OS X 10.11.6)" package="modules" timestamp="2016-11-15T16:24:44" id="0" hostname="james-mac-01" tests="333" errors="1" failures="1" time="26.287">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36"/>
+  </properties>
+  <testcase name="BatchService Should add new batch containers into batch containers array" time="0.12" classname="Chrome_54_0_2840_(Mac_OS_X_10_11_6).modules.BatchService"/>
+  <testcase name="BatchService Should call parseParameters for endpoint" time="0.039" classname="Chrome_54_0_2840_(Mac_OS_X_10_11_6).modules.BatchService"/>
+  <testcase name="BatchService addBatch should return promise" time="0.009" classname="Chrome_54_0_2840_(Mac_OS_X_10_11_6).modules.BatchService"/>
+  <testcase name="BatchService loadBatch should return promise" time="0.016" classname="Chrome_54_0_2840_(Mac_OS_X_10_11_6).modules.BatchService"/>
+  <testcase name="HttpListCacheService Should call requested, publish, success callback on getList() if data cached" time="0.166" classname="Chrome_54_0_2840_(Mac_OS_X_10_11_6).modules.HttpListCacheService"/>
+  <testcase name="HttpListCacheService Should fall to HttpListService and set cached data on getList() if no data cached" time="0.056" classname="Chrome_54_0_2840_(Mac_OS_X_10_11_6).modules.HttpListCacheService"/>
+  <testcase name="HttpListCacheService Should not cache data if total count more than per_page count" time="0.052" classname="Chrome_54_0_2840_(Mac_OS_X_10_11_6).modules.HttpListCacheService"/>
+  <testcase name="HttpListService Should call init and requested on getList()" time="0.045" classname="Chrome_54_0_2840_(Mac_OS_X_10_11_6).modules.HttpListService"/>
+  <testcase name="HttpListService Should call getResourceString with correct params on getList()" time="0.033" classname="Chrome_54_0_2840_(Mac_OS_X_10_11_6).modules.HttpListService"/>
+  <testcase name="HttpListService Should call getResourceString with correct params on getList(batchCollection)" time="0.014" classname="Chrome_54_0_2840_(Mac_OS_X_10_11_6).modules.HttpListService"/>
+  <testcase name="HttpListService Should call batchCollection.addBatch on getList(batchCollection)" time="0.015" classname="Chrome_54_0_2840_(Mac_OS_X_10_11_6).modules.HttpListService"/>
+  <testcase name="HttpListService getList should return valid data" time="0.028" classname="Chrome_54_0_2840_(Mac_OS_X_10_11_6).modules.HttpListService"/>
+  <testcase name="HttpListService Should call onSuccess and success callback on successful getList()" time="0.016" classname="Chrome_54_0_2840_(Mac_OS_X_10_11_6).modules.HttpListService"/>
+  <testcase name="HttpListService Should call onFail and error callback on failed getList()" time="0.288" classname="Chrome_54_0_2840_(Mac_OS_X_10_11_6).modules.HttpListService"/>
+  <testcase name="test AppBus should subscribe to event and receive payload" time="0" classname="Chrome_54_0_2840_(Mac_OS_X_10_11_6).modules.test AppBus"/>
+  <testcase name="test AppBus should unsubscribe from event and don't receive payload" time="0.007" classname="Chrome_54_0_2840_(Mac_OS_X_10_11_6).modules.test AppBus"/>
+  <testcase name="StatusChartController should set statuses" time="0.026" classname="Chrome_54_0_2840_(Mac_OS_X_10_11_6).modules.StatusChartController"/>
+  <testcase name="StatusChartController should set chart data" time="0.019" classname="Chrome_54_0_2840_(Mac_OS_X_10_11_6).modules.StatusChartController">
+    <failure type="">Expected [ IStatusElement({ Block: 0, Pass: 3, Pending: 0, Retest: 0, x: 1475470800000 }), IStatusElement({ Block: 12, Pass: 23, Pending: 0, Retest: 4, x: 1475902800000 }), IStatusElement({ Block: 0, Pass: 0, Pending: 3, Retest: 0, x: 1473742800000 }) ] to equal [ IStatusElement({ Block: 0, Pass: 3, Pending: 0, Retest: 0, x: 1475471248209 }), IStatusElement({ Block: 0, Pass: 23, Pending: 0, Retest: 0, x: 1475903257877 }), IStatusElement({ Block: 0, Pass: 0, Pending: 3, Retest: 0, x: 1473743248209 }), IStatusElement({ Block: 12, Pass: 0, Pending: 0, Retest: 0, x: 1475903257249 }), IStatusElement({ Block: 0, Pass: 0, Pending: 0, Retest: 4, x: 1475903253641 }) ].
+    at Object.&lt;anonymous&gt; (/src/app/components/analysis/status-chart/status-chart-controller.spec.ts:198:26 &lt;- build/test/tests.spec.js:8700:27)
+</failure>
+  </testcase>
+  <testcase name="test ChangePasswordController should change user password" time="0.076" classname="Chrome_54_0_2840_(Mac_OS_X_10_11_6).modules.test ChangePasswordController"/>
+  <testcase name="test ChangePasswordController shouldn't change user password" time="0.06" classname="Chrome_54_0_2840_(Mac_OS_X_10_11_6).modules.test ChangePasswordController"/>
+  <system-out>
+    <![CDATA[
+]]>
+  </system-out>
+  <system-err/>
+  <system-out>
+    <![CDATA[Chrome 54.0.2840 (Mac OS X 10.11.6) ERROR
+  Disconnected, because no message in 10000 ms.
+
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>
