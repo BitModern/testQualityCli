@@ -1,5 +1,8 @@
 # commands, too big
-commands/
+commands/testquality-alpine
+commands/testquality-linux
+commands/testquality-macos
+commands/testquality-win.exe
 
 # Logs
 logs

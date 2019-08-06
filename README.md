@@ -17,6 +17,8 @@ Under ["commands"](./commands) folder you will find command line programs for:
 * Linux
 * Alpine
 
+Commands can be downloaded from [cli.testquality.com](http://cli.testquality.com)
+
 # Usage
 
 For list of commands
