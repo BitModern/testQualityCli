@@ -115,7 +115,7 @@ export class UploadTestRunCommand extends Command {
     milestoneId: number | undefined
   ): Promise<any> {
     return new Promise((resolve, reject) => {
-      const url = `${env.host}/plan/${planId}/junit_xml?XDEBUG_SESSION_START=PHPSTORM`;
+      const url = `${env.host}/plan/${planId}/junit_xml`;
       const formData: any = {};
       if (matches.length > 1) {
         formData['files[]'] = matches.map(f =>

@@ -27,7 +27,13 @@ export class PlanCommand extends Command {
       'plans',
       'List plans in project.',
       args => {
-        return args;
+        return args.option('revision_log', {
+          alias: 'rl',
+          describe: 'Get history',
+          type: 'boolean',
+          default: false,
+          boolean: true
+        });
       },
       args => {
         this.auth.update(args).then(
@@ -37,16 +43,37 @@ export class PlanCommand extends Command {
                 'Project is required. Try adding "--project_name=<name>" or "--project_id=<number>"'
               );
             } else {
-              tqGet<IResourceList<IPlanResource>>(
-                accessToken,
-                `/plan?project_id=${this.auth.projectId}`
-              ).then(
+              let url = `/plan?project_id=${this.auth.projectId}`;
+              if (args.revision_log) {
+                url += '&revision_log=true';
+              }
+              tqGet<IResourceList<IPlanResource>>(accessToken, url).then(
                 planList => {
-                  console.log(
-                    planList.data.map(p => {
-                      return { id: p.id, name: p.name };
-                    })
-                  );
+                  if (args.revision_log) {
+                    const history: any = planList as any;
+                    console.log(
+                      history.map((p: any) => {
+                        return {
+                          id: p.id,
+                          name: p.name,
+                          key: p.key,
+                          created_at: p.created_at,
+                          updated_at: p.updated_at,
+                          operation: p.operation,
+                        };
+                      })
+                    );
+                  } else {
+                    if (planList.total > 0) {
+                      console.log(
+                        planList.data.map(p => {
+                          return { id: p.id, name: p.name };
+                        })
+                      );
+                    } else {
+                      console.log('Result is empty');
+                    }
+                  }
                 },
                 error => logError(error)
               );
