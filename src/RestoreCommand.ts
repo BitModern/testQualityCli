@@ -50,6 +50,33 @@ export class RestoreCommand extends Command {
               logError(
                 `plan or test is required. Try adding "--plan_id=<number>" or "--test_id=<number>`
               );
+              if (args.plan_id) {
+                this.postRestore(
+                  'plan',
+                  accessToken,
+                  args.plan_id as string
+                ).then(
+                  response => console.log(response),
+                  error => logError(error)
+                );
+              } else if (args.test_id) {
+                const options = args.suite_id
+                  ? { suite_id: args.suite_id }
+                  : undefined;
+                this.postRestore(
+                  'test',
+                  accessToken,
+                  args.test_id as string,
+                  options
+                ).then(
+                  response => console.log(response),
+                  error => logError(error)
+                );
+              } else {
+                logError(
+                  `plan or test is required. Try adding "--plan_id=<number>" or "--test_id=<number>`
+                );
+              }
             }
           },
           error => logError(error)
@@ -76,8 +103,8 @@ export class RestoreCommand extends Command {
         body,
         json: true // Automatically parses the JSON string in the response
       };
-      return request(options).then((response: any) => {
-        resolve(response);
+      return request(options).then((resp: any) => {
+        resolve(resp);
       }, reject);
     });
   }
