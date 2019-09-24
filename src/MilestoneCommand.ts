@@ -29,7 +29,13 @@ export class MilestoneCommand extends Command {
       'milestones',
       'List milestones in project.',
       args => {
-        return args;
+        return args.option('revision_log', {
+          alias: 'rl',
+          describe: 'Get history',
+          type: 'boolean',
+          default: false,
+          boolean: true
+        });
       },
       args => {
         this.auth.update(args).then(
@@ -39,16 +45,26 @@ export class MilestoneCommand extends Command {
                 'Project is required. Try adding "--project_name=<name>" or "--project_id=<number>"'
               );
             } else {
-              tqGet<IResourceList<IMilestoneResource>>(
-                accessToken,
-                `/milestone?project_id=${this.auth.projectId}`
-              ).then(
+              const project = this.auth.projectId
+                ? `?project_id=${this.auth.projectId}`
+                : '';
+              const revisionLog = args.revision_log
+                ? (project !== '' ? '&' : '?') + 'revision_log=true'
+                : '';
+              const url = `/milestone${project}${revisionLog}`;
+              tqGet<IResourceList<IMilestoneResource>>(accessToken, url).then(
                 milestoneList => {
-                  console.log(
-                    milestoneList.data.map(p => {
-                      return { id: p.id, name: p.name };
-                    })
-                  );
+                  if (args.revision_log) {
+                    console.log(milestoneList);
+                  } else {
+                    console.log(
+                      args.verbose
+                        ? milestoneList
+                        : milestoneList.data.map(p => {
+                            return { id: p.id, name: p.name };
+                          })
+                    );
+                  }
                 },
                 error => logError(error)
               );

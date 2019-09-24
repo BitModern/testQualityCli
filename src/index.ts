@@ -5,7 +5,7 @@ import { ProjectCommand } from './ProjectCommand';
 import { PlanCommand } from './PlanCommand';
 import { MilestoneCommand } from './MilestoneCommand';
 import { UploadTestRunCommand } from './UploadTestRunCommand';
-import {RestoreCommand} from './RestoreCommand';
+import { RestoreCommand } from './RestoreCommand';
 
 const argv = yargs
   .command(new LoginCommand())

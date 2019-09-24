@@ -25,7 +25,7 @@ class EnvVar {
 }
 
 export const env = {
-  host: 'http://localhost:8001/api',
+  host: getOsEnv('TQ_HOST') || 'https://api.testquality.com/api',
   client_id: 2,
   client_secret: '93MBS86X7JrK4Mrr1mk4PKfo6b1zRVx9Mrmx0nTa',
   variables: {
@@ -39,7 +39,7 @@ export const env = {
 };
 
 export const saveEnv = () => {
-  const content =
+  let content =
     Object.entries(env.variables).reduce(
       // tslint:disable-next-line
       (acc, [_key, value]) => {
@@ -50,5 +50,8 @@ export const saveEnv = () => {
       },
       ''
     ) + '\n';
+  if (env.host !== 'https://api.testquality.com/api') {
+    content += `TQ_HOST=${env.host}\n`;
+  }
   fs.writeFileSync('.env', content, { encoding: 'UTF-8', flag: 'w' });
 };

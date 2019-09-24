@@ -40,7 +40,7 @@ export class ProjectCommand extends Command {
               projectList => {
                 console.log(
                   projectList.data.map(p => {
-                    return { id: p.id, name: p.name };
+                    return { id: p.id, key: p.key, name: p.name };
                   })
                 );
               },

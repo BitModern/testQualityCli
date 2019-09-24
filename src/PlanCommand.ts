@@ -5,6 +5,7 @@ import { logError } from './error';
 
 export interface IPlanResource {
   id: number;
+  key: number;
   created_by: number;
   created_at: Date;
   updated_by: number;
@@ -43,31 +44,24 @@ export class PlanCommand extends Command {
                 'Project is required. Try adding "--project_name=<name>" or "--project_id=<number>"'
               );
             } else {
-              let url = `/plan?project_id=${this.auth.projectId}`;
-              if (args.revision_log) {
-                url += '&revision_log=true';
-              }
+              const project = this.auth.projectId
+                ? `?project_id=${this.auth.projectId}`
+                : '';
+              const revisionLog = args.revision_log
+                ? (project !== '' ? '&' : '?') + 'revision_log=true'
+                : '';
+              const url = `/plan${project}${revisionLog}`;
+              console.log(url);
+
               tqGet<IResourceList<IPlanResource>>(accessToken, url).then(
                 planList => {
                   if (args.revision_log) {
-                    const history: any = planList as any;
-                    console.log(
-                      history.map((p: any) => {
-                        return {
-                          id: p.id,
-                          name: p.name,
-                          key: p.key,
-                          created_at: p.created_at,
-                          updated_at: p.updated_at,
-                          operation: p.operation,
-                        };
-                      })
-                    );
+                    console.log(planList);
                   } else {
                     if (planList.total > 0) {
                       console.log(
                         planList.data.map(p => {
-                          return { id: p.id, name: p.name };
+                          return { id: p.id, key: p.key, name: p.name };
                         })
                       );
                     } else {

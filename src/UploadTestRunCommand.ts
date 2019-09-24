@@ -7,7 +7,6 @@ import { IResourceList } from './ResourceList';
 import * as request from 'request-promise-native';
 import * as glob from 'glob';
 import * as fs from 'fs';
-import * as path from 'path';
 
 interface IHasId {
   id: number;
@@ -18,7 +17,7 @@ export class UploadTestRunCommand extends Command {
   constructor() {
     super(
       'upload_test_run <xmlfiles>',
-      'Login to TestQuality',
+      'JUnit/XUnit XML Upload',
       (args: Argv) => {
         return args.positional('xmlfiles', {
           describe: `glob JUnit/XUnit XML output file, example: uplaod_test_run '**/*.xml'`,
@@ -28,17 +27,15 @@ export class UploadTestRunCommand extends Command {
       (args: Arguments) => {
         this.auth.update(args).then(
           accessToken => {
-            if (!this.auth.projectId) {
-              logError(
-                'Project is required. Try adding "--project_name=<name>" or "--project_id=<number>"'
-              );
-            } else {
-              this.getId(args, 'plan', accessToken).then(
-                planId => {
-                  this.getId(args, 'milestone', accessToken, false).then(
-                    milestoneId => {
-                      if (args.xmlfiles) {
-                        glob(args.xmlfiles as string, {}, (err, matches) => {
+            this.getId(args, 'plan', accessToken).then(
+              planId => {
+                this.getId(args, 'milestone', accessToken, false).then(
+                  milestoneId => {
+                    if (args.xmlfiles) {
+                      glob(
+                        args.xmlfiles as string,
+                        { realpath: true },
+                        (err, matches) => {
                           if (err) {
                             logError(err);
                           } else {
@@ -55,15 +52,15 @@ export class UploadTestRunCommand extends Command {
                               );
                             }
                           }
-                        });
-                      }
-                    },
-                    (error: any) => logError(error)
-                  );
-                },
-                (error: any) => logError(error)
-              );
-            }
+                        }
+                      );
+                    }
+                  },
+                  (error: any) => logError(error)
+                );
+              },
+              (error: any) => logError(error)
+            );
           },
           (error: any) => logError(error)
         );
@@ -118,14 +115,12 @@ export class UploadTestRunCommand extends Command {
       const url = `${env.host}/plan/${planId}/junit_xml`;
       const formData: any = {};
       if (matches.length > 1) {
-        formData['files[]'] = matches.map(f =>
-          fs.createReadStream(path.join(process.cwd(), f))
-        );
+        formData['files[]'] = matches.map(f => fs.createReadStream(f));
         console.log(formData);
+      } else if (matches.length === 1) {
+        formData.file = fs.createReadStream(matches[0]);
       } else {
-        formData.file = fs.createReadStream(
-          path.join(process.cwd(), matches[0])
-        );
+        throw Error('No matching files');
       }
       if (milestoneId) {
         formData.milestone_id = milestoneId;

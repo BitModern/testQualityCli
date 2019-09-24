@@ -11,7 +11,7 @@ In order to upload xml you will need to:
 
 # Compiled Commands
 
-Under ["commands"](./commands) folder you will find command line programs for:
+There are compiled commands for 
 * Windows
 * MacOS
 * Linux
