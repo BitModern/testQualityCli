@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="85.217" tests="11" failures="2">
+  <testsuite name="Root Suite" timestamp="2019-09-02T09:47:23" tests="0" failures="0" time="0">
+  </testsuite>
+  <testsuite name="LS-519 - Check the correct behaviour of the add user functionality" timestamp="2019-09-02T09:47:23" tests="11" failures="2" time="85.217">
+    <testcase name="I as a user want to click on Add new user and I will see Add User page" time="7.433" classname="LS-519 - Check the correct behaviour of the add user functionality I as a user want to click on Add new user and I will see Add User page">
+    </testcase>
+    <testcase name="I as a user I want to add a new user with only required fields populated and i will see it on the user list" time="8.989" classname="LS-519 - Check the correct behaviour of the add user functionality I as a user I want to add a new user with only required fields populated and i will see it on the user list">
+    </testcase>
+    <testcase name="[[DEFECT|LS-1167]] I as a user want to add the same user that before added and I will not be able to add it and I will continue in the users/add page" time="5.804" classname="LS-519 - Check the correct behaviour of the add user functionality LS-1167 I as a user want to add the same user that before added and I will not be able to add it and I will continue in the users/add page">
+    </testcase>
+    <testcase name="I as a user want to add a new user with all fields populated and i will see it on the user list" time="8.322" classname="LS-519 - Check the correct behaviour of the add user functionality I as a user want to add a new user with all fields populated and i will see it on the user list">
+    </testcase>
+    <testcase name="I as a user want to add a new user without fill required fields and i will see a error" time="6.456" classname="LS-519 - Check the correct behaviour of the add user functionality I as a user want to add a new user without fill required fields and i will see a error">
+    </testcase>
+    <testcase name="I as a user want to open Add a new user form and then click on cross button and I will back to user page" time="5.232" classname="LS-519 - Check the correct behaviour of the add user functionality I as a user want to open Add a new user form and then click on cross button and I will back to user page">
+    </testcase>
+    <testcase name="[[DEFECT|LS-1399]] I as a user want to edit a user and then I will see the changes on the user list" time="7.294" classname="LS-519 - Check the correct behaviour of the add user functionality (FIX LS-1399) I as a user want to edit a user and then I will see the changes on the user list">
+    </testcase>
+    <testcase name="I as a user want to edit a user and then click on cross button and I will back to user page" time="16.815" classname="LS-519 - Check the correct behaviour of the add user functionality I as a user want to edit a user and then click on cross button and I will back to user page">
+    </testcase>
+    <testcase name="I as a user want to open delete user (user2) and click NO then I will see that this user appears on user list yet" time="0" classname="LS-519 - Check the correct behaviour of the add user functionality I as a user want to open delete user (user2) and click NO then I will see that this user appears on user list yet">
+      <failure message="Timed out retrying: Expected to find element: &apos;&apos;, but never found it." type="CypressError"><![CDATA[CypressError: Timed out retrying: Expected to find element: '', but never found it.
+    at Object.cypressErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85007:11)
+    at Object.throwErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:84960:18)
+    at Object.throwErrByPath (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:84991:17)
+    at retry (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:78004:16)
+    at https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:69809:18
+    at tryCatcher (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:134260:23)
+    at Promise._settlePromiseFromHandler (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:132278:31)
+    at Promise._settlePromise (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:132335:18)
+    at Promise._settlePromise0 (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:132380:10)
+    at Promise._settlePromises (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:132455:18)
+    at Async._drainQueue (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:129184:16)
+    at Async._drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:129194:10)
+    at Async.drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:129068:14)]]></failure>
+    </testcase>
+    <testcase name="I as a user want to delete the user and then I to see that this user is missing in the list" time="18.872" classname="LS-519 - Check the correct behaviour of the add user functionality I as a user want to delete the user and then I to see that this user is missing in the list">
+    </testcase>
+    <testcase name="[[DEFECT|LS-1167]] [[ATACHMENT|TQ-596.png]] I as a user want to delete a user" time="0" classname="LS-519 - Check the correct behaviour of the add user functionality (FIX-by LS1167) I as a user want to delete a user">
+      <failure message="Timed out retrying: Expected not to find content: &apos;qaTesterName&apos; within the element: &lt;tbody.ant-table-tbody&gt; but continuously found it." type="CypressError"><![CDATA[CypressError: Timed out retrying: Expected not to find content: 'qaTesterName' within the element: <tbody.ant-table-tbody> but continuously found it.
+    at Object.cypressErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85007:11)
+    at Object.throwErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:84960:18)
+    at Object.throwErrByPath (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:84991:17)
+    at retry (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:78004:16)
+    at https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:69809:18
+    at tryCatcher (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:134260:23)
+    at Promise._settlePromiseFromHandler (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:132278:31)
+    at Promise._settlePromise (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:132335:18)
+    at Promise._settlePromise0 (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:132380:10)
+    at Promise._settlePromises (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:132455:18)
+    at Async._drainQueue (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:129184:16)
+    at Async._drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:129194:10)
+    at Async.drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:129068:14)]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>
