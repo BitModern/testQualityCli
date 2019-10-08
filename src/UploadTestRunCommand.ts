@@ -7,6 +7,7 @@ import { IResourceList } from './ResourceList';
 import * as request from 'request-promise-native';
 import * as glob from 'glob';
 import * as fs from 'fs';
+import * as path from 'path';
 
 interface IHasId {
   id: number;
@@ -40,16 +41,46 @@ export class UploadTestRunCommand extends Command {
                             logError(err);
                           } else {
                             console.log('Loading Files: ', matches);
-                            if (planId) {
-                              this.postXML(
-                                accessToken,
-                                planId,
-                                matches,
-                                milestoneId
-                              ).then(
-                                (response: any) => console.log(response),
-                                (error: any) => logError(error)
+                            if (args.run_result_output_dir) {
+                              glob(
+                                args.run_result_output_dir as string,
+                                {},
+                                (errors, outputDir) => {
+                                  if (errors) {
+                                    logError(errors);
+                                  }
+                                  this.parseXML(matches, outputDir).then(
+                                    attachments => {
+                                      if (planId) {
+                                        this.uploadTestResults(
+                                          accessToken,
+                                          planId,
+                                          matches,
+                                          milestoneId,
+                                          attachments
+                                        ).then(
+                                          (response: any) =>
+                                            console.log(response),
+                                          (error: any) => logError(error)
+                                        );
+                                      }
+                                    }
+                                  );
+                                }
                               );
+                            } else {
+                              if (planId) {
+                                this.uploadTestResults(
+                                  accessToken,
+                                  planId,
+                                  matches,
+                                  milestoneId,
+                                  undefined
+                                ).then(
+                                  (response: any) => console.log(response),
+                                  (error: any) => logError(error)
+                                );
+                              }
                             }
                           }
                         }
@@ -66,6 +97,58 @@ export class UploadTestRunCommand extends Command {
         );
       }
     );
+  }
+
+  private parseXML(xmlFiles: string[], outputDir: string[]): Promise<string[]> {
+    return new Promise(resolve => {
+      console.log('Checking provided output dir ', outputDir);
+      const attachmentRegExp = new RegExp(/\[+[ATTACHMENT]+[|](.+.[a-z*3])]]/m);
+      const parser = require('xml2json');
+      const attachments: string[] = [];
+      let data: Buffer;
+
+      xmlFiles.forEach(file => {
+        console.log('Parsing XML File:', file);
+        data = fs.readFileSync(file);
+
+        const json = parser.toJson(data, { object: true });
+        // console.log('to Json -->', json);
+        if (json.testsuites) {
+          json.testsuites.testsuite.forEach((testsuite: any) => {
+            // console.log(testsuite);
+            if (testsuite.testcase) {
+              testsuite.testcase.forEach((testcase: any) => {
+                // console.log(testcase.name);
+                if (attachmentRegExp.test(testcase.name)) {
+                  const matches = attachmentRegExp.exec(testcase.name);
+                  if (matches) {
+                    if (fs.existsSync(path.resolve(outputDir[0], matches[1]))) {
+                      attachments.push(path.resolve(outputDir[0], matches[1]));
+                      // console.log('AAAAA', attachments);
+                    }
+                  }
+                }
+              });
+            }
+          });
+        } else {
+          json.testsuite.testcase.forEach((testcase: any) => {
+            // console.log(testsuite);
+            if (attachmentRegExp.test(testcase.name)) {
+              const matches = attachmentRegExp.exec(testcase.name);
+              if (matches) {
+                if (fs.existsSync(path.resolve(outputDir[0], matches[1]))) {
+                  attachments.push(path.resolve(outputDir[0], matches[1]));
+                  // console.log('AAAAA', attachments);
+                }
+              }
+            }
+          });
+        }
+        // console.log('BBBBB', attachments);
+        resolve(attachments);
+      });
+    });
   }
 
   private getId(
@@ -105,18 +188,25 @@ export class UploadTestRunCommand extends Command {
     });
   }
 
-  private postXML(
+  private uploadTestResults(
     accessToken: string,
     planId: number | undefined,
     matches: string[],
-    milestoneId: number | undefined
+    milestoneId: number | undefined,
+    attachments: string[] | undefined
   ): Promise<any> {
     return new Promise((resolve, reject) => {
       const url = `${env.host}/plan/${planId}/junit_xml`;
       const formData: any = {};
-      if (matches.length > 1) {
+      if (matches.length > 1 || (attachments && attachments.length > 0)) {
         formData['files[]'] = matches.map(f => fs.createReadStream(f));
-        console.log(formData);
+        if (attachments) {
+          console.log('Attachments to Send', attachments);
+          formData['files[]'] = formData['files[]'].concat(
+            attachments.map(f => fs.createReadStream(f))
+          );
+        }
+        console.log('Form data to send: ', formData);
       } else if (matches.length === 1) {
         formData.file = fs.createReadStream(matches[0]);
       } else {
