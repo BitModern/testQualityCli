@@ -40,7 +40,6 @@ export class UploadTestRunCommand extends Command {
                           if (err) {
                             logError(err);
                           } else {
-                            console.log('Loading Files: ', matches);
                             if (args.run_result_output_dir) {
                               glob(
                                 args.run_result_output_dir as string,
@@ -49,7 +48,7 @@ export class UploadTestRunCommand extends Command {
                                   if (errors) {
                                     logError(errors);
                                   }
-                                  this.parseXML(matches, outputDir).then(
+                                  this.parseXMLFiles(matches, outputDir).then(
                                     attachments => {
                                       if (planId) {
                                         this.uploadTestResults(
@@ -99,54 +98,32 @@ export class UploadTestRunCommand extends Command {
     );
   }
 
-  private parseXML(xmlFiles: string[], outputDir: string[]): Promise<string[]> {
-    return new Promise(resolve => {
-      console.log('Checking provided output dir ', outputDir);
+  private parseXMLFiles(
+    xmlFiles: string[],
+    outputDir: string[]
+  ): Promise<string[]> {
+    return new Promise((resolve, reject) => {
+      // console.log('Checking provided output dir ', outputDir);
       const attachmentRegExp = new RegExp(/\[+[ATTACHMENT]+[|](.+.[a-z*3])]]/m);
-      const parser = require('xml2json');
+      const parser = require('xml-stream');
       const attachments: string[] = [];
-      let data: Buffer;
 
       xmlFiles.forEach(file => {
-        console.log('Parsing XML File:', file);
-        data = fs.readFileSync(file);
-
-        const json = parser.toJson(data, { object: true });
-        // console.log('to Json -->', json);
-        if (json.testsuites) {
-          json.testsuites.testsuite.forEach((testsuite: any) => {
-            // console.log(testsuite);
-            if (testsuite.testcase) {
-              testsuite.testcase.forEach((testcase: any) => {
-                // console.log(testcase.name);
-                if (attachmentRegExp.test(testcase.name)) {
-                  const matches = attachmentRegExp.exec(testcase.name);
-                  if (matches) {
-                    if (fs.existsSync(path.resolve(outputDir[0], matches[1]))) {
-                      attachments.push(path.resolve(outputDir[0], matches[1]));
-                      // console.log('AAAAA', attachments);
-                    }
-                  }
-                }
-              });
-            }
-          });
-        } else {
-          json.testsuite.testcase.forEach((testcase: any) => {
-            // console.log(testsuite);
-            if (attachmentRegExp.test(testcase.name)) {
-              const matches = attachmentRegExp.exec(testcase.name);
-              if (matches) {
-                if (fs.existsSync(path.resolve(outputDir[0], matches[1]))) {
-                  attachments.push(path.resolve(outputDir[0], matches[1]));
-                  // console.log('AAAAA', attachments);
-                }
+        console.log('Loading XML File:', file);
+        const xml = new parser(fs.createReadStream(file));
+        xml.preserve('testcase');
+        xml.on('endElement: testcase', (item: any) => {
+          if (attachmentRegExp.test(item.$.name)) {
+            const matches = attachmentRegExp.exec(item.$.name);
+            if (matches) {
+              if (fs.existsSync(path.resolve(outputDir[0], matches[1]))) {
+                attachments.push(path.resolve(outputDir[0], matches[1]));
               }
             }
-          });
-        }
-        // console.log('BBBBB', attachments);
-        resolve(attachments);
+          }
+        });
+        xml.on('end', () => resolve(attachments));
+        xml.on('error', () => reject());
       });
     });
   }
@@ -206,7 +183,7 @@ export class UploadTestRunCommand extends Command {
             attachments.map(f => fs.createReadStream(f))
           );
         }
-        console.log('Form data to send: ', formData);
+        // console.log('Form data to send: ', formData);
       } else if (matches.length === 1) {
         formData.file = fs.createReadStream(matches[0]);
       } else {

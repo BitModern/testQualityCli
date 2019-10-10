@@ -7,7 +7,7 @@
     </testcase>
     <testcase name="I as a user I want to add a new user with only required fields populated and i will see it on the user list" time="8.989" classname="LS-519 - Check the correct behaviour of the add user functionality I as a user I want to add a new user with only required fields populated and i will see it on the user list">
     </testcase>
-    <testcase name="[[DEFECT|LS-1167]] I as a user want to add the same user that before added and I will not be able to add it and I will continue in the users/add page" time="5.804" classname="LS-519 - Check the correct behaviour of the add user functionality LS-1167 I as a user want to add the same user that before added and I will not be able to add it and I will continue in the users/add page">
+    <testcase name="I as a user want to add the same user that before added and I will not be able to add it and I will continue in the users/add page" time="5.804" classname="LS-519 - Check the correct behaviour of the add user functionality LS-1167 I as a user want to add the same user that before added and I will not be able to add it and I will continue in the users/add page">
     </testcase>
     <testcase name="I as a user want to add a new user with all fields populated and i will see it on the user list" time="8.322" classname="LS-519 - Check the correct behaviour of the add user functionality I as a user want to add a new user with all fields populated and i will see it on the user list">
     </testcase>
@@ -15,7 +15,7 @@
     </testcase>
     <testcase name="I as a user want to open Add a new user form and then click on cross button and I will back to user page" time="5.232" classname="LS-519 - Check the correct behaviour of the add user functionality I as a user want to open Add a new user form and then click on cross button and I will back to user page">
     </testcase>
-    <testcase name="[[DEFECT|LS-1399]] I as a user want to edit a user and then I will see the changes on the user list" time="7.294" classname="LS-519 - Check the correct behaviour of the add user functionality (FIX LS-1399) I as a user want to edit a user and then I will see the changes on the user list">
+    <testcase name="I as a user want to edit a user and then I will see the changes on the user list" time="7.294" classname="LS-519 - Check the correct behaviour of the add user functionality (FIX LS-1399) I as a user want to edit a user and then I will see the changes on the user list">
     </testcase>
     <testcase name="I as a user want to edit a user and then click on cross button and I will back to user page" time="16.815" classname="LS-519 - Check the correct behaviour of the add user functionality I as a user want to edit a user and then click on cross button and I will back to user page">
     </testcase>
@@ -37,7 +37,7 @@
     </testcase>
     <testcase name="I as a user want to delete the user and then I to see that this user is missing in the list" time="18.872" classname="LS-519 - Check the correct behaviour of the add user functionality I as a user want to delete the user and then I to see that this user is missing in the list">
     </testcase>
-    <testcase name="[[DEFECT|LS-1167]] [[ATACHMENT|TQ-596.png]] I as a user want to delete a user" time="0" classname="LS-519 - Check the correct behaviour of the add user functionality (FIX-by LS1167) I as a user want to delete a user">
+    <testcase name="[[ATACHMENT|TQ-596.png]] I as a user want to delete a user" time="0" classname="LS-519 - Check the correct behaviour of the add user functionality (FIX-by LS1167) I as a user want to delete a user">
       <failure message="Timed out retrying: Expected not to find content: &apos;qaTesterName&apos; within the element: &lt;tbody.ant-table-tbody&gt; but continuously found it." type="CypressError"><![CDATA[CypressError: Timed out retrying: Expected not to find content: 'qaTesterName' within the element: <tbody.ant-table-tbody> but continuously found it.
     at Object.cypressErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85007:11)
     at Object.throwErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:84960:18)
