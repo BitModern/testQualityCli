@@ -2,6 +2,7 @@ import { Command } from './Command';
 import { Arguments, Argv } from 'yargs';
 import { env } from './env';
 import { logError } from './error';
+import { logInfo } from './info';
 import { tqGet } from './tqGet';
 import { IResourceList } from './ResourceList';
 import * as request from 'request-promise-native';
@@ -104,25 +105,77 @@ export class UploadTestRunCommand extends Command {
   ): Promise<string[]> {
     return new Promise((resolve, reject) => {
       // console.log('Checking provided output dir ', outputDir);
+      const SYSTEM_ERR = 'system-err';
+      const SYSTEM_OUT = 'system-out';
       const attachmentRegExp = new RegExp(/\[+[ATTACHMENT]+[|](.+.[a-z*3])]]/m);
       const parser = require('xml-stream');
       const attachments: string[] = [];
+      const unresolvedAttachments: string[] = [];
+
+      let matches: RegExpExecArray | null;
+      let filePath: string;
 
       xmlFiles.forEach(file => {
-        console.log('Loading XML File:', file);
+        logInfo('Loading XML File: ' + file);
         const xml = new parser(fs.createReadStream(file));
-        xml.preserve('testcase');
+
+        xml.collect('testcase');
         xml.on('endElement: testcase', (item: any) => {
           if (attachmentRegExp.test(item.$.name)) {
-            const matches = attachmentRegExp.exec(item.$.name);
+            matches = attachmentRegExp.exec(item.$.name);
             if (matches) {
-              if (fs.existsSync(path.resolve(outputDir[0], matches[1]))) {
-                attachments.push(path.resolve(outputDir[0], matches[1]));
+              filePath = path.resolve(outputDir[0], matches[1]);
+              if (fs.existsSync(filePath)) {
+                if (!attachments.includes(filePath)) {
+                  attachments.push(filePath);
+                }
+              } else {
+                unresolvedAttachments.push(filePath);
+              }
+            }
+          }
+
+          if (item[SYSTEM_OUT]) {
+            if (attachmentRegExp.test(item[SYSTEM_OUT])) {
+              matches = attachmentRegExp.exec(item[SYSTEM_OUT]);
+              if (matches) {
+                filePath = path.resolve(outputDir[0], matches[1]);
+                if (fs.existsSync(filePath)) {
+                  if (!attachments.includes(filePath)) {
+                    attachments.push(filePath);
+                  }
+                } else {
+                  unresolvedAttachments.push(filePath);
+                }
+              }
+            }
+          }
+
+          if (item[SYSTEM_ERR]) {
+            if (attachmentRegExp.test(item[SYSTEM_ERR])) {
+              matches = attachmentRegExp.exec(item[SYSTEM_ERR]);
+              if (matches) {
+                filePath = path.resolve(outputDir[0], matches[1]);
+                if (fs.existsSync(filePath)) {
+                  if (!attachments.includes(filePath)) {
+                    attachments.push(filePath);
+                  }
+                } else {
+                  unresolvedAttachments.push(filePath);
+                }
               }
             }
           }
         });
-        xml.on('end', () => resolve(attachments));
+
+        xml.on('end', () => {
+          logInfo('Resolved attachments:');
+          console.log(attachments);
+          logInfo('Unresolved attachments:');
+          console.log(unresolvedAttachments);
+          // throw new Error('Stoping error');
+          resolve(attachments);
+        });
         xml.on('error', () => reject());
       });
     });
@@ -178,7 +231,6 @@ export class UploadTestRunCommand extends Command {
       if (matches.length > 1 || (attachments && attachments.length > 0)) {
         formData['files[]'] = matches.map(f => fs.createReadStream(f));
         if (attachments) {
-          console.log('Attachments to Send', attachments);
           formData['files[]'] = formData['files[]'].concat(
             attachments.map(f => fs.createReadStream(f))
           );
