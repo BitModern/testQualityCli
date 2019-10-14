@@ -59,6 +59,7 @@ export class UploadTestRunCommand extends Command {
                                     attachments => {
                                       if (planId) {
                                         this.uploadTestResults(
+                                          args,
                                           accessToken,
                                           planId,
                                           matches,
@@ -77,6 +78,7 @@ export class UploadTestRunCommand extends Command {
                             } else {
                               if (planId) {
                                 this.uploadTestResults(
+                                  args,
                                   accessToken,
                                   planId,
                                   matches,
@@ -216,6 +218,7 @@ export class UploadTestRunCommand extends Command {
   }
 
   private uploadTestResults(
+    args: Arguments,
     accessToken: string,
     planId: number | undefined,
     matches: string[],
@@ -238,7 +241,10 @@ export class UploadTestRunCommand extends Command {
           logWarning('Unresolved attachments:');
           console.log(attachments.unresolved);
         }
-        // console.log('Form data to send: ', formData);
+        if (args.verbose) {
+          console.log('Matching files: ', matches);
+          console.log('Form data to send: ', formData);
+        }
       } else if (matches.length === 1) {
         formData.file = fs.createReadStream(matches[0]);
       } else {
