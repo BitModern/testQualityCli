@@ -1,6 +1,16 @@
 # TestQuality CLI
 
-This command line interface allows you to upload your automated test results to TestQuality. Automated test results must be outputted in JUnit XML format, which most test automation tools will provide.
+This command line interface allows you to upload your automated test results to TestQuality. Automated test results must be outputted in JUnit XML format, which most test automation tools will provide. Test result attachments and related defects are also supported through test name tags or console outputs.
+
+For DEFECTS we expect the following tag format for both test name tags and console ouptuts.
+ - GitHub Defects [[DEFECT|22]]
+ - Jira Defects [[DEFECT|TQ-123]]
+
+ For ATTACHMENTS the following format is expected:
+ - Attachments from test name tag [[ATTACHMENT|ScreenshotFileName.png]]
+ - Attachments from console output [[ATTACHMENT|path/to/file]]
+
+ Note that for attachment test name tag usage you will neet to use 'run_result_output_dir' option to specify the test result output directory.
 
 ## Requirements
 
