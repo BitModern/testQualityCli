@@ -35,7 +35,6 @@
     at Async._drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:129194:10)
     at Async.drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:129068:14)]]></failure>
       <system-err>[[ATTACHMENT|/c/dev/bitm/testQualityCli/sampleXml/TQ-596.png]]</system-err>
-	    <system-out>[[ATTACHMENT|/c/dev/bitm/testQualityCli/sampleXml/TQ-596_2.png]]</system-out>
     </testcase>
     <testcase name="I as a user want to delete the user and then I to see that this user is missing in the list" time="18.872" classname="LS-519 - Check the correct behaviour of the add user functionality I as a user want to delete the user and then I to see that this user is missing in the list">
     </testcase>
