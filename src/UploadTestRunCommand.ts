@@ -2,6 +2,8 @@ import { Command } from './Command';
 import { Arguments, Argv } from 'yargs';
 import { env } from './env';
 import { logError } from './error';
+import { logInfo } from './info';
+import { logWarning } from './warning';
 import { tqGet } from './tqGet';
 import { IResourceList } from './ResourceList';
 import * as request from 'request-promise-native';
@@ -14,6 +16,11 @@ interface IHasId {
   name: string;
 }
 
+interface IAttachmentsResult {
+  resolved: string[];
+  unresolved: string[];
+}
+
 export class UploadTestRunCommand extends Command {
   constructor() {
     super(
@@ -21,7 +28,7 @@ export class UploadTestRunCommand extends Command {
       'JUnit/XUnit XML Upload',
       (args: Argv) => {
         return args.positional('xmlfiles', {
-          describe: `glob JUnit/XUnit XML output file, example: uplaod_test_run '**/*.xml'`,
+          describe: `glob JUnit/XUnit XML output file, example: upload_test_run '**/*.xml'`,
           type: 'string'
         });
       },
@@ -40,7 +47,6 @@ export class UploadTestRunCommand extends Command {
                           if (err) {
                             logError(err);
                           } else {
-                            console.log('Loading Files: ', matches);
                             if (args.run_result_output_dir) {
                               glob(
                                 args.run_result_output_dir as string,
@@ -49,10 +55,11 @@ export class UploadTestRunCommand extends Command {
                                   if (errors) {
                                     logError(errors);
                                   }
-                                  this.parseXML(matches, outputDir).then(
+                                  this.parseXMLFiles(matches, outputDir).then(
                                     attachments => {
                                       if (planId) {
                                         this.uploadTestResults(
+                                          args,
                                           accessToken,
                                           planId,
                                           matches,
@@ -71,6 +78,7 @@ export class UploadTestRunCommand extends Command {
                             } else {
                               if (planId) {
                                 this.uploadTestResults(
+                                  args,
                                   accessToken,
                                   planId,
                                   matches,
@@ -99,54 +107,75 @@ export class UploadTestRunCommand extends Command {
     );
   }
 
-  private parseXML(xmlFiles: string[], outputDir: string[]): Promise<string[]> {
-    return new Promise(resolve => {
-      console.log('Checking provided output dir ', outputDir);
+  private parseXMLFiles(
+    xmlFiles: string[],
+    outputDir: string[]
+  ): Promise<IAttachmentsResult> {
+    return new Promise((resolve, reject) => {
+      // console.log('Checking provided output dir ', outputDir);
+      const SYSTEM_ERR = 'system-err';
+      const SYSTEM_OUT = 'system-out';
       const attachmentRegExp = new RegExp(/\[+[ATTACHMENT]+[|](.+.[a-z*3])]]/m);
-      const parser = require('xml2json');
-      const attachments: string[] = [];
-      let data: Buffer;
+      const parser = require('xml-stream');
+      const result: IAttachmentsResult = { resolved: [], unresolved: [] };
+      let matches: RegExpExecArray | null;
+      let filePath: string;
 
       xmlFiles.forEach(file => {
-        console.log('Parsing XML File:', file);
-        data = fs.readFileSync(file);
+        logInfo('Loading XML File: ' + file);
+        const xml = new parser(fs.createReadStream(file));
 
-        const json = parser.toJson(data, { object: true });
-        // console.log('to Json -->', json);
-        if (json.testsuites) {
-          json.testsuites.testsuite.forEach((testsuite: any) => {
-            // console.log(testsuite);
-            if (testsuite.testcase) {
-              testsuite.testcase.forEach((testcase: any) => {
-                // console.log(testcase.name);
-                if (attachmentRegExp.test(testcase.name)) {
-                  const matches = attachmentRegExp.exec(testcase.name);
-                  if (matches) {
-                    if (fs.existsSync(path.resolve(outputDir[0], matches[1]))) {
-                      attachments.push(path.resolve(outputDir[0], matches[1]));
-                      // console.log('AAAAA', attachments);
-                    }
-                  }
+        xml.collect('testcase');
+        xml.on('endElement: testcase', (item: any) => {
+          if (attachmentRegExp.test(item.$.name)) {
+            matches = attachmentRegExp.exec(item.$.name);
+            if (matches) {
+              filePath = path.resolve(outputDir[0], matches[1]);
+              if (fs.existsSync(filePath)) {
+                if (!result.resolved.includes(filePath)) {
+                  result.resolved.push(filePath);
                 }
-              });
+              } else {
+                result.unresolved.push(filePath);
+              }
             }
-          });
-        } else {
-          json.testsuite.testcase.forEach((testcase: any) => {
-            // console.log(testsuite);
-            if (attachmentRegExp.test(testcase.name)) {
-              const matches = attachmentRegExp.exec(testcase.name);
+          }
+
+          if (item[SYSTEM_OUT]) {
+            if (attachmentRegExp.test(item[SYSTEM_OUT])) {
+              matches = attachmentRegExp.exec(item[SYSTEM_OUT]);
               if (matches) {
-                if (fs.existsSync(path.resolve(outputDir[0], matches[1]))) {
-                  attachments.push(path.resolve(outputDir[0], matches[1]));
-                  // console.log('AAAAA', attachments);
+                filePath = path.resolve(outputDir[0], matches[1]);
+                if (fs.existsSync(filePath)) {
+                  if (!result.resolved.includes(filePath)) {
+                    result.resolved.push(filePath);
+                  }
+                } else {
+                  result.unresolved.push(filePath);
                 }
               }
             }
-          });
-        }
-        // console.log('BBBBB', attachments);
-        resolve(attachments);
+          }
+
+          if (item[SYSTEM_ERR]) {
+            if (attachmentRegExp.test(item[SYSTEM_ERR])) {
+              matches = attachmentRegExp.exec(item[SYSTEM_ERR]);
+              if (matches) {
+                filePath = path.resolve(outputDir[0], matches[1]);
+                if (fs.existsSync(filePath)) {
+                  if (!result.resolved.includes(filePath)) {
+                    result.resolved.push(filePath);
+                  }
+                } else {
+                  result.unresolved.push(filePath);
+                }
+              }
+            }
+          }
+        });
+
+        xml.on('end', () => resolve(result));
+        xml.on('error', () => reject());
       });
     });
   }
@@ -189,24 +218,33 @@ export class UploadTestRunCommand extends Command {
   }
 
   private uploadTestResults(
+    args: Arguments,
     accessToken: string,
     planId: number | undefined,
     matches: string[],
     milestoneId: number | undefined,
-    attachments: string[] | undefined
+    attachments: IAttachmentsResult | undefined
   ): Promise<any> {
     return new Promise((resolve, reject) => {
       const url = `${env.host}/plan/${planId}/junit_xml`;
       const formData: any = {};
-      if (matches.length > 1 || (attachments && attachments.length > 0)) {
+      if (matches.length > 1 || attachments) {
         formData['files[]'] = matches.map(f => fs.createReadStream(f));
-        if (attachments) {
-          console.log('Attachments to Send', attachments);
+        if (attachments && attachments.resolved.length > 0) {
+          logInfo('Resolved attachments:');
+          console.log(attachments.resolved);
           formData['files[]'] = formData['files[]'].concat(
-            attachments.map(f => fs.createReadStream(f))
+            attachments.resolved.map(f => fs.createReadStream(f))
           );
         }
-        console.log('Form data to send: ', formData);
+        if (attachments && attachments.unresolved.length > 0) {
+          logWarning('Unresolved attachments:');
+          console.log(attachments.unresolved);
+        }
+        if (args.verbose) {
+          console.log('Matching files: ', matches);
+          console.log('Form data to send: ', formData);
+        }
       } else if (matches.length === 1) {
         formData.file = fs.createReadStream(matches[0]);
       } else {
