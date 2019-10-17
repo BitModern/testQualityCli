@@ -29,10 +29,10 @@
     "pkg": "4.3.8",
     "prettier": "^1.16.4",
     "rimraf": "^2.6.2",
+    "ts-node": "^8.3.0",
     "tslint": "^5.13.1",
     "tslint-config-airbnb": "^5.11.1",
     "tslint-config-prettier": "^1.18.0",
-    "ts-node": "^8.3.0",
     "typescript": "^3.3.3333"
   },
   "dependencies": {

@@ -29,6 +29,10 @@ There are compiled commands for
 
 Commands can be downloaded from [cli.testquality.com](http://cli.testquality.com)
 
+Note: For *alpine* you must install libstdc++
+
+    apk add --no-cache libstdc++
+
 # Usage
 
 For list of commands
