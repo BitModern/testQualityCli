@@ -24,7 +24,7 @@
     <failure type="">Expected [ IStatusElement({ Block: 0, Pass: 3, Pending: 0, Retest: 0, x: 1475470800000 }), IStatusElement({ Block: 12, Pass: 23, Pending: 0, Retest: 4, x: 1475902800000 }), IStatusElement({ Block: 0, Pass: 0, Pending: 3, Retest: 0, x: 1473742800000 }) ] to equal [ IStatusElement({ Block: 0, Pass: 3, Pending: 0, Retest: 0, x: 1475471248209 }), IStatusElement({ Block: 0, Pass: 23, Pending: 0, Retest: 0, x: 1475903257877 }), IStatusElement({ Block: 0, Pass: 0, Pending: 3, Retest: 0, x: 1473743248209 }), IStatusElement({ Block: 12, Pass: 0, Pending: 0, Retest: 0, x: 1475903257249 }), IStatusElement({ Block: 0, Pass: 0, Pending: 0, Retest: 4, x: 1475903253641 }) ].
     at Object.&lt;anonymous&gt; (/src/app/components/analysis/status-chart/status-chart-controller.spec.ts:198:26 &lt;- build/test/tests.spec.js:8700:27)
     </failure>
-    <system-out>[[ATTACHMENT|/c/dev/bitm/testQualityCli/sampleXml/TQ-600.png]]</system-out>
+    <system-out>[[ATTACHMENT|./sampleXml/TQ-600.png]]</system-out>
   </testcase>
   <testcase name="test ChangePasswordController should change user password" time="0.076" classname="Chrome_54_0_2840_(Mac_OS_X_10_11_6).modules.test ChangePasswordController"/>
   <testcase name="[[ATTACHMENT|TQ-601.png]] test ChangePasswordController shouldn't change user password" time="0.06" classname="Chrome_54_0_2840_(Mac_OS_X_10_11_6).modules.test ChangePasswordController"/>
