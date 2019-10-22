@@ -5,6 +5,7 @@ import { ProjectCommand } from './ProjectCommand';
 import { PlanCommand } from './PlanCommand';
 import { MilestoneCommand } from './MilestoneCommand';
 import { UploadTestRunCommand } from './UploadTestRunCommand';
+import { UploadFeatureCommand } from './UploadFeatureCommand';
 import { RestoreCommand } from './RestoreCommand';
 
 const argv = yargs
@@ -13,6 +14,7 @@ const argv = yargs
   .command(new PlanCommand())
   .command(new MilestoneCommand())
   .command(new UploadTestRunCommand())
+  .command(new UploadFeatureCommand())
   .command(new RestoreCommand())
   .option('verbose', {
     alias: 'v',
