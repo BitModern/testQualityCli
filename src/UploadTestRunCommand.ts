@@ -286,6 +286,11 @@ export class UploadTestRunCommand extends Command {
     return new Promise((resolve, reject) => {
       const url = `${env.host}/plan/${planId}/junit_xml`;
       const formData: any = {};
+
+      if (args.run_name) {
+        formData.run_name = args.run_name;
+      }
+
       if (matches.length > 1 || attachments) {
         formData['files[]'] = matches.map(f => fs.createReadStream(f));
         if (attachments && attachments.resolved.length > 0) {

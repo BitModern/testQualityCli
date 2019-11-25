@@ -79,6 +79,11 @@ const argv = yargs
     describe: 'Plan Name',
     type: 'string'
   })
+  .option('run_name', {
+    alias: 'rn',
+    describe: '(Optional) Run name',
+    type: 'string'
+  })
   .option('run_result_output_dir', {
     alias: 'rr_output_dir',
     describe:
