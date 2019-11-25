@@ -84,6 +84,12 @@ const argv = yargs
     describe: '(Optional) Run name',
     type: 'string'
   })
+  .option('add_additional_run', {
+    alias: 'aar',
+    describe:
+      "(Optional) Creates additional Run, incompleted and in running state that will be assigned to the user's test plan",
+    type: 'boolean'
+  })
   .option('run_result_output_dir', {
     alias: 'rr_output_dir',
     describe:
