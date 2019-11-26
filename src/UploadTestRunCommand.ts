@@ -291,8 +291,8 @@ export class UploadTestRunCommand extends Command {
         formData.run_name = args.run_name;
       }
 
-      if (args.add_additional_run) {
-        formData.add_additional_run = args.add_additional_run ? 1 : 0;
+      if (args.create_manual_run) {
+        formData.create_manual_run = args.create_manual_run ? 1 : 0;
       }
 
       if (matches.length > 1 || attachments) {

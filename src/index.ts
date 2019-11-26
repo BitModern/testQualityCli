@@ -84,10 +84,10 @@ const argv = yargs
     describe: '(Optional) Run name',
     type: 'string'
   })
-  .option('add_additional_run', {
+  .option('create_manual_run', {
     alias: 'aar',
     describe:
-      "(Optional) Creates additional Run on pending state that will be assigned to the user's test plan",
+      "(Optional) Create a Plan Test Run for manual execution without uploading test results",
     type: 'boolean'
   })
   .option('run_result_output_dir', {
