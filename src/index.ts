@@ -6,6 +6,7 @@ import { PlanCommand } from './PlanCommand';
 import { MilestoneCommand } from './MilestoneCommand';
 import { UploadTestRunCommand } from './UploadTestRunCommand';
 import { UploadFeatureCommand } from './UploadFeatureCommand';
+import { CreateManualRunCommand } from './CreateManualRunCommand';
 import { RestoreCommand } from './RestoreCommand';
 
 const argv = yargs
@@ -15,6 +16,7 @@ const argv = yargs
   .command(new MilestoneCommand())
   .command(new UploadTestRunCommand())
   .command(new UploadFeatureCommand())
+  .command(new CreateManualRunCommand())
   .command(new RestoreCommand())
   .option('verbose', {
     alias: 'v',
@@ -81,14 +83,8 @@ const argv = yargs
   })
   .option('run_name', {
     alias: 'rn',
-    describe: '(Optional) Run name',
+    describe: 'Run name',
     type: 'string'
-  })
-  .option('create_manual_run', {
-    alias: 'aar',
-    describe:
-      "(Optional) Create a Plan Test Run for manual execution without uploading test results",
-    type: 'boolean'
   })
   .option('run_result_output_dir', {
     alias: 'rr_output_dir',
