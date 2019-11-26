@@ -87,7 +87,7 @@ const argv = yargs
   .option('add_additional_run', {
     alias: 'aar',
     describe:
-      "(Optional) Creates additional Run, incompleted and in running state that will be assigned to the user's test plan",
+      "(Optional) Creates additional Run on pending state that will be assigned to the user's test plan",
     type: 'boolean'
   })
   .option('run_result_output_dir', {
