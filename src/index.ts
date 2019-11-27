@@ -87,7 +87,7 @@ const argv = yargs
   .option('create_manual_run', {
     alias: 'aar',
     describe:
-      "(Optional) Create a Plan Test Run for manual execution without uploading test results",
+      '(Optional) Create a Plan Test Run for manual execution without uploading test results',
     type: 'boolean'
   })
   .option('run_result_output_dir', {
