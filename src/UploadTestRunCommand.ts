@@ -21,6 +21,12 @@ interface IAttachmentsResult {
   unresolved: string[];
 }
 
+interface IAttachment {
+  testsuite: string;
+  testcase: string;
+  attachmentPath: string;
+}
+
 export class UploadTestRunCommand extends Command {
   constructor() {
     super(
@@ -153,6 +159,65 @@ export class UploadTestRunCommand extends Command {
     return results;
   }
 
+  private findAttachments(
+    outputDir: string,
+    attachments: IAttachment[]
+  ): Promise<IAttachment[]> {
+    return new Promise((resolve, reject) => {
+      let items;
+      try {
+        items = fs.readdirSync(outputDir);
+        items.forEach((item: any) => {
+          if (fs.lstatSync(path.resolve(outputDir, item)).isDirectory()) {
+            if (path.extname(item) === '.feature') {
+              const files = fs.readdirSync(path.resolve(outputDir, item));
+              files.forEach((file: string) => {
+                const testsuite = path
+                  .basename(file)
+                  .substring(0, path.basename(file).indexOf('--') - 1);
+                const testcase = path
+                  .basename(file)
+                  .substring(
+                    path.basename(file).indexOf('--') + 2,
+                    path.basename(file).length
+                  );
+                const attachment: IAttachment = {
+                  testsuite,
+                  testcase,
+                  attachmentPath: path.resolve(outputDir, item) + '/' + file
+                };
+                attachments.push(attachment);
+              });
+            } else {
+              this.findAttachments(path.resolve(outputDir, item), attachments);
+            }
+          }
+        });
+        resolve(attachments);
+      } catch (err) {
+        console.log(err);
+        reject(err);
+      }
+    });
+  }
+
+  private getAttachment(
+    attachments: IAttachment[],
+    testsuite: string,
+    testcase: string
+  ): Promise<IAttachment> {
+    return new Promise(resolve => {
+      attachments.forEach((item: IAttachment) => {
+        if (item.testsuite === testsuite.substring(0, item.testsuite.length)) {
+          // if (item.testcase.substring(0, testcase.length) === testcase) {
+          if (item.testcase.indexOf(testcase) > 0) {
+            resolve(item);
+          }
+        }
+      });
+    });
+  }
+
   private parseXMLFiles(
     xmlFiles: string[],
     outputDir: string[] | undefined
@@ -174,67 +239,96 @@ export class UploadTestRunCommand extends Command {
         supressEmptyNode: false
       };
 
-      xmlFiles.forEach(file => {
-        try {
-          const json = parser.parse(fs.readFileSync(file, 'utf8'), options);
-          const testcases = this.getTestCases(json);
-          // console.log('testcases ', testcases);
-          if (testcases) {
-            testcases.forEach((item: any) => {
-              if (outputDir) {
-                if (attachmentRegExp.test(item.name)) {
-                  matches = attachmentRegExp.exec(item.name);
-                  if (matches) {
-                    filePath = path.resolve(outputDir[0], matches[1]);
-                    if (fs.existsSync(filePath)) {
-                      if (!result.resolved.includes(filePath)) {
-                        result.resolved.push(filePath);
-                      }
-                    } else {
-                      result.unresolved.push(filePath);
-                    }
-                  }
-                }
-              }
+      if (outputDir) {
+        // console.log('outputDir', outputDir);
+        const attachmentsList: IAttachment[] = [];
+        this.findAttachments(outputDir[0], attachmentsList).then(
+          attachments => {
+            /*
+            attachments.forEach(attachment => {
+              console.log(attachment);
+            });
+            */
 
-              if (item[SYSTEM_OUT]) {
-                if (attachmentRegExp.test(item[SYSTEM_OUT])) {
-                  matches = attachmentRegExp.exec(item[SYSTEM_OUT]);
-                  if (matches) {
-                    filePath = path.resolve(matches[1]);
-                    if (fs.existsSync(filePath)) {
-                      if (!result.resolved.includes(filePath)) {
-                        result.resolved.push(filePath);
+            xmlFiles.forEach(file => {
+              try {
+                const json = parser.parse(
+                  fs.readFileSync(file, 'utf8'),
+                  options
+                );
+                const testcases = this.getTestCases(json);
+                // console.log('testcases ', testcases);
+                if (testcases) {
+                  testcases.forEach((item: any) => {
+                    if (outputDir) {
+                      if (attachmentRegExp.test(item.name)) {
+                        matches = attachmentRegExp.exec(item.name);
+                        if (matches) {
+                          filePath = path.resolve(outputDir[0], matches[1]);
+                          if (fs.existsSync(filePath)) {
+                            if (!result.resolved.includes(filePath)) {
+                              result.resolved.push(filePath);
+                            }
+                          } else {
+                            result.unresolved.push(filePath);
+                          }
+                        }
                       }
-                    } else {
-                      result.unresolved.push(filePath);
                     }
-                  }
-                }
-              }
 
-              if (item[SYSTEM_ERR]) {
-                if (attachmentRegExp.test(item[SYSTEM_ERR])) {
-                  matches = attachmentRegExp.exec(item[SYSTEM_ERR]);
-                  if (matches) {
-                    filePath = path.resolve(matches[1]);
-                    if (fs.existsSync(filePath)) {
-                      if (!result.resolved.includes(filePath)) {
-                        result.resolved.push(filePath);
+                    this.getAttachment(
+                      attachments,
+                      item.classname,
+                      item.name
+                    ).then(attachment => {
+                      if (attachment) {
+                        result.resolved.push(attachment.attachmentPath);
                       }
-                    } else {
-                      result.unresolved.push(filePath);
+                    });
+
+                    if (item[SYSTEM_OUT]) {
+                      if (attachmentRegExp.test(item[SYSTEM_OUT])) {
+                        matches = attachmentRegExp.exec(item[SYSTEM_OUT]);
+                        if (matches) {
+                          filePath = path.resolve(matches[1]);
+                          if (fs.existsSync(filePath)) {
+                            if (!result.resolved.includes(filePath)) {
+                              result.resolved.push(filePath);
+                            }
+                          } else {
+                            result.unresolved.push(filePath);
+                          }
+                        }
+                      }
                     }
-                  }
+
+                    if (item[SYSTEM_ERR]) {
+                      if (attachmentRegExp.test(item[SYSTEM_ERR])) {
+                        matches = attachmentRegExp.exec(item[SYSTEM_ERR]);
+                        if (matches) {
+                          filePath = path.resolve(matches[1]);
+                          if (fs.existsSync(filePath)) {
+                            if (!result.resolved.includes(filePath)) {
+                              result.resolved.push(filePath);
+                            }
+                          } else {
+                            result.unresolved.push(filePath);
+                          }
+                        }
+                      }
+                    }
+                  });
                 }
+                resolve(result);
+              } catch (error) {
+                reject(error);
               }
             });
+            // console.log(result.resolved);
+            // throw new Error('Stopping error');
           }
-          resolve(result);
-        } catch (error) {
-          reject(error);
-        }
-      });
+        );
+      }
     });
   }
 
