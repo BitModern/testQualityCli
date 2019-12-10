@@ -328,6 +328,8 @@ export class UploadTestRunCommand extends Command {
             // throw new Error('Stopping error');
           }
         );
+      } else {
+        resolve(undefined);
       }
     });
   }
