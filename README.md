@@ -65,6 +65,10 @@ or
 You can also create a manual test plan run.
 
    testquality-macos create_manual_run --project_name=My_Project --plan_name=My_Test_Plan --run_name=Test_Run_Name
+
+CSV Files
+
+  testquality-macos upload_csv ./test_run_results.csv --cf ./test_run_results.config
     
  # Contributing
  
