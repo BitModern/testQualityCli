@@ -6,6 +6,7 @@ import { PlanCommand } from './PlanCommand';
 import { MilestoneCommand } from './MilestoneCommand';
 import { UploadTestRunCommand } from './UploadTestRunCommand';
 import { UploadFeatureCommand } from './UploadFeatureCommand';
+import { UploadCSVCommand } from './UploadCSVCommand';
 import { CreateManualRunCommand } from './CreateManualRunCommand';
 import { RestoreCommand } from './RestoreCommand';
 
@@ -16,6 +17,7 @@ const argv = yargs
   .command(new MilestoneCommand())
   .command(new UploadTestRunCommand())
   .command(new UploadFeatureCommand())
+  .command(new UploadCSVCommand())
   .command(new CreateManualRunCommand())
   .command(new RestoreCommand())
   .option('verbose', {
@@ -90,6 +92,11 @@ const argv = yargs
     alias: 'rr_output_dir',
     describe:
       'Run results output directory where potential attachments are located',
+    type: 'string'
+  })
+  .option('config_file', {
+    alias: 'cf',
+    describe: 'CSV upload configuration file with data mapping information',
     type: 'string'
   })
   .demandCommand()
