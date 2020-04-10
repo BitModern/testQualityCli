@@ -62,13 +62,13 @@ or
     testquality-macos login larry@bitmodern.com *password* --save
     testquality-macos upload_test_run 'sampleXml/*.xml' --project_name=Test --plan_name=Test
 
-You can also create a manual test plan run.
+ You can also create a manual test plan run.
 
-   testquality-macos create_manual_run --project_name=My_Project --plan_name=My_Test_Plan --run_name=Test_Run_Name
+    testquality-macos create_manual_run --project_name=My_Project --plan_name=My_Test_Plan --run_name=Test_Run_Name
 
-CSV Files
+ CSV Files
 
-  testquality-macos upload_csv ./test_run_results.csv --cf ./test_run_results.config
+    testquality-macos upload_csv ./test_run_results.csv --cf ./test_run_results.config
     
  # Contributing
  
