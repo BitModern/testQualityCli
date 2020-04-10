@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="0" tests="15" failures="15">
+  <testsuite name="Root Suite" timestamp="2019-10-23T11:08:56" tests="0" failures="0" time="0">
+  </testsuite>
+  <testsuite name="Dashboard" timestamp="2019-10-23T11:08:56" tests="15" failures="15" time="0">
+    <testcase name="I as a user I want to go to Dashboard page and verify that after clicking on Asset box I will see Inventory list" time="0" classname="Dashboard I as a user I want to go to Dashboard page and verify that after clicking on Asset box I will see Inventory list">
+      <failure message="Timed out retrying: Expected to find content: &apos;qalansweeperis+SeveralClient&apos; within the element: &lt;ul.ant-select-dropdown-menu.ant-select-dropdown-menu-root.ant-select-dropdown-menu-vertical&gt; but never did." type="CypressError"><![CDATA[CypressError: Timed out retrying: Expected to find content: 'qalansweeperis+SeveralClient' within the element: <ul.ant-select-dropdown-menu.ant-select-dropdown-menu-root.ant-select-dropdown-menu-vertical> but never did.
+    at Object.cypressErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85348:11)
+    at Object.throwErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85303:18)
+    at Object.throwErrByPath (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85335:17)
+    at retry (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:77321:16)
+    at onFailFn (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:68422:16)
+    at tryCatcher (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:118962:23)
+    at Promise._settlePromiseFromHandler (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:116898:31)
+    at Promise._settlePromise (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:116955:18)
+    at Promise._settlePromise0 (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:117000:10)
+    at Promise._settlePromises (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:117075:18)
+    at Async../node_modules/bluebird/js/release/async.js.Async._drainQueue (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113687:16)
+    at Async../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113697:10)
+    at Async.drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113571:14)]]></failure>
+    </testcase>
+    <testcase name="I as a user I want to go to Dashboard page and verify that after clicking on Users box I will see Users list page" time="0" classname="Dashboard I as a user I want to go to Dashboard page and verify that after clicking on Users box I will see Users list page">
+      <failure message="Timed out retrying: Expected to find content: &apos;qalansweeperis+SeveralClient&apos; within the element: &lt;ul.ant-select-dropdown-menu.ant-select-dropdown-menu-root.ant-select-dropdown-menu-vertical&gt; but never did." type="CypressError"><![CDATA[CypressError: Timed out retrying: Expected to find content: 'qalansweeperis+SeveralClient' within the element: <ul.ant-select-dropdown-menu.ant-select-dropdown-menu-root.ant-select-dropdown-menu-vertical> but never did.
+    at Object.cypressErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85348:11)
+    at Object.throwErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85303:18)
+    at Object.throwErrByPath (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85335:17)
+    at retry (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:77321:16)
+    at onFailFn (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:68422:16)
+    at tryCatcher (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:118962:23)
+    at Promise._settlePromiseFromHandler (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:116898:31)
+    at Promise._settlePromise (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:116955:18)
+    at Promise._settlePromise0 (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:117000:10)
+    at Promise._settlePromises (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:117075:18)
+    at Async../node_modules/bluebird/js/release/async.js.Async._drainQueue (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113687:16)
+    at Async../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113697:10)
+    at Async.drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113571:14)]]></failure>
+    </testcase>
+    <testcase name="I as a user I want to go to Dashboard page and verify that after clicking on Activity Logs box I will see Activity Logs list page" time="0" classname="Dashboard I as a user I want to go to Dashboard page and verify that after clicking on Activity Logs box I will see Activity Logs list page">
+      <failure message="cy.screenshot() timed out waiting &apos;30000ms&apos; to complete." type="CypressError"><![CDATA[CypressError: cy.screenshot() timed out waiting '30000ms' to complete.
+    at Object.cypressErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85348:11)
+    at Object.throwErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85303:18)
+    at Object.throwErrByPath (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85335:17)
+    at https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:74964:21
+    at tryCatcher (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:118962:23)
+    at https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:114103:41
+    at tryCatcher (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:118962:23)
+    at Promise._settlePromiseFromHandler (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:116898:31)
+    at Promise._settlePromise (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:116955:18)
+    at Promise._settlePromise0 (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:117000:10)
+    at Promise._settlePromises (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:117075:18)
+    at Async../node_modules/bluebird/js/release/async.js.Async._drainQueue (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113687:16)
+    at Async../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113697:10)
+    at Async.drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113571:14)]]></failure>
+    </testcase>
+    <testcase name="I as a user I want to go to Dashboard page and verify that after clicking on New Assets box I will see New Assests list page" time="0" classname="Dashboard I as a user I want to go to Dashboard page and verify that after clicking on New Assets box I will see New Assests list page">
+      <failure message="cy.screenshot() timed out waiting &apos;30000ms&apos; to complete." type="CypressError"><![CDATA[CypressError: cy.screenshot() timed out waiting '30000ms' to complete.
+    at Object.cypressErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85348:11)
+    at Object.throwErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85303:18)
+    at Object.throwErrByPath (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85335:17)
+    at https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:74964:21
+    at tryCatcher (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:118962:23)
+    at https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:114103:41
+    at tryCatcher (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:118962:23)
+    at Promise._settlePromiseFromHandler (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:116898:31)
+    at Promise._settlePromise (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:116955:18)
+    at Promise._settlePromise0 (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:117000:10)
+    at Promise._settlePromises (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:117075:18)
+    at Async../node_modules/bluebird/js/release/async.js.Async._drainQueue (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113687:16)
+    at Async../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113697:10)
+    at Async.drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113571:14)]]></failure>
+    </testcase>
+    <testcase name="I as a user I want to go to Dashboard page and verify that after clicking on Software Scanned box I will see Software Scanned list page" time="0" classname="Dashboard I as a user I want to go to Dashboard page and verify that after clicking on Software Scanned box I will see Software Scanned list page">
+      <failure message="cy.screenshot() timed out waiting &apos;30000ms&apos; to complete." type="CypressError"><![CDATA[CypressError: cy.screenshot() timed out waiting '30000ms' to complete.
+    at Object.cypressErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85348:11)
+    at Object.throwErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85303:18)
+    at Object.throwErrByPath (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85335:17)
+    at https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:74964:21
+    at tryCatcher (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:118962:23)
+    at https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:114103:41
+    at tryCatcher (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:118962:23)
+    at Promise._settlePromiseFromHandler (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:116898:31)
+    at Promise._settlePromise (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:116955:18)
+    at Promise._settlePromise0 (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:117000:10)
+    at Promise._settlePromises (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:117075:18)
+    at Async../node_modules/bluebird/js/release/async.js.Async._drainQueue (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113687:16)
+    at Async../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113697:10)
+    at Async.drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113571:14)]]></failure>
+    </testcase>
+    <testcase name="I as a user I want to go to Dashboard page and verify that after clicking on Software Scanned box I will see Software Scanned list page" time="0" classname="Dashboard I as a user I want to go to Dashboard page and verify that after clicking on Software Scanned box I will see Software Scanned list page">
+      <failure message="cy.screenshot() timed out waiting &apos;30000ms&apos; to complete." type="CypressError"><![CDATA[CypressError: cy.screenshot() timed out waiting '30000ms' to complete.
+    at Object.cypressErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85348:11)
+    at Object.throwErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85303:18)
+    at Object.throwErrByPath (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85335:17)
+    at https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:74964:21
+    at tryCatcher (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:118962:23)
+    at https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:114103:41
+    at tryCatcher (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:118962:23)
+    at Promise._settlePromiseFromHandler (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:116898:31)
+    at Promise._settlePromise (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:116955:18)
+    at Promise._settlePromise0 (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:117000:10)
+    at Promise._settlePromises (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:117075:18)
+    at Async../node_modules/bluebird/js/release/async.js.Async._drainQueue (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113687:16)
+    at Async../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113697:10)
+    at Async.drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113571:14)]]></failure>
+    </testcase>
+    <testcase name="I as a user I want to go to Dashboard page and verify after clicking on Invite User(s) link I will see add user page" time="0" classname="Dashboard I as a user I want to go to Dashboard page and verify after clicking on Invite User(s) link I will see add user page">
+      <failure message="cy.screenshot() timed out waiting &apos;30000ms&apos; to complete." type="CypressError"><![CDATA[CypressError: cy.screenshot() timed out waiting '30000ms' to complete.
+    at Object.cypressErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85348:11)
+    at Object.throwErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85303:18)
+    at Object.throwErrByPath (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85335:17)
+    at https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:74964:21
+    at tryCatcher (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:118962:23)
+    at https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:114103:41
+    at tryCatcher (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:118962:23)
+    at Promise._settlePromiseFromHandler (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:116898:31)
+    at Promise._settlePromise (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:116955:18)
+    at Promise._settlePromise0 (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:117000:10)
+    at Promise._settlePromises (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:117075:18)
+    at Async../node_modules/bluebird/js/release/async.js.Async._drainQueue (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113687:16)
+    at Async../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113697:10)
+    at Async.drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113571:14)]]></failure>
+    </testcase>
+    <testcase name="I as a user I want to go to Dashboard page and verify after clicking on Add-Remove User(s) link I will see user list" time="0" classname="Dashboard I as a user I want to go to Dashboard page and verify after clicking on Add-Remove User(s) link I will see user list">
+      <failure message="cy.screenshot() timed out waiting &apos;30000ms&apos; to complete." type="CypressError"><![CDATA[CypressError: cy.screenshot() timed out waiting '30000ms' to complete.
+    at Object.cypressErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85348:11)
+    at Object.throwErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85303:18)
+    at Object.throwErrByPath (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85335:17)
+    at https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:74964:21
+    at tryCatcher (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:118962:23)
+    at https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:114103:41
+    at tryCatcher (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:118962:23)
+    at Promise._settlePromiseFromHandler (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:116898:31)
+    at Promise._settlePromise (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:116955:18)
+    at Promise._settlePromise0 (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:117000:10)
+    at Promise._settlePromises (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:117075:18)
+    at Async../node_modules/bluebird/js/release/async.js.Async._drainQueue (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113687:16)
+    at Async../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113697:10)
+    at Async.drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113571:14)]]></failure>
+    </testcase>
+    <testcase name="I as a user I want to go to Dashboard page and verify after clicking on Add-Remove Group(s) link I will see group list" time="0" classname="Dashboard I as a user I want to go to Dashboard page and verify after clicking on Add-Remove Group(s) link I will see group list">
+      <failure message="cy.screenshot() timed out waiting &apos;30000ms&apos; to complete." type="CypressError"><![CDATA[CypressError: cy.screenshot() timed out waiting '30000ms' to complete.
+    at Object.cypressErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85348:11)
+    at Object.throwErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85303:18)
+    at Object.throwErrByPath (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85335:17)
+    at https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:74964:21
+    at tryCatcher (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:118962:23)
+    at https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:114103:41
+    at tryCatcher (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:118962:23)
+    at Promise._settlePromiseFromHandler (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:116898:31)
+    at Promise._settlePromise (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:116955:18)
+    at Promise._settlePromise0 (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:117000:10)
+    at Promise._settlePromises (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:117075:18)
+    at Async../node_modules/bluebird/js/release/async.js.Async._drainQueue (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113687:16)
+    at Async../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113697:10)
+    at Async.drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113571:14)]]></failure>
+    </testcase>
+    <testcase name="I as a user I want to go to Dashboard page and verify after clicking on Explore Hardware Datasets link I will see hardware report" time="0" classname="Dashboard I as a user I want to go to Dashboard page and verify after clicking on Explore Hardware Datasets link I will see hardware report">
+      <failure message="cy.screenshot() timed out waiting &apos;30000ms&apos; to complete." type="CypressError"><![CDATA[CypressError: cy.screenshot() timed out waiting '30000ms' to complete.
+    at Object.cypressErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85348:11)
+    at Object.throwErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85303:18)
+    at Object.throwErrByPath (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85335:17)
+    at https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:74964:21
+    at tryCatcher (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:118962:23)
+    at https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:114103:41
+    at tryCatcher (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:118962:23)
+    at Promise._settlePromiseFromHandler (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:116898:31)
+    at Promise._settlePromise (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:116955:18)
+    at Promise._settlePromise0 (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:117000:10)
+    at Promise._settlePromises (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:117075:18)
+    at Async../node_modules/bluebird/js/release/async.js.Async._drainQueue (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113687:16)
+    at Async../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113697:10)
+    at Async.drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113571:14)]]></failure>
+    </testcase>
+    <testcase name="I as a user I want to go to Dashboard page and verify after clicking on Explore Software Datasets link I will see software report" time="0" classname="Dashboard I as a user I want to go to Dashboard page and verify after clicking on Explore Software Datasets link I will see software report">
+      <failure message="cy.screenshot() timed out waiting &apos;30000ms&apos; to complete." type="CypressError"><![CDATA[CypressError: cy.screenshot() timed out waiting '30000ms' to complete.
+    at Object.cypressErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85348:11)
+    at Object.throwErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85303:18)
+    at Object.throwErrByPath (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85335:17)
+    at https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:74964:21
+    at tryCatcher (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:118962:23)
+    at https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:114103:41
+    at tryCatcher (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:118962:23)
+    at Promise._settlePromiseFromHandler (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:116898:31)
+    at Promise._settlePromise (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:116955:18)
+    at Promise._settlePromise0 (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:117000:10)
+    at Promise._settlePromises (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:117075:18)
+    at Async../node_modules/bluebird/js/release/async.js.Async._drainQueue (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113687:16)
+    at Async../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113697:10)
+    at Async.drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113571:14)]]></failure>
+    </testcase>
+    <testcase name="I as a user I want to go to Dashboard page and verify after clicking on Explore User Datasets link I will see user report" time="0" classname="Dashboard I as a user I want to go to Dashboard page and verify after clicking on Explore User Datasets link I will see user report">
+      <failure message="cy.screenshot() timed out waiting &apos;30000ms&apos; to complete." type="CypressError"><![CDATA[CypressError: cy.screenshot() timed out waiting '30000ms' to complete.
+    at Object.cypressErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85348:11)
+    at Object.throwErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85303:18)
+    at Object.throwErrByPath (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85335:17)
+    at https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:74964:21
+    at tryCatcher (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:118962:23)
+    at https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:114103:41
+    at tryCatcher (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:118962:23)
+    at Promise._settlePromiseFromHandler (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:116898:31)
+    at Promise._settlePromise (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:116955:18)
+    at Promise._settlePromise0 (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:117000:10)
+    at Promise._settlePromises (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:117075:18)
+    at Async../node_modules/bluebird/js/release/async.js.Async._drainQueue (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113687:16)
+    at Async../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113697:10)
+    at Async.drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113571:14)]]></failure>
+    </testcase>
+    <testcase name="I as a user I want to go to Dashboard page and verify after clicking on Explore Hardware Datasets link I will see hardware report" time="0" classname="Dashboard I as a user I want to go to Dashboard page and verify after clicking on Explore Hardware Datasets link I will see hardware report">
+      <failure message="Timed out retrying: Expected to find content: &apos;qalansweeperis+SeveralClient&apos; within the element: &lt;ul.ant-select-dropdown-menu.ant-select-dropdown-menu-root.ant-select-dropdown-menu-vertical&gt; but never did." type="CypressError"><![CDATA[CypressError: Timed out retrying: Expected to find content: 'qalansweeperis+SeveralClient' within the element: <ul.ant-select-dropdown-menu.ant-select-dropdown-menu-root.ant-select-dropdown-menu-vertical> but never did.
+    at Object.cypressErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85348:11)
+    at Object.throwErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85303:18)
+    at Object.throwErrByPath (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85335:17)
+    at retry (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:77321:16)
+    at onFailFn (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:68422:16)
+    at tryCatcher (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:118962:23)
+    at Promise._settlePromiseFromHandler (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:116898:31)
+    at Promise._settlePromise (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:116955:18)
+    at Promise._settlePromise0 (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:117000:10)
+    at Promise._settlePromises (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:117075:18)
+    at Async../node_modules/bluebird/js/release/async.js.Async._drainQueue (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113687:16)
+    at Async../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113697:10)
+    at Async.drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113571:14)]]></failure>
+    </testcase>
+    <testcase name="I as a user I want to go to Dashboard page and verify after clicking on Explore Software Datasets link I will see software report" time="0" classname="Dashboard I as a user I want to go to Dashboard page and verify after clicking on Explore Software Datasets link I will see software report">
+      <failure message="Timed out retrying: Expected to find content: &apos;qalansweeperis+SeveralClient&apos; within the element: &lt;ul.ant-select-dropdown-menu.ant-select-dropdown-menu-root.ant-select-dropdown-menu-vertical&gt; but never did." type="CypressError"><![CDATA[CypressError: Timed out retrying: Expected to find content: 'qalansweeperis+SeveralClient' within the element: <ul.ant-select-dropdown-menu.ant-select-dropdown-menu-root.ant-select-dropdown-menu-vertical> but never did.
+    at Object.cypressErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85348:11)
+    at Object.throwErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85303:18)
+    at Object.throwErrByPath (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85335:17)
+    at retry (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:77321:16)
+    at onFailFn (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:68422:16)
+    at tryCatcher (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:118962:23)
+    at Promise._settlePromiseFromHandler (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:116898:31)
+    at Promise._settlePromise (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:116955:18)
+    at Promise._settlePromise0 (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:117000:10)
+    at Promise._settlePromises (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:117075:18)
+    at Async../node_modules/bluebird/js/release/async.js.Async._drainQueue (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113687:16)
+    at Async../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113697:10)
+    at Async.drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113571:14)]]></failure>
+    </testcase>
+    <testcase name="I as a user I want to go to Dashboard page and verify after clicking on Explore User Datasets link I will see user report" time="0" classname="Dashboard I as a user I want to go to Dashboard page and verify after clicking on Explore User Datasets link I will see user report">
+      <failure message="Timed out retrying: Expected to find content: &apos;qalansweeperis+SeveralClient&apos; within the element: &lt;ul.ant-select-dropdown-menu.ant-select-dropdown-menu-root.ant-select-dropdown-menu-vertical&gt; but never did." type="CypressError"><![CDATA[CypressError: Timed out retrying: Expected to find content: 'qalansweeperis+SeveralClient' within the element: <ul.ant-select-dropdown-menu.ant-select-dropdown-menu-root.ant-select-dropdown-menu-vertical> but never did.
+    at Object.cypressErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85348:11)
+    at Object.throwErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85303:18)
+    at Object.throwErrByPath (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85335:17)
+    at retry (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:77321:16)
+    at onFailFn (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:68422:16)
+    at tryCatcher (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:118962:23)
+    at Promise._settlePromiseFromHandler (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:116898:31)
+    at Promise._settlePromise (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:116955:18)
+    at Promise._settlePromise0 (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:117000:10)
+    at Promise._settlePromises (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:117075:18)
+    at Async../node_modules/bluebird/js/release/async.js.Async._drainQueue (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113687:16)
+    at Async../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113697:10)
+    at Async.drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:113571:14)]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>
