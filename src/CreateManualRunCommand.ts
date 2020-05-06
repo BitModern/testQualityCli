@@ -1,10 +1,8 @@
 import { Command } from './Command';
 import { logError } from './error';
 import { Arguments, Argv } from 'yargs';
-import { tqGet } from './tqGet';
+import { tqRequest, tqPost } from './tqRequest';
 import { IResourceList } from './ResourceList';
-import { env } from './env';
-import * as request from 'request-promise-native';
 
 interface IHasId {
   id: number;
@@ -66,7 +64,7 @@ export class CreateManualRunCommand extends Command {
       }
 
       if (name) {
-        tqGet<IResourceList<IHasId>>(
+        tqRequest<IResourceList<IHasId>>(
           accessToken,
           `/${type}?project_id=${this.auth.projectId}`
         ).then(list => {
@@ -101,7 +99,6 @@ export class CreateManualRunCommand extends Command {
     milestoneId: number | undefined
   ): Promise<any> {
     return new Promise((resolve, reject) => {
-      const url = `${env.host}/run`;
       const formData: any = {
         is_complete: 0,
         is_running: 1,
@@ -119,17 +116,7 @@ export class CreateManualRunCommand extends Command {
       }
 
       // console.log(formData);
-
-      const options = {
-        method: 'POST',
-        url,
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        },
-        formData,
-        json: true // Automatically parses the JSON string in the response
-      };
-      return request(options).then((body: any) => {
+      return tqPost<any>(accessToken, '/run', formData).then((body: any) => {
         const response = {
           id: body.id,
           name: body.name,

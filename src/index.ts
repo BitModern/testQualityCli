@@ -9,6 +9,7 @@ import { UploadFeatureCommand } from './UploadFeatureCommand';
 import { UploadCSVCommand } from './UploadCSVCommand';
 import { CreateManualRunCommand } from './CreateManualRunCommand';
 import { RestoreCommand } from './RestoreCommand';
+import { CreatePlan } from './CreatePlan';
 
 const argv = yargs
   .command(new LoginCommand())
@@ -20,6 +21,7 @@ const argv = yargs
   .command(new UploadCSVCommand())
   .command(new CreateManualRunCommand())
   .command(new RestoreCommand())
+  .command(new CreatePlan())
   .option('verbose', {
     alias: 'v',
     boolean: true,

@@ -2,7 +2,7 @@ import { Command } from './Command';
 import { Arguments, Argv } from 'yargs';
 import { env } from './env';
 import { logError } from './error';
-import { tqGet } from './tqGet';
+import { tqRequest } from './tqRequest';
 import { IResourceList } from './ResourceList';
 import * as request from 'request-promise-native';
 import * as glob from 'glob';
@@ -77,7 +77,7 @@ export class UploadFeatureCommand extends Command {
     return new Promise((resolve, reject) => {
       const name = args[type + '_name'] as string;
       if (name) {
-        tqGet<IResourceList<IHasId>>(
+        tqRequest<IResourceList<IHasId>>(
           accessToken,
           `/${type}?project_id=${this.auth.projectId}`
         ).then(list => {

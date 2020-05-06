@@ -85,3 +85,53 @@ or
  ## Development
     yarn serve
 
+## Docker
+
+Retrieve an authentication token and authenticate your Docker client to your registry.
+Use the AWS CLI:
+
+    aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 092049816521.dkr.ecr.us-east-1.amazonaws.com/test-quality-cli
+
+Note: If you receive an error using the AWS CLI, make sure that you have the latest version of the AWS CLI and Docker installed.
+
+Build your Docker image using the following command. For information on building a Docker file from scratch see the instructions [here](http://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-basics.html) 
+    
+    docker build -t test-quality-cli .
+    
+Run your Docker image local.
+
+    docker run --name test-quality-cli -p 80:80 --rm test-quality-cli
+
+After the build completes, tag your image so you can push the image to this repository:
+    
+    docker tag test-quality-cli:latest 092049816521.dkr.ecr.us-east-1.amazonaws.com/test-quality-cli:latest
+
+Run the following command to push this image to your newly created AWS repository:
+    
+    docker push 092049816521.dkr.ecr.us-east-1.amazonaws.com/test-quality-cli:latest
+    
+Kubernetes
+
+    kustomize build kustomize/overlays/<<environment>> | kubectl apply --dry-run --validate -f -
+    
+    kustomize build kustomize/overlays/<<parameters.environment>> | kubectl apply --record=true -f -
+
+#Jenkins
+
+    #!/bin/bash
+    export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+    yarn install
+    yarn build
+    yarn package
+    export set KUBECONFIG=eks_config
+    VERSION=1.0.${BUILD_NUMBER}
+    aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 092049816521.dkr.ecr.us-east-1.amazonaws.com/test-quality-cli
+    docker build -t test-quality-cli .
+    docker tag test-quality-cli:latest 092049816521.dkr.ecr.us-east-1.amazonaws.com/test-quality-cli:latest
+    docker tag test-quality-cli:latest 092049816521.dkr.ecr.us-east-1.amazonaws.com/test-quality-cli:$VERSION
+    docker push 092049816521.dkr.ecr.us-east-1.amazonaws.com/test-quality-cli
+    aws eks update-kubeconfig --name tq-stage --kubeconfig eks_config
+    sed  -i "s/0.0.0/$VERSION/" kustomize/overlays/stage/custom-env.yaml
+    sed  -i "s/latest/$VERSION/" kustomize/overlays/stage/kustomization.yaml
+    kubectl apply -k kustomize/overlays/stage

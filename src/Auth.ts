@@ -1,7 +1,7 @@
 import * as request from 'request-promise-native';
 import { env, saveEnv } from './env';
 import { IReturnToken } from './ReturnToken';
-import { tqGet } from './tqGet';
+import { tqRequest } from './tqRequest';
 import { IResourceList } from './ResourceList';
 import { IProjectResource } from './ProjectCommand';
 
@@ -79,24 +79,24 @@ export class Auth {
       const projectName = args.project_name as string;
       if (projectName) {
         this.updateToken(args).then(accessToken => {
-          tqGet<IResourceList<IProjectResource>>(accessToken, '/project').then(
-            projectList => {
-              const project = projectList.data.find(
-                p => p.name.toLowerCase() === projectName.toLowerCase()
-              );
-              if (project) {
-                this.projectId = project.id.toString();
-                if (args.save) {
-                  env.variables.project_id.value = this.projectId;
-                  saveEnv();
-                }
-                resolve(accessToken);
-              } else {
-                reject(`Project ${projectName} not found!`);
+          tqRequest<IResourceList<IProjectResource>>(
+            accessToken,
+            '/project'
+          ).then(projectList => {
+            const project = projectList.data.find(
+              p => p.name.toLowerCase() === projectName.toLowerCase()
+            );
+            if (project) {
+              this.projectId = project.id.toString();
+              if (args.save) {
+                env.variables.project_id.value = this.projectId;
+                saveEnv();
               }
-            },
-            reject
-          );
+              resolve(accessToken);
+            } else {
+              reject(`Project ${projectName} not found!`);
+            }
+          }, reject);
         }, reject);
       } else {
         this.projectId =

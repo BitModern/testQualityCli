@@ -1,6 +1,6 @@
 import { Command } from './Command';
 import { logError } from './error';
-import { tqGet } from './tqGet';
+import { tqRequest } from './tqRequest';
 import { IResourceList } from './ResourceList';
 
 export interface IProjectResource {
@@ -33,7 +33,7 @@ export class ProjectCommand extends Command {
       args => {
         this.auth.update(args).then(
           accessToken => {
-            tqGet<IResourceList<IProjectResource>>(
+            tqRequest<IResourceList<IProjectResource>>(
               accessToken,
               '/project'
             ).then(

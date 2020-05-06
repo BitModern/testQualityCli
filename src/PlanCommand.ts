@@ -1,5 +1,5 @@
 import { Command } from './Command';
-import { tqGet } from './tqGet';
+import { tqRequest } from './tqRequest';
 import { IResourceList } from './ResourceList';
 import { logError } from './error';
 
@@ -53,7 +53,7 @@ export class PlanCommand extends Command {
               const url = `/plan${project}${revisionLog}`;
               console.log(url);
 
-              tqGet<IResourceList<IPlanResource>>(accessToken, url).then(
+              tqRequest<IResourceList<IPlanResource>>(accessToken, url).then(
                 planList => {
                   if (args.revision_log) {
                     console.log(planList);

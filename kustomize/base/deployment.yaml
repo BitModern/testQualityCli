@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-quality-cli
+  labels:
+    component: ui
+    part-of: web
+    managed-by: kustomize
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-quality-cli
+  template:
+    metadata:
+      labels:
+        app: test-quality-cli
+        component: ui
+        part-of: web
+        managed-by: kustomize
+    spec:
+      containers:
+        - name: test-quality-cli
+          image: test-quality-cli:latest
+          ports:
+            - containerPort: 80

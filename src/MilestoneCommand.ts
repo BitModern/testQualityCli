@@ -1,6 +1,6 @@
 import { Command } from './Command';
 import { logError } from './error';
-import { tqGet } from './tqGet';
+import { tqRequest } from './tqRequest';
 import { IResourceList } from './ResourceList';
 
 export interface IMilestoneResource {
@@ -52,7 +52,10 @@ export class MilestoneCommand extends Command {
                 ? (project !== '' ? '&' : '?') + 'revision_log=true'
                 : '';
               const url = `/milestone${project}${revisionLog}`;
-              tqGet<IResourceList<IMilestoneResource>>(accessToken, url).then(
+              tqRequest<IResourceList<IMilestoneResource>>(
+                accessToken,
+                url
+              ).then(
                 milestoneList => {
                   if (args.revision_log) {
                     console.log(milestoneList);
