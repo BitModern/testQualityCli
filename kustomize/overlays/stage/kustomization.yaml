@@ -15,5 +15,5 @@ images:
   - name: test-quality-cli
     newName: 092049816521.dkr.ecr.us-east-1.amazonaws.com/test-quality-cli
     newTag: latest
-resources:
+bases:
   - ../../base
