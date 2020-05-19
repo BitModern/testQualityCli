@@ -7,7 +7,7 @@ export class RestoreCommand extends Command {
   constructor() {
     super(
       'restore',
-      'Restore plan or test.',
+      'Restore plan, suite or test.',
       args => {
         return args
           .option('test_id', {
@@ -24,16 +24,7 @@ export class RestoreCommand extends Command {
       args => {
         this.auth.update(args).then(
           accessToken => {
-            if (args.plan_id) {
-              this.postRestore(
-                'plan',
-                accessToken,
-                args.plan_id as string
-              ).then(
-                response => console.log(response),
-                error => logError(error)
-              );
-            } else if (args.test_id) {
+            if (args.test_id) {
               const options = args.suite_id
                 ? { suite_id: args.suite_id }
                 : undefined;
@@ -46,37 +37,32 @@ export class RestoreCommand extends Command {
                 response => console.log(response),
                 error => logError(error)
               );
+            } else if (args.suite_id) {
+              const options = args.plan_id
+                ? { plan_id: args.plan_id }
+                : undefined;
+              this.postRestore(
+                'suite',
+                accessToken,
+                args.suite_id as string,
+                options
+              ).then(
+                response => console.log(response),
+                error => logError(error)
+              );
+            } else if (args.plan_id) {
+              this.postRestore(
+                'plan',
+                accessToken,
+                args.plan_id as string
+              ).then(
+                response => console.log(response),
+                error => logError(error)
+              );
             } else {
               logError(
                 `plan or test is required. Try adding "--plan_id=<number>" or "--test_id=<number>`
               );
-              if (args.plan_id) {
-                this.postRestore(
-                  'plan',
-                  accessToken,
-                  args.plan_id as string
-                ).then(
-                  response => console.log(response),
-                  error => logError(error)
-                );
-              } else if (args.test_id) {
-                const options = args.suite_id
-                  ? { suite_id: args.suite_id }
-                  : undefined;
-                this.postRestore(
-                  'test',
-                  accessToken,
-                  args.test_id as string,
-                  options
-                ).then(
-                  response => console.log(response),
-                  error => logError(error)
-                );
-              } else {
-                logError(
-                  `plan or test is required. Try adding "--plan_id=<number>" or "--test_id=<number>`
-                );
-              }
             }
           },
           error => logError(error)

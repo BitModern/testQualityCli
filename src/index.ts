@@ -10,11 +10,13 @@ import { UploadCSVCommand } from './UploadCSVCommand';
 import { CreateManualRunCommand } from './CreateManualRunCommand';
 import { RestoreCommand } from './RestoreCommand';
 import { CreatePlan } from './CreatePlan';
+import { SuiteCommand } from './SuiteCommand';
 
 const argv = yargs
   .command(new LoginCommand())
   .command(new ProjectCommand())
   .command(new PlanCommand())
+  .command(new SuiteCommand())
   .command(new MilestoneCommand())
   .command(new UploadTestRunCommand())
   .command(new UploadFeatureCommand())

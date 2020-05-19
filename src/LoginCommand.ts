@@ -18,11 +18,19 @@ export class LoginCommand extends Command {
           .positional('password', {
             describe: 'Password for user',
             type: 'string'
+          })
+          .option('properties', {
+            alias: 'prop',
+            describe: 'Add Properties',
+            type: 'string'
           });
       },
       (args: Arguments) => {
         if (args.username && args.password) {
-          this.auth.login(args.username, args.password).then(
+          const prop = args.properties
+            ? JSON.parse(args.properties as string)
+            : undefined;
+          this.auth.login(args.username, args.password, prop).then(
             (body: IReturnToken) => {
               if (args.save) {
                 saveEnv();

@@ -13,7 +13,8 @@ export class Auth {
 
   public login(
     username: string | unknown,
-    password: string | unknown
+    password: string | unknown,
+    properties?: any
   ): Promise<IReturnToken> {
     return new Promise((resolve, reject) => {
       const url = `${env.host}/oauth/access_token`;
@@ -28,7 +29,8 @@ export class Auth {
           client_id: env.client_id,
           client_secret: env.client_secret,
           username,
-          password
+          password,
+          ...properties
         },
         json: true // Automatically parses the JSON string in the response
       };
