@@ -63,7 +63,7 @@ export class PlanCommand extends Command {
                   if (planList.total > 0) {
                     console.log(
                       planList.data.map(p => {
-                        return { id: p.id, key: p.key, name: p.name };
+                        return { id: p.id, key: p.key, name: p.name, project_id: p.project_id };
                       })
                     );
                   } else {
