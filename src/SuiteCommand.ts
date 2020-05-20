@@ -46,19 +46,21 @@ export class SuiteCommand extends Command {
             alias: 'si',
             describe: 'Suite to restore test in, optional',
             type: 'string'
+          })
+          .option('params', {
+            alias: 'p',
+            describe: 'Add Properties',
+            type: 'array'
           });
       },
       args => {
         this.auth.update(args).then(async accessToken => {
-          const revisionLog = args.revision_log ? '?revision_log=true' : '';
-          if (!args.plan_id) {
-            logError(
-              `plan or test is required. Try adding "--plan_id=<number>"`
-            );
-            return;
-          }
+          const params = args.params ? (args.params as string[]).join('&') : '';
+          const revisionLog = args.revision_log ? '?revision_log=true' + (args.params ? '&' + params : '') : (args.params ? '?' + params : '');
           if (!args.delete) {
-            const url = `/plan/${args.plan_id}/suite${revisionLog}`;
+            const url =
+              (args.plan_id ? `/plan/${args.plan_id}` : '') +
+              `/suite${revisionLog}`;
             console.log(url);
 
             tqRequest<IResourceList<SuiteResource>>(accessToken, url).then(
@@ -87,7 +89,9 @@ export class SuiteCommand extends Command {
                   'Suite id is required to perform delete, try adding --suite_id=<number>'
                 );
               }
-              const url = `/plan/${args.plan_id}/suite/${suiteId}`;
+              const url =
+                (args.plan_id ? `/plan/${args.plan_id}` : '') +
+                `/suite/${suiteId}`;
               console.log(url);
 
               const result = await tqRequest<IResourceList<SuiteResource>>(

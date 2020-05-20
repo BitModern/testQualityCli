@@ -28,50 +28,51 @@ export class PlanCommand extends Command {
       'plans',
       'List plans in project.',
       args => {
-        return args.option('revision_log', {
-          alias: 'rl',
-          describe: 'Get history',
-          type: 'boolean',
-          default: false,
-          boolean: true
-        });
+        return args
+          .option('revision_log', {
+            alias: 'rl',
+            describe: 'Get history',
+            type: 'boolean',
+            default: false,
+            boolean: true
+          })
+          .option('params', {
+            alias: 'p',
+            describe: 'Add Properties',
+            type: 'array'
+          });
       },
       args => {
         this.auth.update(args).then(
           accessToken => {
-            if (!this.auth.projectId) {
-              logError(
-                'Project is required. Try adding "--project_name=<name>" or "--project_id=<number>"'
-              );
-            } else {
-              const project = this.auth.projectId
-                ? `?project_id=${this.auth.projectId}`
-                : '';
-              const revisionLog = args.revision_log
-                ? (project !== '' ? '&' : '?') + 'revision_log=true'
-                : '';
-              const url = `/plan${project}${revisionLog}`;
-              console.log(url);
+            const params = args.params ? (args.params as string[]).join('&') : '';
+            const project = this.auth.projectId
+              ? `?project_id=${this.auth.projectId}`
+              : '';
+            const revisionLog = args.revision_log
+              ? (project !== '' ? '&' : '?') + 'revision_log=true' + (args.params ? '&' + params : '')
+              : (args.params ? '?' + params : '');
+            const url = `/plan${project}${revisionLog}`;
+            console.log(url);
 
-              tqRequest<IResourceList<IPlanResource>>(accessToken, url).then(
-                planList => {
-                  if (args.revision_log) {
-                    console.log(planList);
+            tqRequest<IResourceList<IPlanResource>>(accessToken, url).then(
+              planList => {
+                if (args.revision_log) {
+                  console.log(planList);
+                } else {
+                  if (planList.total > 0) {
+                    console.log(
+                      planList.data.map(p => {
+                        return { id: p.id, key: p.key, name: p.name };
+                      })
+                    );
                   } else {
-                    if (planList.total > 0) {
-                      console.log(
-                        planList.data.map(p => {
-                          return { id: p.id, key: p.key, name: p.name };
-                        })
-                      );
-                    } else {
-                      console.log('Result is empty');
-                    }
+                    console.log('Result is empty');
                   }
-                },
-                error => logError(error)
-              );
-            }
+                }
+              },
+              error => logError(error)
+            );
           },
           error => logError(error)
         );
