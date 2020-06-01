@@ -56,7 +56,11 @@ export class SuiteCommand extends Command {
       args => {
         this.auth.update(args).then(async accessToken => {
           const params = args.params ? (args.params as string[]).join('&') : '';
-          const revisionLog = args.revision_log ? '?revision_log=true' + (args.params ? '&' + params : '') : (args.params ? '?' + params : '');
+          const revisionLog = args.revision_log
+            ? '?revision_log=true' + (args.params ? '&' + params : '')
+            : args.params
+            ? '?' + params
+            : '';
           if (!args.delete) {
             const url =
               (args.plan_id ? `/plan/${args.plan_id}` : '') +

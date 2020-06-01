@@ -45,13 +45,19 @@ export class PlanCommand extends Command {
       args => {
         this.auth.update(args).then(
           accessToken => {
-            const params = args.params ? (args.params as string[]).join('&') : '';
+            const params = args.params
+              ? (args.params as string[]).join('&')
+              : '';
             const project = this.auth.projectId
               ? `?project_id=${this.auth.projectId}`
               : '';
             const revisionLog = args.revision_log
-              ? (project !== '' ? '&' : '?') + 'revision_log=true' + (args.params ? '&' + params : '')
-              : (args.params ? '?' + params : '');
+              ? (project !== '' ? '&' : '?') +
+                'revision_log=true' +
+                (args.params ? '&' + params : '')
+              : args.params
+              ? '?' + params
+              : '';
             const url = `/plan${project}${revisionLog}`;
             console.log(url);
 
@@ -63,7 +69,12 @@ export class PlanCommand extends Command {
                   if (planList.total > 0) {
                     console.log(
                       planList.data.map(p => {
-                        return { id: p.id, key: p.key, name: p.name, project_id: p.project_id };
+                        return {
+                          id: p.id,
+                          key: p.key,
+                          name: p.name,
+                          project_id: p.project_id
+                        };
                       })
                     );
                   } else {
