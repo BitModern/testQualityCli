@@ -11,6 +11,7 @@ import { CreateManualRunCommand } from './CreateManualRunCommand';
 import { RestoreCommand } from './RestoreCommand';
 import { CreatePlan } from './CreatePlan';
 import { SuiteCommand } from './SuiteCommand';
+import {TestCommand} from './TestCommand';
 
 const argv = yargs
   .command(new LoginCommand())
@@ -24,6 +25,7 @@ const argv = yargs
   .command(new CreateManualRunCommand())
   .command(new RestoreCommand())
   .command(new CreatePlan())
+  .command(new TestCommand())
   .option('verbose', {
     alias: 'v',
     boolean: true,

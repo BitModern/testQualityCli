@@ -21,11 +21,11 @@ export interface SuiteResource {
   metadata_model: string;
 }
 
-export class SuiteCommand extends Command {
+export class TestCommand extends Command {
   constructor() {
     super(
-      'suites',
-      'List suites in project.',
+      'tests',
+      'List tests in project.',
       args => {
         return args
           .option('revision_log', {
@@ -37,14 +37,19 @@ export class SuiteCommand extends Command {
           })
           .option('delete', {
             alias: 'dl',
-            describe: 'delete a suite',
+            describe: 'delete a test',
             type: 'boolean',
             default: false,
             boolean: true
           })
           .option('suite_id', {
             alias: 'si',
-            describe: 'Suite to delete',
+            describe: 'Suite test belong to',
+            type: 'string'
+          })
+          .option('test_id', {
+            alias: 'tc',
+            describe: 'Test to delete',
             type: 'string'
           })
           .option('params', {
@@ -59,12 +64,13 @@ export class SuiteCommand extends Command {
           const revisionLog = args.revision_log
             ? '?revision_log=true' + (args.params ? '&' + params : '')
             : args.params
-            ? '?' + params
-            : '';
+              ? '?' + params
+              : '';
           if (!args.delete) {
             const url =
               (args.plan_id ? `/plan/${args.plan_id}` : '') +
-              `/suite${revisionLog}`;
+              (args.suite_id ? `/plan/${args.suite_id}` : '') +
+              `/test${revisionLog}`;
             console.log(url);
 
             tqRequest<IResourceList<SuiteResource>>(accessToken, url).then(
@@ -87,15 +93,15 @@ export class SuiteCommand extends Command {
             );
           } else {
             try {
-              const suiteId = args.suite_id;
-              if (!suiteId) {
+              const testId = args.test_id;
+              if (!testId) {
                 logError(
-                  'Suite id is required to perform delete, try adding --suite_id=<number>'
+                  'Test id is required to perform delete, try adding --test_id=<number>'
                 );
               }
               const url =
-                (args.plan_id ? `/plan/${args.plan_id}` : '') +
-                `/suite/${suiteId}`;
+                (args.suite_id ? `/plan/${args.suite_id}` : '') +
+                `/test/${testId}`;
               console.log(url);
 
               const result = await tqRequest<IResourceList<SuiteResource>>(
