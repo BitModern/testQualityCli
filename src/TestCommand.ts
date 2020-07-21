@@ -64,8 +64,8 @@ export class TestCommand extends Command {
           const revisionLog = args.revision_log
             ? '?revision_log=true' + (args.params ? '&' + params : '')
             : args.params
-              ? '?' + params
-              : '';
+            ? '?' + params
+            : '';
           if (!args.delete) {
             const url =
               (args.plan_id ? `/plan/${args.plan_id}` : '') +
