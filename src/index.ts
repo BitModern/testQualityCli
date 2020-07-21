@@ -11,7 +11,7 @@ import { CreateManualRunCommand } from './CreateManualRunCommand';
 import { RestoreCommand } from './RestoreCommand';
 import { CreatePlan } from './CreatePlan';
 import { SuiteCommand } from './SuiteCommand';
-import {TestCommand} from './TestCommand';
+import { TestCommand } from './TestCommand';
 
 const argv = yargs
   .command(new LoginCommand())
