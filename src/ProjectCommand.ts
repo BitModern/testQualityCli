@@ -28,7 +28,31 @@ export class ProjectCommand extends Command {
       'projects',
       'List projects TestQuality',
       args => {
-        return args;
+        return args
+          .option('revision_log', {
+            alias: 'rl',
+            describe: 'Get history',
+            type: 'boolean',
+            default: false,
+            boolean: true
+          })
+          .option('delete', {
+            alias: 'dl',
+            describe: 'delete a suite',
+            type: 'boolean',
+            default: false,
+            boolean: true
+          })
+          .option('suite_id', {
+            alias: 'si',
+            describe: 'Suite to delete',
+            type: 'string'
+          })
+          .option('params', {
+            alias: 'p',
+            describe: 'Add Properties',
+            type: 'array'
+          });
       },
       args => {
         this.auth.update(args).then(
