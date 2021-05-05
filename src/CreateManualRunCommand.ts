@@ -1,13 +1,9 @@
 import { Command } from './Command';
-import { logError } from './error';
+import { logError } from './logError';
 import { Arguments, Argv } from 'yargs';
 import { tqRequest, tqPost } from './tqRequest';
-import { IResourceList } from './ResourceList';
-
-interface IHasId {
-  id: number;
-  name: string;
-}
+import { ResourceList } from './gen/models/ResourceList';
+import { HasId } from './HasId';
 
 export class CreateManualRunCommand extends Command {
   constructor() {
@@ -17,22 +13,17 @@ export class CreateManualRunCommand extends Command {
       (args: Argv) => {
         return args.option('run_name', {
           describe: `Plan Test Run name, example: create_manual_run --run_name 'My_Manual_Run'`,
-          type: 'string'
+          type: 'string',
         });
       },
       (args: Arguments) => {
-        this.auth.update(args).then(accessToken => {
-          this.getId(args, 'plan', accessToken).then(
-            planId => {
-              this.getId(args, 'milestone', accessToken, false).then(
-                milestoneId => {
+        this.auth.update(args).then(() => {
+          this.getId(args, 'plan').then(
+            (planId) => {
+              this.getId(args, 'milestone', false).then(
+                (milestoneId) => {
                   if (planId) {
-                    this.createManualRun(
-                      args,
-                      accessToken,
-                      planId,
-                      milestoneId
-                    ).then(
+                    this.createManualRun(args, planId, milestoneId).then(
                       (response: any) => console.log(response),
                       (error: any) => logError(error)
                     );
@@ -51,7 +42,6 @@ export class CreateManualRunCommand extends Command {
   private getId(
     args: any,
     type: string,
-    accessToken: string,
     required: boolean = true
   ): Promise<number | undefined> {
     return new Promise((resolve, reject) => {
@@ -64,12 +54,11 @@ export class CreateManualRunCommand extends Command {
       }
 
       if (name) {
-        tqRequest<IResourceList<IHasId>>(
-          accessToken,
+        tqRequest<ResourceList<HasId>>(
           `/${type}?project_id=${this.auth.projectId}`
-        ).then(list => {
+        ).then((list) => {
           const item = list.data.find(
-            p => p.name.toLowerCase() === name.toLowerCase()
+            (p) => p.name.toLowerCase() === name.toLowerCase()
           );
           if (item) {
             resolve(item.id);
@@ -94,7 +83,6 @@ export class CreateManualRunCommand extends Command {
 
   private createManualRun(
     args: Arguments,
-    accessToken: string,
     planId: number | undefined,
     milestoneId: number | undefined
   ): Promise<any> {
@@ -104,7 +92,7 @@ export class CreateManualRunCommand extends Command {
         is_running: 1,
         plan_id: planId,
         project_id: this.auth.projectId,
-        start_time: new Date().toISOString()
+        start_time: new Date().toISOString(),
       };
 
       if (args.run_name) {
@@ -116,7 +104,7 @@ export class CreateManualRunCommand extends Command {
       }
 
       // console.log(formData);
-      return tqPost<any>(accessToken, '/run', formData).then((body: any) => {
+      return tqPost<any>('/run', formData).then((body: any) => {
         const response = {
           id: body.id,
           name: body.name,
@@ -125,8 +113,8 @@ export class CreateManualRunCommand extends Command {
           is_running: body.is_running,
           project_id: body.project_id,
           plan_id: body.plan_id,
-          milenstone_id: body.milenstone_id,
-          run_result_rows: body.run_result_rows
+          milestone_id: body.milenstone_id,
+          run_result_rows: body.run_result_rows,
         };
         resolve(response);
       }, reject);

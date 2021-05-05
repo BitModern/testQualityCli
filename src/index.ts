@@ -30,80 +30,80 @@ const argv = yargs
     alias: 'v',
     boolean: true,
     type: 'boolean',
-    default: false
+    default: false,
   })
   .option('save', {
     alias: 's',
     describe: 'Save tokens for future use',
     boolean: true,
     type: 'boolean',
-    default: false
+    default: false,
   })
   .option('username', {
     alias: 'u',
     describe: 'User name you login as',
-    type: 'string'
+    type: 'string',
   })
   .option('access_token', {
     alias: 'at',
     describe: 'Access Token',
-    type: 'string'
+    type: 'string',
   })
   .option('expires_at', {
     alias: 'ea',
     describe: 'Access Token Expires at Unix Epoch',
-    type: 'string'
+    type: 'string',
   })
   .option('refresh_token', {
     alias: 'rt',
     describe: 'Refresh Token',
-    type: 'string'
+    type: 'string',
   })
   .option('project_id', {
     alias: 'i',
     describe: 'Project Id',
-    type: 'string'
+    type: 'string',
   })
   .option('project_name', {
     alias: 'n',
     describe: 'Project Name',
-    type: 'string'
+    type: 'string',
   })
   .option('milestone_id', {
     alias: 'mi',
     describe: 'Milestone ID',
-    type: 'string'
+    type: 'string',
   })
   .option('milestone_name', {
     alias: 'mn',
     describe: 'Milestone Name',
-    type: 'string'
+    type: 'string',
   })
   .option('plan_id', {
     alias: 'pi',
     describe: 'Plan ID',
-    type: 'string'
+    type: 'string',
   })
   .option('plan_name', {
     alias: 'pn',
     describe: 'Plan Name',
-    type: 'string'
+    type: 'string',
   })
   .option('run_name', {
     alias: 'rn',
     describe: 'Run name',
-    type: 'string'
+    type: 'string',
   })
   .option('run_result_output_dir', {
     alias: 'rr_output_dir',
     describe:
       'Run results output directory where potential attachments are located',
-    type: 'string'
+    type: 'string',
   })
   .option('config_file', {
     alias: 'cf',
     describe: 'CSV upload configuration file with data mapping information',
-    type: 'string'
+    type: 'string',
   })
   .demandCommand()
   .recommendCommands()

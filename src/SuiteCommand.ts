@@ -1,60 +1,43 @@
 import { Command } from './Command';
-import { logError } from './error';
+import { logError } from './logError';
 import { tqRequest } from './tqRequest';
-import { IResourceList } from './ResourceList';
-
-export interface SuiteResource {
-  id: number;
-  key: number;
-  created_by: number;
-  created_at: string;
-  updated_by: number;
-  updated_at: string;
-  epoch: number;
-  name: string;
-  description: string;
-  requirement_reference_id: string;
-  project_id: number;
-  virtual: any;
-  client_id: number;
-  assigned_to_tester: number;
-  metadata_model: string;
-}
+import { ResourceList } from './gen/models/ResourceList';
+import { SuiteApi } from './gen/domain/suite/SuiteApi';
 
 export class SuiteCommand extends Command {
   constructor() {
     super(
       'suites',
       'List suites in project.',
-      args => {
+      (args) => {
         return args
           .option('revision_log', {
             alias: 'rl',
             describe: 'Get history',
             type: 'boolean',
             default: false,
-            boolean: true
+            boolean: true,
           })
           .option('delete', {
             alias: 'dl',
             describe: 'delete a suite',
             type: 'boolean',
             default: false,
-            boolean: true
+            boolean: true,
           })
           .option('suite_id', {
             alias: 'si',
             describe: 'Suite to delete',
-            type: 'string'
+            type: 'string',
           })
           .option('params', {
             alias: 'p',
             describe: 'Add Properties',
-            type: 'array'
+            type: 'array',
           });
       },
-      args => {
-        this.auth.update(args).then(async accessToken => {
+      (args) => {
+        this.auth.update(args).then(async () => {
           const params = args.params ? (args.params as string[]).join('&') : '';
           const revisionLog = args.revision_log
             ? '?revision_log=true' + (args.params ? '&' + params : '')
@@ -67,14 +50,14 @@ export class SuiteCommand extends Command {
               `/suite${revisionLog}`;
             console.log(url);
 
-            tqRequest<IResourceList<SuiteResource>>(accessToken, url).then(
-              list => {
+            tqRequest<ResourceList<SuiteApi>>(url).then(
+              (list) => {
                 if (args.revision_log) {
                   console.log(list);
                 } else {
                   if (list.total > 0) {
                     console.log(
-                      list.data.map(p => {
+                      list.data.map((p) => {
                         return { id: p.id, key: p.key, name: p.name };
                       })
                     );
@@ -83,7 +66,7 @@ export class SuiteCommand extends Command {
                   }
                 }
               },
-              error => logError(error)
+              (error) => logError(error)
             );
           } else {
             try {
@@ -98,8 +81,7 @@ export class SuiteCommand extends Command {
                 `/suite/${suiteId}`;
               console.log(url);
 
-              const result = await tqRequest<IResourceList<SuiteResource>>(
-                accessToken,
+              const result = await tqRequest<ResourceList<SuiteApi>>(
                 url,
                 'DELETE'
               );

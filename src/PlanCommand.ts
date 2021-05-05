@@ -1,50 +1,32 @@
 import { Command } from './Command';
 import { tqRequest } from './tqRequest';
-import { IResourceList } from './ResourceList';
-import { logError } from './error';
-
-export interface IPlanResource {
-  id: number;
-  key: number;
-  created_by: number;
-  created_at: Date;
-  updated_by: number;
-  updated_at: Date;
-  epoch: number;
-  project_id: number;
-  assigned_to_tester: number;
-  milestone_id: number;
-  virtual: any;
-  name: string;
-  description: string;
-  client_id: number;
-  requirement_reference_id: string;
-  metadata_model: string;
-}
+import { logError } from './logError';
+import { ResourceList } from './gen/models/ResourceList';
+import { Plan } from './gen/domain/plan/Plan';
 
 export class PlanCommand extends Command {
   constructor() {
     super(
       'plans',
       'List plans in project.',
-      args => {
+      (args) => {
         return args
           .option('revision_log', {
             alias: 'rl',
             describe: 'Get history',
             type: 'boolean',
             default: false,
-            boolean: true
+            boolean: true,
           })
           .option('params', {
             alias: 'p',
             describe: 'Add Properties',
-            type: 'array'
+            type: 'array',
           });
       },
-      args => {
+      (args) => {
         this.auth.update(args).then(
-          accessToken => {
+          () => {
             const params = args.params
               ? (args.params as string[]).join('&')
               : '';
@@ -61,19 +43,19 @@ export class PlanCommand extends Command {
             const url = `/plan${project}${revisionLog}`;
             console.log(url);
 
-            tqRequest<IResourceList<IPlanResource>>(accessToken, url).then(
-              planList => {
+            tqRequest<ResourceList<Plan>>(url).then(
+              (planList) => {
                 if (args.revision_log) {
                   console.log(planList);
                 } else {
                   if (planList.total > 0) {
                     console.log(
-                      planList.data.map(p => {
+                      planList.data.map((p) => {
                         return {
                           id: p.id,
                           key: p.key,
                           name: p.name,
-                          project_id: p.project_id
+                          project_id: p.project_id,
                         };
                       })
                     );
@@ -82,10 +64,10 @@ export class PlanCommand extends Command {
                   }
                 }
               },
-              error => logError(error)
+              (error) => logError(error)
             );
           },
-          error => logError(error)
+          (error) => logError(error)
         );
       }
     );

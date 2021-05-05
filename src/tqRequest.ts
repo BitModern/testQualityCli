@@ -1,37 +1,29 @@
-import { env } from './env';
-import * as request from 'request-promise-native';
+import { testQualityApi } from './http/TestQualityApi';
+import { Method } from 'axios';
 
-const getHeaders = (accessToken: string) => {
-  return {
-    'content-type': 'application/json',
-    Authorization: `Bearer ${accessToken}`,
-    Accept: 'application/json'
-  };
-};
+const api = testQualityApi;
 
-export function tqRequest<R>(
-  accessToken: string,
+export function tqRequest<T>(
   path: string,
-  method: string = 'GET',
-  formData?: any
-): Promise<R> {
-  return new Promise((resolve, reject) => {
-    const url = `${env.host}${path}`;
-    const options = {
+  method: Method = 'GET',
+  formData?: any,
+  headers?: any
+): Promise<T> {
+  return api
+    .request<T>({
       method,
-      url,
-      headers: getHeaders(accessToken),
-      formData,
-      json: true // Automatically parses the JSON string in the response
-    };
-    return request(options).then(resolve, reject);
-  });
+      url: path,
+      data: formData,
+      headers,
+    })
+    .then((resp) => {
+      if (resp && resp.data) {
+        return resp.data;
+      }
+      throw new Error('No response was provided');
+    });
 }
 
-export function tqPost<R>(
-  accessToken: string,
-  path: string,
-  formData?: any
-): Promise<R> {
-  return tqRequest<R>(accessToken, path, 'POST', formData);
+export function tqPost<T>(path: string, formData?: any): Promise<T> {
+  return tqRequest<T>(path, 'POST', formData);
 }

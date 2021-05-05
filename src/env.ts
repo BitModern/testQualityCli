@@ -1,14 +1,12 @@
 import * as dotenv from 'dotenv';
-// import { logError } from './error';
 import * as fs from 'fs';
 import * as path from 'path';
 
-// const envFile =
+const envFile =
 dotenv.config({ path: path.join(process.cwd(), '.env') });
-
-// if (envFile.error) {
-//   logError(envFile.error);
-// }
+if (envFile.error) {
+   console.error(envFile.error);
+}
 
 export function getOsEnv(key: string): string | undefined {
   if (process.env[key]) {
@@ -25,7 +23,10 @@ class EnvVar {
 }
 
 export const env = {
-  host: getOsEnv('TQ_HOST') || 'https://api.testquality.com/api',
+  api: {
+    url: getOsEnv('TQ_HOST') || 'https://api.testquality.com',
+    xDebug: getOsEnv('APP_XDEBUG') === 'true',
+  },
   client_id: 2,
   client_secret: '93MBS86X7JrK4Mrr1mk4PKfo6b1zRVx9Mrmx0nTa',
   variables: {
@@ -34,8 +35,14 @@ export const env = {
     expires_at: new EnvVar('TQ_EXPIRES_AT'),
     access_token: new EnvVar('TQ_ACCESS_TOKEN'),
     refresh_token: new EnvVar('TQ_REFRESH_TOKEN'),
-    project_id: new EnvVar('TQ_PROJECT_ID')
-  }
+    project_id: new EnvVar('TQ_PROJECT_ID'),
+  },
+  log: {
+    level: getOsEnv('LOG_LEVEL') || 'info',
+    levelInString: getOsEnv('LOG_LEVEL_IN_STRING') === 'true',
+    format: getOsEnv('LOG_FORMAT') || 'short',
+    data: getOsEnv('LOG_DATA') === 'true',
+  },
 };
 
 export const saveEnv = () => {
@@ -50,8 +57,8 @@ export const saveEnv = () => {
       },
       ''
     ) + '\n';
-  if (env.host !== 'https://api.testquality.com/api') {
-    content += `TQ_HOST=${env.host}\n`;
+  if (env.api.url !== 'https://api.testquality.com') {
+    content += `TQ_HOST=${env.api.url}\n`;
   }
   fs.writeFileSync('.env', content, { encoding: 'UTF-8', flag: 'w' });
 };

@@ -1,27 +1,22 @@
 import { Command } from './Command';
 import { Arguments, Argv } from 'yargs';
-import { env } from './env';
-import { logError } from './error';
-import { logInfo } from './info';
-import { logWarning } from './warning';
+import { logError } from './logError';
+import { logInfo } from './logInfo';
+import { logWarning } from './logWarning';
 import { tqRequest } from './tqRequest';
-import { IResourceList } from './ResourceList';
-import * as request from 'request-promise-native';
 import * as glob from 'glob';
 import * as fs from 'fs';
 import * as path from 'path';
+import FormData = require('form-data');
+import { HasId } from './HasId';
+import { ResourceList } from './gen/models/ResourceList';
 
-interface IHasId {
-  id: number;
-  name: string;
-}
-
-interface IAttachmentsResult {
+interface AttachmentsResult {
   resolved: string[];
   unresolved: string[];
 }
 
-interface IAttachment {
+interface Attachment {
   testsuite: string;
   testcase: string;
   attachmentPath: string;
@@ -35,16 +30,16 @@ export class UploadTestRunCommand extends Command {
       (args: Argv) => {
         return args.positional('xmlfiles', {
           describe: `glob JUnit/XUnit XML output file, example: upload_test_run '**/*.xml'`,
-          type: 'string'
+          type: 'string',
         });
       },
       (args: Arguments) => {
         this.auth.update(args).then(
-          accessToken => {
-            this.getId(args, 'plan', accessToken).then(
-              planId => {
-                this.getId(args, 'milestone', accessToken, false).then(
-                  milestoneId => {
+          () => {
+            this.getId(args, 'plan').then(
+              (planId) => {
+                this.getId(args, 'milestone', false).then(
+                  (milestoneId) => {
                     if (args.xmlfiles) {
                       glob(
                         args.xmlfiles as string,
@@ -62,11 +57,10 @@ export class UploadTestRunCommand extends Command {
                                     logError(errors);
                                   }
                                   this.parseXMLFiles(matches, outputDir).then(
-                                    attachments => {
+                                    (attachments) => {
                                       if (planId) {
                                         this.uploadTestResults(
                                           args,
-                                          accessToken,
                                           planId,
                                           matches,
                                           milestoneId,
@@ -83,11 +77,10 @@ export class UploadTestRunCommand extends Command {
                               );
                             } else {
                               this.parseXMLFiles(matches, undefined).then(
-                                attachments => {
+                                (attachments) => {
                                   if (planId) {
                                     this.uploadTestResults(
                                       args,
-                                      accessToken,
                                       planId,
                                       matches,
                                       milestoneId,
@@ -161,8 +154,8 @@ export class UploadTestRunCommand extends Command {
 
   private findAttachments(
     outputDir: string,
-    attachments: IAttachment[]
-  ): Promise<IAttachment[]> {
+    attachments: Attachment[]
+  ): Promise<Attachment[]> {
     return new Promise((resolve, reject) => {
       let items;
       try {
@@ -181,10 +174,10 @@ export class UploadTestRunCommand extends Command {
                     path.basename(file).indexOf('--') + 2,
                     path.basename(file).length
                   );
-                const attachment: IAttachment = {
+                const attachment: Attachment = {
                   testsuite,
                   testcase,
-                  attachmentPath: path.resolve(outputDir, item) + '/' + file
+                  attachmentPath: path.resolve(outputDir, item) + '/' + file,
                 };
                 attachments.push(attachment);
               });
@@ -202,12 +195,12 @@ export class UploadTestRunCommand extends Command {
   }
 
   private getAttachment(
-    attachments: IAttachment[],
+    attachments: Attachment[],
     testsuite: string,
     testcase: string
-  ): Promise<IAttachment> {
-    return new Promise(resolve => {
-      attachments.forEach((item: IAttachment) => {
+  ): Promise<Attachment> {
+    return new Promise((resolve) => {
+      attachments.forEach((item: Attachment) => {
         if (item.testsuite === testsuite.substring(0, item.testsuite.length)) {
           // if (item.testcase.substring(0, testcase.length) === testcase) {
           if (item.testcase.indexOf(testcase) > 0) {
@@ -221,13 +214,13 @@ export class UploadTestRunCommand extends Command {
   private parseXMLFiles(
     xmlFiles: string[],
     outputDir: string[] | undefined
-  ): Promise<IAttachmentsResult> {
+  ): Promise<AttachmentsResult> {
     return new Promise((resolve, reject) => {
       const SYSTEM_ERR = 'system-err';
       const SYSTEM_OUT = 'system-out';
       const attachmentRegExp = new RegExp(/\[+[ATTACHMENT]+[|](.+.[a-z*3])]]/m);
       const parser = require('fast-xml-parser');
-      const result: IAttachmentsResult = { resolved: [], unresolved: [] };
+      const result: AttachmentsResult = { resolved: [], unresolved: [] };
       let matches: RegExpExecArray | null;
       let filePath: string;
 
@@ -236,21 +229,21 @@ export class UploadTestRunCommand extends Command {
         ignoreAttributes: false,
         format: false,
         indentBy: '  ',
-        supressEmptyNode: false
+        supressEmptyNode: false,
       };
 
       if (outputDir) {
         // console.log('outputDir', outputDir);
-        const attachmentsList: IAttachment[] = [];
+        const attachmentsList: Attachment[] = [];
         this.findAttachments(outputDir[0], attachmentsList).then(
-          attachments => {
+          (attachments) => {
             /*
             attachments.forEach(attachment => {
               console.log(attachment);
             });
             */
 
-            xmlFiles.forEach(file => {
+            xmlFiles.forEach((file) => {
               try {
                 const json = parser.parse(
                   fs.readFileSync(file, 'utf8'),
@@ -280,7 +273,7 @@ export class UploadTestRunCommand extends Command {
                       attachments,
                       item.classname,
                       item.name
-                    ).then(attachment => {
+                    ).then((attachment) => {
                       if (attachment) {
                         result.resolved.push(attachment.attachmentPath);
                       }
@@ -337,18 +330,16 @@ export class UploadTestRunCommand extends Command {
   private getId(
     args: any,
     type: string,
-    accessToken: string,
     required: boolean = true
   ): Promise<number | undefined> {
     return new Promise((resolve, reject) => {
       const name = args[type + '_name'] as string;
       if (name) {
-        tqRequest<IResourceList<IHasId>>(
-          accessToken,
+        tqRequest<ResourceList<HasId>>(
           `/${type}?project_id=${this.auth.projectId}`
-        ).then(list => {
+        ).then((list) => {
           const item = list.data.find(
-            p => p.name.toLowerCase() === name.toLowerCase()
+            (p: any) => p && p.name.toLowerCase() === name.toLowerCase()
           );
           if (item) {
             resolve(item.id);
@@ -373,61 +364,49 @@ export class UploadTestRunCommand extends Command {
 
   private uploadTestResults(
     args: Arguments,
-    accessToken: string,
     planId: number | undefined,
     matches: string[],
     milestoneId: number | undefined,
-    attachments: IAttachmentsResult | undefined
+    attachments: AttachmentsResult | undefined
   ): Promise<any> {
-    return new Promise((resolve, reject) => {
-      const url = `${env.host}/plan/${planId}/junit_xml`;
-      const formData: any = {};
+    const url = `/plan/${planId}/junit_xml`;
+    const data = new FormData();
 
-      if (args.run_name) {
-        formData.run_name = args.run_name;
-      }
+    if (args.run_name) {
+      data.append('run_name', args.run_name);
+    }
 
-      if (args.create_manual_run) {
-        formData.create_manual_run = args.create_manual_run ? 1 : 0;
-      }
+    if (args.create_manual_run) {
+      data.append('create_manual_run', args.create_manual_run ? 1 : 0);
+    }
 
-      if (matches.length > 1 || attachments) {
-        formData['files[]'] = matches.map(f => fs.createReadStream(f));
-        if (attachments && attachments.resolved.length > 0) {
-          logInfo('Resolved attachments:');
-          console.log(attachments.resolved);
-          formData['files[]'] = formData['files[]'].concat(
-            attachments.resolved.map(f => fs.createReadStream(f))
-          );
-        }
-        if (attachments && attachments.unresolved.length > 0) {
-          logWarning('Unresolved attachments:');
-          console.log(attachments.unresolved);
-        }
-        if (args.verbose) {
-          console.log('Matching files: ', matches);
-          console.log('Form data to send: ', formData);
-        }
-      } else if (matches.length === 1) {
-        formData.file = fs.createReadStream(matches[0]);
-      } else {
-        throw Error('No matching files');
+    if (matches.length > 1 || attachments) {
+      let files = matches.map((f) => fs.createReadStream(f));
+
+      if (attachments && attachments.resolved.length > 0) {
+        logInfo('Resolved attachments:');
+        console.log(attachments.resolved);
+        files = files.concat(
+          attachments.resolved.map((f) => fs.createReadStream(f))
+        );
       }
-      if (milestoneId) {
-        formData.milestone_id = milestoneId;
+      if (attachments && attachments.unresolved.length > 0) {
+        logWarning('Unresolved attachments:');
+        console.log(attachments.unresolved);
       }
-      const options = {
-        method: 'POST',
-        url,
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        },
-        formData,
-        json: true // Automatically parses the JSON string in the response
-      };
-      return request(options).then((body: any) => {
-        resolve(body);
-      }, reject);
-    });
+      data.append('files[]', files);
+      if (args.verbose) {
+        console.log('Matching files: ', matches);
+        console.log('Form data to send: ', files);
+      }
+    } else if (matches.length === 1) {
+      data.append('file', fs.createReadStream(matches[0]));
+    } else {
+      throw Error('No matching files');
+    }
+    if (milestoneId) {
+      data.append('milestone_id', milestoneId);
+    }
+    return tqRequest(url, 'POST', data, data.getHeaders());
   }
 }
