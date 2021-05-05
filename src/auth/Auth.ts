@@ -3,7 +3,7 @@ import { logger } from '../Logger';
 import { AxiosResponse } from 'axios';
 import { AUTH, GeneralError, VERIFICATION } from '../exceptions/GeneralError';
 import { env } from '../env';
-import { RefreshToken, testQualityApi } from '../http/TestQualityApi';
+import { testQualityApi } from '../http/TestQualityApi';
 
 /**
  * Copyright (C) 2021 BitModern, Inc - All Rights Reserved
@@ -14,11 +14,21 @@ import { RefreshToken, testQualityApi } from '../http/TestQualityApi';
 const grantPath = '/oauth/access_token';
 
 export class Auth {
-  public api = testQualityApi;
+  public static checkForFailure(response: AxiosResponse<ReturnToken>): boolean {
+    if (response.data.verification_ended_at) {
+      // if verification ended then we don't have a token
+      throw new GeneralError(
+        'Email verification is required to login',
+        VERIFICATION
+      );
+    } else if (!response.data.access_token) {
+      throw new GeneralError('Auth failed', AUTH);
+    }
+    return true;
+  }
+
   private token?: ReturnToken;
-  private authCallback?: (
-    me: Auth
-  ) => Promise<ReturnToken | undefined>;
+  private authCallback?: (me: Auth) => Promise<ReturnToken | undefined>;
   private log = logger;
 
   constructor(cb?: (me: Auth) => Promise<ReturnToken | undefined>) {
@@ -33,25 +43,27 @@ export class Auth {
     this.authCallback = cb;
   }
 
+  public updateToken(token?: ReturnToken): ReturnToken | undefined {
+    this.token = token;
+    return this.token;
+  }
+
   public async login(
     username: string,
     password: string,
     properties?: any
-  ): Promise<ReturnToken> {
+  ): Promise<ReturnToken | undefined> {
     try {
-      const response = await testQualityApi.post<ReturnToken>(
-        grantPath,
-        {
-          grant_type: 'password',
-          client_id: env.client_id,
-          client_secret: env.client_secret,
-          username,
-          password,
-          ...properties
-        }
-      );
-      this.checkForFailure(response);
-      this.token = response.data;
+      const response = await testQualityApi.post<ReturnToken>(grantPath, {
+        grant_type: 'password',
+        client_id: env.client_id,
+        client_secret: env.client_secret,
+        username,
+        password,
+        ...properties,
+      });
+      Auth.checkForFailure(response);
+      this.updateToken(response.data);
       this.addInterceptors();
       this.log.info('Logged In');
       return this.token;
@@ -61,20 +73,20 @@ export class Auth {
     }
   }
 
-  public async refresh(): Promise<ReturnToken | undefined> {
-    if (this.token) {
+  public async refresh(
+    refreshToken?: string
+  ): Promise<ReturnToken | undefined> {
+    const token = this.getToken();
+    if (refreshToken || token) {
       try {
-        const response = await testQualityApi.post<ReturnToken>(
-          grantPath,
-          {
-            grant_type: 'refresh_token',
-            client_id: env.client_id,
-            client_secret: env.client_secret,
-            refresh_token: refreshToken
-          }
-        );
-        this.checkForFailure(response);
-        this.token = response.data;
+        const response = await testQualityApi.post<ReturnToken>(grantPath, {
+          grant_type: 'refresh_token',
+          client_id: env.client_id,
+          client_secret: env.client_secret,
+          refresh_token: refreshToken || token?.refresh_token,
+        });
+        Auth.checkForFailure(response);
+        this.updateToken(response.data);
         this.addInterceptors();
         this.log.info('Refreshed');
         return this.token;
@@ -92,9 +104,8 @@ export class Auth {
   public async getAccessToken(): Promise<string | undefined> {
     let token = this.token;
     if (token) {
-      const expires_at: Date = new Date(token.expires_at);
-      const diff = expires_at.getTime() - new Date().getTime();
-      if (diff < 0) {
+      const expiresAt = parseInt(token.expires_at, 10);
+      if (expiresAt < new Date().getTime()) {
         // token has expired, try to get a token
         token = await this.refresh();
       }
@@ -107,22 +118,13 @@ export class Auth {
     return this.token !== undefined;
   }
 
-  private checkForFailure(response: AxiosResponse<ReturnToken>): boolean {
-    if (response.data.verification_ended_at) {
-      //if verification ended then we don't have a token
-      throw new GeneralError(
-        'Email verification is required to login',
-        VERIFICATION
-      );
-    } else if (!response.data.access_token) {
-      throw new GeneralError('Auth failed', AUTH);
-    }
-    return true;
+  protected getToken() {
+    return this.token;
   }
 
-  private addInterceptors(): void {
+  protected addInterceptors(): void {
     testQualityApi.interceptors.request.use(
-      async config => {
+      async (config) => {
         const accessToken = await this.getAccessToken();
         if (accessToken) {
           config.headers.Authorization = `Bearer ${accessToken}`;
@@ -133,12 +135,10 @@ export class Auth {
         }
         return config;
       },
-      error => {
+      (error) => {
         this.log.error('Request error', error);
         return Promise.reject(error);
       }
     );
   }
-}
-
 }

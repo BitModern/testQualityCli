@@ -1,7 +1,5 @@
-import * as Chalk from 'chalk';
-
-const chalk = Chalk.default;
+import { logger } from './Logger';
 
 export const logWarning = (message: any) => {
-  console.log(chalk.yellow('Warning:'), message);
+  logger.warn(message);
 };

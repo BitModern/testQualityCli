@@ -5,7 +5,7 @@
  * Created by jamespitts on 3/30/20.
  */
 import { AxiosError } from 'axios';
-import Logger from 'bunyan';
+import * as Logger from 'bunyan';
 
 export interface TraceFile {
   file: string;
