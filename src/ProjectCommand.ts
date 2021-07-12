@@ -1,8 +1,6 @@
+import { projectGetMany } from '@testquality/sdk';
 import { Command } from './Command';
 import { logError } from './logError';
-import { tqRequest } from './tqRequest';
-import { ResourceList } from './gen/models/ResourceList';
-import { ProjectApi } from './gen/domain/project/ProjectApi';
 
 export class ProjectCommand extends Command {
   constructor() {
@@ -37,15 +35,19 @@ export class ProjectCommand extends Command {
           });
       },
       (args) => {
-        this.auth.update(args).then(
+        this.reLogin(args).then(
           () => {
-            tqRequest<ResourceList<ProjectApi>>('/project').then(
+            projectGetMany().then(
               (projectList) => {
-                console.log(
-                  projectList.data.map((p) => {
-                    return { id: p.id, key: p.key, name: p.name };
-                  })
-                );
+                if (args.verbose) {
+                  console.log(projectList.data);
+                } else {
+                  console.log(
+                    projectList.data.map((p) => {
+                      return { id: p.id, key: p.key, name: p.name };
+                    })
+                  );
+                }
               },
               (error) => logError(error)
             );

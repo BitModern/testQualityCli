@@ -1,9 +1,7 @@
+import { runCreateOne } from '@testquality/sdk';
 import { Command } from './Command';
 import { logError } from './logError';
 import { Arguments, Argv } from 'yargs';
-import { tqRequest, tqPost } from './tqRequest';
-import { ResourceList } from './gen/models/ResourceList';
-import { HasId } from './HasId';
 
 export class CreateManualRunCommand extends Command {
   constructor() {
@@ -17,10 +15,10 @@ export class CreateManualRunCommand extends Command {
         });
       },
       (args: Arguments) => {
-        this.auth.update(args).then(() => {
-          this.getId(args, 'plan').then(
+        this.getProjectId(args).then((projectId) => {
+          this.getId(args, 'plan', projectId).then(
             (planId) => {
-              this.getId(args, 'milestone', false).then(
+              this.getId(args, 'milestone', projectId, false).then(
                 (milestoneId) => {
                   if (planId) {
                     this.createManualRun(args, planId, milestoneId).then(
@@ -39,48 +37,6 @@ export class CreateManualRunCommand extends Command {
     );
   }
 
-  private getId(
-    args: any,
-    type: string,
-    required: boolean = true
-  ): Promise<number | undefined> {
-    return new Promise((resolve, reject) => {
-      const name = args[type + '_name'] as string;
-
-      if (!this.auth.projectId) {
-        reject(
-          `projectId is required. Try adding "--project_name=<name>" or "--project_id=<number>"`
-        );
-      }
-
-      if (name) {
-        tqRequest<ResourceList<HasId>>(
-          `/${type}?project_id=${this.auth.projectId}`
-        ).then((list) => {
-          const item = list.data.find(
-            (p) => p.name.toLowerCase() === name.toLowerCase()
-          );
-          if (item) {
-            resolve(item.id);
-          } else {
-            reject(`${type} ${name} not found!`);
-          }
-        }, reject);
-      } else {
-        const id = args[type + '_id'];
-        if (id) {
-          resolve(parseInt(id, 10));
-        } else if (required) {
-          reject(
-            `${type} is required. Try adding "--${type}_name=<name>" or "--${type}_id=<number>"`
-          );
-        } else {
-          resolve(undefined);
-        }
-      }
-    });
-  }
-
   private createManualRun(
     args: Arguments,
     planId: number | undefined,
@@ -91,20 +47,14 @@ export class CreateManualRunCommand extends Command {
         is_complete: 0,
         is_running: 1,
         plan_id: planId,
-        project_id: this.auth.projectId,
+        project_id: this.projectId,
         start_time: new Date().toISOString(),
+        name: args.run_name as string,
+        milestone_id: milestoneId,
       };
 
-      if (args.run_name) {
-        formData.name = args.run_name;
-      }
-
-      if (milestoneId) {
-        formData.milenstone_id = milestoneId;
-      }
-
       // console.log(formData);
-      return tqPost<any>('/run', formData).then((body: any) => {
+      return runCreateOne(formData).then((body: any) => {
         const response = {
           id: body.id,
           name: body.name,
@@ -113,7 +63,7 @@ export class CreateManualRunCommand extends Command {
           is_running: body.is_running,
           project_id: body.project_id,
           plan_id: body.plan_id,
-          milestone_id: body.milenstone_id,
+          milestone_id: body.milestone_id,
           run_result_rows: body.run_result_rows,
         };
         resolve(response);

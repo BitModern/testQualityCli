@@ -1,12 +1,10 @@
 import { Command } from './Command';
 import { Arguments, Argv } from 'yargs';
 import { logError } from './logError';
-import { tqRequest } from './tqRequest';
 import * as glob from 'glob';
 import * as fs from 'fs';
 import FormData = require('form-data');
-import { ResourceList } from './gen/models/ResourceList';
-import { HasId } from './HasId';
+import { getResponse } from '@testquality/sdk';
 
 export class UploadFeatureCommand extends Command {
   constructor() {
@@ -20,11 +18,11 @@ export class UploadFeatureCommand extends Command {
         });
       },
       (args: Arguments) => {
-        this.auth.update(args).then(
-          () => {
-            this.getId(args, 'plan').then(
+        this.getProjectId(args).then(
+          (projectId) => {
+            this.getId(args, 'plan', projectId).then(
               (planId) => {
-                this.getId(args, 'milestone', false).then(
+                this.getId(args, 'milestone', projectId, false).then(
                   (milestoneId) => {
                     if (args.files) {
                       glob(
@@ -62,41 +60,6 @@ export class UploadFeatureCommand extends Command {
     );
   }
 
-  private getId(
-    args: any,
-    type: string,
-    required: boolean = true
-  ): Promise<number | undefined> {
-    return new Promise((resolve, reject) => {
-      const name = args[type + '_name'] as string;
-      if (name) {
-        tqRequest<ResourceList<HasId>>(
-          `/${type}?project_id=${this.auth.projectId}`
-        ).then((list) => {
-          const item = list.data.find(
-            (p) => p.name.toLowerCase() === name.toLowerCase()
-          );
-          if (item) {
-            resolve(item.id);
-          } else {
-            reject(`${type} ${name} not found!`);
-          }
-        }, reject);
-      } else {
-        const id = args[type + '_id'];
-        if (id) {
-          resolve(parseInt(id, 10));
-        } else if (required) {
-          reject(
-            `${type} is required. Try adding "--${type}_name=<name>" or "--${type}_id=<number>"`
-          );
-        } else {
-          resolve(undefined);
-        }
-      }
-    });
-  }
-
   private uploadFeatureFiles(
     args: Arguments,
     planId: number | undefined,
@@ -123,6 +86,11 @@ export class UploadFeatureCommand extends Command {
     if (milestoneId) {
       data.append('milestone_id', milestoneId);
     }
-    return tqRequest(url, 'POST', data, data.getHeaders());
+    return getResponse(this.client.api, {
+      url,
+      method: 'POST',
+      data,
+      headers: data.getHeaders(),
+    });
   }
 }

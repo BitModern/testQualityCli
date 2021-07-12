@@ -115,3 +115,8 @@ Kubernetes
     kustomize build kustomize/overlays/<<environment>> | kubectl apply --dry-run --validate -f -
     
     kustomize build kustomize/overlays/<<parameters.environment>> | kubectl apply --record=true -f -
+
+## Calling with params
+
+ --params.per_page -1 --params._with test
+// gives us: {per_page: -1, with: 'test'}

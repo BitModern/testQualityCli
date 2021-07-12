@@ -1,8 +1,7 @@
+import { planCreateOne } from '@testquality/sdk';
 import { Command } from './Command';
 import { Arguments, Argv } from 'yargs';
 import { logError } from './logError';
-import { tqPost } from './tqRequest';
-import { PlanApi } from './gen/domain/plan/PlanApi';
 
 export class CreatePlan extends Command {
   constructor() {
@@ -21,8 +20,8 @@ export class CreatePlan extends Command {
           });
       },
       (args: Arguments) => {
-        this.auth.update(args).then(() => {
-          if (!this.auth.projectId) {
+        this.getProjectId(args).then((projectId) => {
+          if (!projectId) {
             logError(
               'Project is required. Try adding "--project_name=<name>" or "--project_id=<number>"'
             );
@@ -33,14 +32,14 @@ export class CreatePlan extends Command {
             return;
           }
           const formData = {
-            project_id: this.auth.projectId,
-            name: args.name,
+            project_id: projectId,
+            name: args.name as string,
           };
           if (args.duplicates) {
             const duplicates: number = args.duplicates as number;
             for (let idx = 0; idx < duplicates; idx += 1) {
               formData.name = args.name + ' ' + idx.toString(10);
-              tqPost<PlanApi>('/plan', formData).then(
+              planCreateOne(formData).then(
                 (plan) => {
                   console.log(plan);
                 },
@@ -48,7 +47,7 @@ export class CreatePlan extends Command {
               );
             }
           } else {
-            tqPost<PlanApi>('/plan', formData).then(
+            planCreateOne(formData).then(
               (plan) => {
                 console.log(plan);
               },

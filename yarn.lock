@@ -48,6 +48,14 @@
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.stat/-/fs.stat-1.1.3.tgz#2b5a3ab3f918cca48a8c754c08168e3f03eba61b"
 
+"@testquality/sdk@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.npmjs.org/@testquality/sdk/-/sdk-1.0.0.tgz#e351eafdfba8f976ac0c102b6720fc4b08dac3af"
+  integrity sha512-xfI7VMYiQMsLDaaTw5zsWLOWCmP7YJ2M4R7YHXEVNBkLZ6YAx9O2kg9t51e47u0aUZFSTse7EGQNy2yg3VLA5Q==
+  dependencies:
+    axios "^0.21.1"
+    querystring "^0.2.1"
+
 "@types/bunyan-format@^0.2.3":
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/@types/bunyan-format/-/bunyan-format-0.2.3.tgz#b481411b41f7c620fdeb718f688be82783d4b4ce"
@@ -1396,6 +1404,11 @@ punycode@^2.1.0:
 qs@~6.5.2:
   version "6.5.2"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.2.tgz#cb3ae806e8740444584ef154ce8ee98d403f3e36"
+
+querystring@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.npmjs.org/querystring/-/querystring-0.2.1.tgz#40d77615bb09d16902a85c3e38aa8b5ed761c2dd"
+  integrity sha512-wkvS7mL/JMugcup3/rMitHmd9ecIGd2lhFhK9N3UUQ450h66d1r3Y9nvXzQAW1Lq+wyx61k/1pfKS5KuKiyEbg==
 
 readable-stream@^2.0.0, readable-stream@^2.0.5, readable-stream@^2.1.4:
   version "2.3.6"

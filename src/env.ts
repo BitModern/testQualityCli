@@ -2,10 +2,9 @@ import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 import * as path from 'path';
 
-const envFile =
-dotenv.config({ path: path.join(process.cwd(), '.env') });
+const envFile = dotenv.config({ path: path.join(process.cwd(), '.env') });
 if (envFile.error) {
-   console.error(envFile.error);
+  console.error(envFile.error);
 }
 
 export function getOsEnv(key: string): string | undefined {
@@ -27,15 +26,22 @@ export const env = {
     url: getOsEnv('TQ_HOST') || 'https://api.testquality.com',
     xDebug: getOsEnv('APP_XDEBUG') === 'true',
   },
-  client_id: 2,
+  client_id: '2',
   client_secret: '93MBS86X7JrK4Mrr1mk4PKfo6b1zRVx9Mrmx0nTa',
   variables: {
     username: new EnvVar('TQ_USERNAME'),
     password: new EnvVar('TQ_PASSWORD'),
+    project_id: new EnvVar('TQ_PROJECT_ID'),
     expires_at: new EnvVar('TQ_EXPIRES_AT'),
     access_token: new EnvVar('TQ_ACCESS_TOKEN'),
     refresh_token: new EnvVar('TQ_REFRESH_TOKEN'),
-    project_id: new EnvVar('TQ_PROJECT_ID'),
+  },
+  auth: {
+    username: getOsEnv('TQ_USERNAME'),
+    password: getOsEnv('TQ_PASSWORD'),
+    token: getOsEnv('TQ_TOKEN'),
+    remember: getOsEnv('TQ_REMEMBER'),
+    project_id: getOsEnv('TQ_PROJECT_ID'),
   },
   log: {
     level: getOsEnv('LOG_LEVEL') || 'info',
@@ -47,11 +53,12 @@ export const env = {
 
 export const saveEnv = () => {
   let content =
-    Object.entries(env.variables).reduce(
+    Object.entries(env.auth).reduce(
       // tslint:disable-next-line
-      (acc, [_key, value]) => {
-        if (value.value && value.value !== '') {
-          return `${acc}\n${value.name}=${value.value}`;
+      (acc, [key, value]) => {
+        const name = 'TQ_' + key.toUpperCase();
+        if (value && value !== '') {
+          return `${acc}\n${name}=${value}`;
         }
         return acc;
       },

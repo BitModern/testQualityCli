@@ -1,6 +1,6 @@
+import { getResponse } from '@testquality/sdk';
 import { Command } from './Command';
 import { logError } from './logError';
-import { tqPost } from './tqRequest';
 
 export class RestoreCommand extends Command {
   constructor() {
@@ -18,24 +18,27 @@ export class RestoreCommand extends Command {
             alias: 'si',
             describe: 'Suite to restore test in, optional',
             type: 'string',
+          })
+          .option('plan_id', {
+            alias: 'pi',
+            describe: 'Plan to restore',
+            type: 'string',
           });
       },
       (args) => {
-        this.auth.update(args).then(
+        this.reLogin(args).then(
           () => {
             if (args.test_id) {
-              const options = args.suite_id
+              const data = args.suite_id
                 ? { suite_id: args.suite_id }
                 : undefined;
-              this.postRestore('test', args.test_id as string, options).then(
+              this.postRestore('test', args.test_id as string, data).then(
                 (response) => console.log(response),
                 (error) => logError(error)
               );
             } else if (args.suite_id) {
-              const options = args.plan_id
-                ? { plan_id: args.plan_id }
-                : undefined;
-              this.postRestore('suite', args.suite_id as string, options).then(
+              const data = args.plan_id ? { plan_id: args.plan_id } : undefined;
+              this.postRestore('suite', args.suite_id as string, data).then(
                 (response) => console.log(response),
                 (error) => logError(error)
               );
@@ -56,8 +59,11 @@ export class RestoreCommand extends Command {
     );
   }
 
-  private postRestore(type: string, id: string, body?: any): Promise<any> {
+  private postRestore(type: string, id: string, data?: any): Promise<any> {
     const url = `/${type}/${id}/restore`;
-    return tqPost(url, body);
+    return getResponse(this.client.api, {
+      url,
+      data,
+    });
   }
 }

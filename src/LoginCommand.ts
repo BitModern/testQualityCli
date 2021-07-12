@@ -1,5 +1,4 @@
 import { Command } from './Command';
-import { saveEnv } from './env';
 import { logError } from './logError';
 import { Arguments, Argv } from 'yargs';
 
@@ -29,13 +28,16 @@ export class LoginCommand extends Command {
           const prop = args.properties
             ? JSON.parse(args.properties as string)
             : undefined;
-          this.auth
-            .login(args.username as string, args.password as string, prop)
+          this.client
+            .getAuth()
+            .login(
+              args.username as string,
+              args.password as string,
+              !!args.save,
+              prop
+            )
             .then(
               (body) => {
-                if (args.save) {
-                  saveEnv();
-                }
                 console.log(body);
               },
               (error: any) => {

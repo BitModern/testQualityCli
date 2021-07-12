@@ -12,20 +12,22 @@ import { RestoreCommand } from './RestoreCommand';
 import { CreatePlan } from './CreatePlan';
 import { SuiteCommand } from './SuiteCommand';
 import { TestCommand } from './TestCommand';
+import { RunCommand } from './RunCommand';
 
 const argv = yargs
+  .command(new CreateManualRunCommand())
+  .command(new CreatePlan())
   .command(new LoginCommand())
+  .command(new MilestoneCommand())
   .command(new ProjectCommand())
   .command(new PlanCommand())
+  .command(new RestoreCommand())
+  .command(new RunCommand())
   .command(new SuiteCommand())
-  .command(new MilestoneCommand())
+  .command(new TestCommand())
   .command(new UploadTestRunCommand())
   .command(new UploadFeatureCommand())
   .command(new UploadCSVCommand())
-  .command(new CreateManualRunCommand())
-  .command(new RestoreCommand())
-  .command(new CreatePlan())
-  .command(new TestCommand())
   .option('verbose', {
     alias: 'v',
     boolean: true,

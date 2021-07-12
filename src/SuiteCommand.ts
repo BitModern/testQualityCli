@@ -1,8 +1,6 @@
+import { suiteDeleteOne, suiteGetMany } from '@testquality/sdk';
 import { Command } from './Command';
 import { logError } from './logError';
-import { tqRequest } from './tqRequest';
-import { ResourceList } from './gen/models/ResourceList';
-import { SuiteApi } from './gen/domain/suite/SuiteApi';
 
 export class SuiteCommand extends Command {
   constructor() {
@@ -37,30 +35,31 @@ export class SuiteCommand extends Command {
           });
       },
       (args) => {
-        this.auth.update(args).then(async () => {
-          const params = args.params ? (args.params as string[]).join('&') : '';
-          const revisionLog = args.revision_log
-            ? '?revision_log=true' + (args.params ? '&' + params : '')
-            : args.params
-            ? '?' + params
-            : '';
+        this.reLogin(args).then(async () => {
+          const params = this.getParams(args);
+          if (args.revision_log) {
+            params.revision_log = 'true';
+          }
           if (!args.delete) {
             const url =
-              (args.plan_id ? `/plan/${args.plan_id}` : '') +
-              `/suite${revisionLog}`;
+              (args.plan_id ? `/plan/${args.plan_id}` : '') + `/suite`;
             console.log(url);
 
-            tqRequest<ResourceList<SuiteApi>>(url).then(
+            suiteGetMany({ url, params }).then(
               (list) => {
                 if (args.revision_log) {
                   console.log(list);
                 } else {
                   if (list.total > 0) {
-                    console.log(
-                      list.data.map((p) => {
-                        return { id: p.id, key: p.key, name: p.name };
-                      })
-                    );
+                    if (args.verbose) {
+                      console.log(list.data);
+                    } else {
+                      console.log(
+                        list.data.map((p) => {
+                          return { id: p.id, key: p.key, name: p.name };
+                        })
+                      );
+                    }
                   } else {
                     console.log('Result is empty');
                   }
@@ -70,21 +69,17 @@ export class SuiteCommand extends Command {
             );
           } else {
             try {
-              const suiteId = args.suite_id;
+              const suiteId = args.suite_id as number;
               if (!suiteId) {
                 logError(
                   'Suite id is required to perform delete, try adding --suite_id=<number>'
                 );
               }
               const url =
-                (args.plan_id ? `/plan/${args.plan_id}` : '') +
-                `/suite/${suiteId}`;
+                (args.plan_id ? `/plan/${args.plan_id}` : '') + `/suite`;
               console.log(url);
 
-              const result = await tqRequest<ResourceList<SuiteApi>>(
-                url,
-                'DELETE'
-              );
+              const result = await suiteDeleteOne(suiteId, { url });
               console.log('Delete Success ', result);
             } catch (error) {
               logError(error);

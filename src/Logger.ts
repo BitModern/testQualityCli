@@ -7,7 +7,7 @@
 import * as Logger from 'bunyan';
 import * as BunyanFormat from 'bunyan-format';
 import { env } from './env';
-import { errSerializer } from './http/errSerializer';
+import { errSerializer } from './errSerializer';
 
 export const logger = new Logger({
   level: env.log.level as Logger.LogLevelString,

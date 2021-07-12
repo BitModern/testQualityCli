@@ -1,8 +1,6 @@
+import { milestoneGetMany } from '@testquality/sdk';
 import { Command } from './Command';
 import { logError } from './logError';
-import { tqRequest } from './tqRequest';
-import { ResourceList } from './gen/models/ResourceList';
-import { MilestoneApi } from './gen/domain/milestone/MilestoneApi';
 
 export class MilestoneCommand extends Command {
   constructor() {
@@ -19,21 +17,19 @@ export class MilestoneCommand extends Command {
         });
       },
       (args) => {
-        this.auth.update(args).then(
-          () => {
-            if (!this.auth.projectId) {
+        this.getProjectId(args).then(
+          (projectId) => {
+            if (!projectId) {
               logError(
                 'Project is required. Try adding "--project_name=<name>" or "--project_id=<number>"'
               );
             } else {
-              const project = this.auth.projectId
-                ? `?project_id=${this.auth.projectId}`
-                : '';
-              const revisionLog = args.revision_log
-                ? (project !== '' ? '&' : '?') + 'revision_log=true'
-                : '';
-              const url = `/milestone${project}${revisionLog}`;
-              tqRequest<ResourceList<MilestoneApi>>(url).then(
+              milestoneGetMany({
+                params: {
+                  project_id: projectId,
+                  revision_log: args.revision_log ? true : undefined,
+                },
+              }).then(
                 (milestoneList) => {
                   if (args.revision_log) {
                     console.log(milestoneList);

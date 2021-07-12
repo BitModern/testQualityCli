@@ -3,8 +3,8 @@ import { Arguments, Argv } from 'yargs';
 import { logError } from './logError';
 import * as glob from 'glob';
 import * as fs from 'fs';
-import { tqRequest } from './tqRequest';
 import FormData = require('form-data');
+import { getResponse } from '@testquality/sdk';
 
 export class UploadCSVCommand extends Command {
   constructor() {
@@ -18,7 +18,7 @@ export class UploadCSVCommand extends Command {
         });
       },
       (args: Arguments) => {
-        this.auth.update(args).then(
+        this.reLogin(args).then(
           () => {
             if (args.file) {
               console.log(args.file);
@@ -80,6 +80,11 @@ export class UploadCSVCommand extends Command {
       throw Error('Config file not found');
     }
 
-    return tqRequest(url, 'POST', data, data.getHeaders());
+    return getResponse<any>(this.client.api, {
+      method: 'POST',
+      url,
+      data,
+      headers: data.getHeaders(),
+    });
   }
 }

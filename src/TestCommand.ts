@@ -1,8 +1,6 @@
+import { testDeleteOne, testGetMany } from '@testquality/sdk';
 import { Command } from './Command';
 import { logError } from './logError';
-import { tqRequest } from './tqRequest';
-import { ResourceList } from './gen/models/ResourceList';
-import { SuiteApi } from './gen/domain/suite/SuiteApi';
 
 export class TestCommand extends Command {
   constructor() {
@@ -42,21 +40,20 @@ export class TestCommand extends Command {
           });
       },
       (args) => {
-        this.auth.update(args).then(async () => {
-          const params = args.params ? (args.params as string[]).join('&') : '';
-          const revisionLog = args.revision_log
-            ? '?revision_log=true' + (args.params ? '&' + params : '')
-            : args.params
-            ? '?' + params
-            : '';
+        this.reLogin(args).then(async () => {
+          const params = this.getParams(args);
+          if (args.revision_log) {
+            params.revision_log = 'true';
+          }
+
           if (!args.delete) {
             const url =
               (args.plan_id ? `/plan/${args.plan_id}` : '') +
               (args.suite_id ? `/plan/${args.suite_id}` : '') +
-              `/test${revisionLog}`;
+              `/test`;
             console.log(url);
 
-            tqRequest<ResourceList<SuiteApi>>(url).then(
+            testGetMany({ url, params }).then(
               (list) => {
                 if (args.revision_log) {
                   console.log(list);
@@ -64,7 +61,7 @@ export class TestCommand extends Command {
                   if (list.total > 0) {
                     console.log(
                       list.data.map((p) => {
-                        if (args.params) {
+                        if (args.params || args.verbose) {
                           return p;
                         } else {
                           return { id: p.id, key: p.key, name: p.name };
@@ -80,21 +77,17 @@ export class TestCommand extends Command {
             );
           } else {
             try {
-              const testId = args.test_id;
+              const testId = args.test_id as number;
               if (!testId) {
                 logError(
                   'Test id is required to perform delete, try adding --test_id=<number>'
                 );
               }
               const url =
-                (args.suite_id ? `/plan/${args.suite_id}` : '') +
-                `/test/${testId}`;
+                (args.suite_id ? `/plan/${args.suite_id}` : '') + `/test`;
               console.log(url);
 
-              const result = await tqRequest<ResourceList<SuiteApi>>(
-                url,
-                'DELETE'
-              );
+              const result = await testDeleteOne(testId, { url });
               console.log('Delete Success ', result);
             } catch (error) {
               logError(error);
