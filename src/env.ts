@@ -26,8 +26,8 @@ export const env = {
     url: getOsEnv('TQ_HOST') || 'https://api.testquality.com',
     xDebug: getOsEnv('APP_XDEBUG') === 'true',
   },
-  client_id: '2',
-  client_secret: '93MBS86X7JrK4Mrr1mk4PKfo6b1zRVx9Mrmx0nTa',
+  client_id: getOsEnv('TQ_CLIENT_ID') || '2',
+  client_secret: getOsEnv('TQ_CLIENT_SECRET') || '93MBS86X7JrK4Mrr1mk4PKfo6b1zRVx9Mrmx0nTa',
   variables: {
     username: new EnvVar('TQ_USERNAME'),
     password: new EnvVar('TQ_PASSWORD'),
