@@ -1,10 +1,9 @@
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
-import * as path from 'path';
 
-const envFile = dotenv.config({ path: path.join(process.cwd(), '.env') });
+const envFile = dotenv.config();
 if (envFile.error) {
-  console.error(envFile.error);
+  // console.error(envFile.error);
 }
 
 export function getOsEnv(key: string): string | undefined {
@@ -27,7 +26,8 @@ export const env = {
     xDebug: getOsEnv('APP_XDEBUG') === 'true',
   },
   client_id: getOsEnv('TQ_CLIENT_ID') || '2',
-  client_secret: getOsEnv('TQ_CLIENT_SECRET') || '93MBS86X7JrK4Mrr1mk4PKfo6b1zRVx9Mrmx0nTa',
+  client_secret:
+    getOsEnv('TQ_CLIENT_SECRET') || '93MBS86X7JrK4Mrr1mk4PKfo6b1zRVx9Mrmx0nTa',
   variables: {
     username: new EnvVar('TQ_USERNAME'),
     password: new EnvVar('TQ_PASSWORD'),

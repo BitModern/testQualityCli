@@ -2,7 +2,7 @@ import { Arguments, Argv } from 'yargs';
 import { env, saveEnv } from './env';
 import { logger } from './Logger';
 import {
-  Client,
+  ClientSdk,
   getResponse,
   HttpError,
   LoggerInterface,
@@ -14,7 +14,7 @@ import { EnvStorage } from './EnvStorage';
 import { HasId } from 'HasId';
 import { logError } from './logError';
 
-const singleClient = new Client({
+const singleClient = new ClientSdk({
   clientId: env.client_id,
   clientSecret: env.client_secret,
   baseUrl: env.api.url,
@@ -27,7 +27,7 @@ const singleClient = new Client({
 });
 
 export class Command {
-  public client: Client;
+  public client: ClientSdk;
   public projectId?: number;
 
   constructor(
@@ -92,6 +92,13 @@ export class Command {
       if (un && pw) {
         this.client.getAuth().login(un, pw).then(resolve, reject);
       } else {
+        const at = args.access_token as string;
+        const ea = args.expires_at as string;
+        if (at) {
+          this.client
+            .getAuth()
+            .setToken({ access_token: at, expires_at: ea } as any);
+        }
         resolve(undefined);
       }
     });
