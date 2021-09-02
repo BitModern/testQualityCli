@@ -13,15 +13,19 @@ import { CreatePlan } from './CreatePlan';
 import { SuiteCommand } from './SuiteCommand';
 import { TestCommand } from './TestCommand';
 import { RunCommand } from './RunCommand';
+import { DefectCommand } from './DefectCommand';
+import { RequirementCommand } from './RequirementCommand';
 
 const argv = yargs
   .command(new CreateManualRunCommand())
   .command(new CreatePlan())
+  .command(new DefectCommand())
   .command(new LoginCommand())
   .command(new MilestoneCommand())
   .command(new ProjectCommand())
   .command(new PlanCommand())
   .command(new RestoreCommand())
+  .command(new RequirementCommand())
   .command(new RunCommand())
   .command(new SuiteCommand())
   .command(new TestCommand())

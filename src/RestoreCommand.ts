@@ -62,6 +62,7 @@ export class RestoreCommand extends Command {
   private postRestore(type: string, id: string, data?: any): Promise<any> {
     const url = `/${type}/${id}/restore`;
     return getResponse(this.client.api, {
+      method: 'post',
       url,
       data,
     });
