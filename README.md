@@ -116,6 +116,34 @@ Kubernetes
     
     kustomize build kustomize/overlays/<<parameters.environment>> | kubectl apply --record=true -f -
 
+## Restoring a plan or suite
+
+For Plan
+1. Login
+2. List plans that have been deleted
+   
+       testquality-macos plans --revision_log -p _sort=-updated_at -p operation=delete```
+
+3. Restore
+
+       testquality-macos restore --plan_id 17452
+
+For Suite
+1. Login
+2. List suites that have been deleted
+
+       testquality-macos suites --revision_log -p _sort=-updated_at -p operation=delete
+
+3. Find associated plans
+
+       testquality-macos plan_suite --revision_log -p _sort=-updated_at -p operation=delete -p suite_id=105923
+
+4. Restore 
+
+       testquality-macos restore --suite_id 105923 --plan_id 17452
+
+  
+
 ## Calling with params
 
  --params.per_page -1 --params._with test

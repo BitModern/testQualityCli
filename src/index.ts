@@ -16,6 +16,7 @@ import { RunCommand } from './RunCommand';
 import { DefectCommand } from './DefectCommand';
 import { RequirementCommand } from './RequirementCommand';
 import { PlanSuiteCommand } from './PlanSuiteCommand';
+import { SuiteTestCommand } from './SuiteTestCommand';
 
 const argv = yargs
   .command(new CreateManualRunCommand())
@@ -30,6 +31,7 @@ const argv = yargs
   .command(new RequirementCommand())
   .command(new RunCommand())
   .command(new SuiteCommand())
+  .command(new SuiteTestCommand())
   .command(new TestCommand())
   .command(new UploadTestRunCommand())
   .command(new UploadFeatureCommand())
