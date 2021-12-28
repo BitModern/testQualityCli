@@ -37,7 +37,7 @@ export class ProjectCommand extends Command {
       (args) => {
         this.reLogin(args).then(
           () => {
-            projectGetMany().then(
+            projectGetMany({params: {per_page: -1}}).then(
               (projectList) => {
                 if (args.verbose) {
                   console.log(projectList.data);

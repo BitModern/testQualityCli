@@ -51,38 +51,47 @@ or
 
     testquality-macos login --help
  
- # Save
- 
- Include ```--save``` to save tokens to use with other commands.
- 
- # Example
- 
- Example workflow.
- 
+# Save
+
+Include ```--save``` to save tokens to use with other commands.
+
+# Example
+
+Example workflow.
+
     testquality-macos login larry@bitmodern.com *password* --save
     testquality-macos upload_test_run 'sampleXml/*.xml' --project_name=Test --plan_name=Test
 
- You can also create a manual test plan run.
+You can also create a manual test plan run.
 
     testquality-macos create_manual_run --project_name=My_Project --plan_name=My_Test_Plan --run_name=Test_Run_Name
 
- CSV Files
+CSV Files
 
     testquality-macos upload_csv ./test_run_results.csv --cf ./test_run_results.config
-    
- # Contributing
- 
- ## Build
+
+Personal Access Token (PAT)
+
+Add the ```--acces_token=pat``` where pat equals token to any command.
+
+Or
+
+Save token into .env or environment with ```TQ_ACCESS_TOKEN=pat``` where pat equals token 
+
+# Contributing
+
+## Build
+
     yarn
     yarn build
- 
- ## Running
+
+## Running
     yarn start login <username> <password>
-    
- ## Packaging Commands
+
+## Packaging Commands
     yarn package
-    
- ## Development
+
+## Development
     yarn serve
 
 ## Docker
@@ -122,7 +131,7 @@ For Plan
 1. Login
 2. List plans that have been deleted
    
-       testquality-macos plans --revision_log -p _sort=-updated_at -p operation=delete```
+       testquality-macos plans --revision_log -p _sort=-updated_at -p operation=delete
 
 3. Restore
 

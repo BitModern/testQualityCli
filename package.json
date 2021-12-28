@@ -13,10 +13,10 @@
     "format:fix": "prettier --write 'src/**/*.ts'",
     "clean": "rimraf dist/*",
     "package": "rimraf .env && yarn package:macos && yarn package:win && yarn package:linux && yarn package:alpine",
-    "package:macos": "pkg . --target node10-macos-x64 --output commands/testquality-macos",
-    "package:win": "pkg . --target node10-win-x64 --output commands/testquality-win",
-    "package:linux": "pkg . --target node10-linux-x64 --output commands/testquality-linux",
-    "package:alpine": "pkg . --target node10-alpine-x64 --output commands/testquality-alpine"
+    "package:macos": "pkg . --target node10-macos-x64 --compress GZip --output commands/testquality-macos",
+    "package:win": "pkg . --target node10-win-x64 --compress GZip --output commands/testquality-win",
+    "package:linux": "pkg . --target node10-linux-x64 --compress GZip --output commands/testquality-linux",
+    "package:alpine": "pkg . --target node10-alpine-x64 --compress GZip --output commands/testquality-alpine"
   },
   "devDependencies": {
     "@types/bunyan": "^1.8.6",
@@ -28,7 +28,7 @@
     "@types/yargs": "^13.0.2",
     "cross-env": "^5.1.4",
     "ora": "3.1.0",
-    "pkg": "4.3.8",
+    "pkg": "5.5.1",
     "prettier": "^2.2.1",
     "rimraf": "^2.6.2",
     "ts-node": "^8.3.0",
@@ -38,8 +38,8 @@
     "typescript": "^3.7.5"
   },
   "dependencies": {
-    "@testquality/sdk": "file:.yalc/@testquality/sdk",
-    "axios": "^0.21.1",
+    "@testquality/sdk": "1.4.21",
+    "axios": "^0.21.4",
     "bunyan": "^1.8.12",
     "bunyan-format": "^0.2.1",
     "dotenv": "^10.0.0",
