@@ -1,5 +1,5 @@
 import { Command } from './Command';
-import {suiteTestGetMany } from '@testquality/sdk';
+import { suiteTestGetMany } from '@testquality/sdk';
 import { logError } from './logError';
 
 export class SuiteTestCommand extends Command {

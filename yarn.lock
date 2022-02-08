@@ -72,10 +72,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@testquality/sdk@1.4.21":
-  version "1.4.21"
-  resolved "https://registry.npmjs.org/@testquality/sdk/-/sdk-1.4.21.tgz#f47841223d0a51dd883f01ac420dba27ec711399"
-  integrity sha512-tMOpfrH6wR9949yuERNpahTQ1H7TIWWPspXANUZsuvoTWu2JGuVKYVnLbfolLGs/rfX2Rmg4UwyoagmJOQwiRQ==
+"@testquality/sdk@1.4.23":
+  version "1.4.23"
+  resolved "https://registry.npmjs.org/@testquality/sdk/-/sdk-1.4.23.tgz#cbb48a32a61d3d7f2f8423969f636d68da56ce8c"
+  integrity sha512-DWEtT7L6u9ER07momWsng+afrvJzKdrn1RzAxNjYICww3MkOTRox/KIfbOccNVo39a0P3SzZEyFRYw9bb1FWoQ==
   dependencies:
     axios "^0.21.1"
     querystring "^0.2.1"

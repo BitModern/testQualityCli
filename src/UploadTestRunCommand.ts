@@ -33,7 +33,7 @@ export class UploadTestRunCommand extends Command {
           if (!xmlFilesGlob) throw new Error('Must supply xmlfiles');
 
           const projectId = await this.getProjectId(args);
-          const planId = await this.getId(args, 'plan', projectId);
+          const planId = await this.getId(args, 'plan', projectId, false);
           const milestoneId = await this.getId(
             args,
             'milestone',
@@ -53,10 +53,11 @@ export class UploadTestRunCommand extends Command {
 
           const response = await this.uploadTestResults(
             args,
-            planId,
             xmlFiles,
-            milestoneId,
-            attachments
+            attachments,
+            projectId,
+            planId,
+            milestoneId
           );
           console.log(response);
         } catch (error) {
@@ -68,15 +69,22 @@ export class UploadTestRunCommand extends Command {
 
   private uploadTestResults(
     args: Arguments,
-    planId: number | undefined,
     xmlFiles: string[],
-    milestoneId: number | undefined,
-    attachments: string[] | undefined = []
+    attachments: string[] = [],
+    projectId?: number,
+    planId?: number,
+    milestoneId?: number
   ): Promise<any> {
-    if (!planId) throw new Error('Must supply plan id');
-
     const data = new FormData();
 
+    if (projectId) {
+      data.append('project_id', projectId);
+    }
+    if (planId) {
+      data.append('plan_id', projectId);
+    } else if (args.plan_name) {
+      data.append('plan_name', args.plan_name);
+    }
     if (args.run_name) {
       data.append('run_name', args.run_name);
     }
@@ -102,7 +110,7 @@ export class UploadTestRunCommand extends Command {
     }
 
     return getResponse(this.client.api, {
-      url: `/plan/${planId}/junit_xml`,
+      url: `/junit_xml`,
       method: 'POST',
       data,
       headers: data.getHeaders(),
