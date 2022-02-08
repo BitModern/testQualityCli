@@ -10,7 +10,7 @@ For DEFECTS we expect the following tag format for both test name tags and conso
  - Attachments from test name tag [[ATTACHMENT|ScreenshotFileName.png]]
  - Attachments from console output [[ATTACHMENT|path/to/file]]
 
- Note that for attachment test name tag usage you will neet to use 'run_result_output_dir' option to specify the test result output directory.
+ Note that for attachment you will need to use 'run_result_output_dir' option to specify the test result output directory.
 
 ## Requirements
 
@@ -72,7 +72,7 @@ CSV Files
 
 Personal Access Token (PAT)
 
-Add the ```--acces_token=pat``` where pat equals token to any command.
+Add the ```--access_token=pat``` where pat equals token to any command.
 
 Or
 
