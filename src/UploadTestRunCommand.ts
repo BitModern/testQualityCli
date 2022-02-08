@@ -80,7 +80,7 @@ export class UploadTestRunCommand extends Command {
     const files = [...xmlFiles, ...attachments];
 
     if (files.length === 1) {
-      data.append('file', fs.createReadStream(xmlFiles[0]));
+      data.append('file', fs.createReadStream(files[0]));
     } else {
       files.forEach((file) => {
         data.append('files[]', fs.createReadStream(file), path.basename(file));
