@@ -21,7 +21,15 @@ export class UploadTestRunCommand extends Command {
       async (args: Arguments) => {
         try {
           const xmlFilesGlob = args.xmlfiles as string;
-          const runResultOutputDirGlob = args.run_result_output_dir as string;
+          const runResultOutputDir = args.run_result_output_dir as string;
+          const ouputIsDir = fs
+            .lstatSync(path.resolve(runResultOutputDir))
+            .isDirectory();
+
+          const runResultOutputDirGlob = ouputIsDir
+            ? `${runResultOutputDir}/**/*`
+            : runResultOutputDir;
+
           if (!xmlFilesGlob) throw new Error('Must supply xmlfiles');
 
           const projectId = await this.getProjectId(args);
@@ -37,7 +45,9 @@ export class UploadTestRunCommand extends Command {
           let attachments;
           if (runResultOutputDirGlob) {
             console.log('file glob: ', runResultOutputDirGlob);
-            attachments = await asyncGlob(runResultOutputDirGlob);
+            attachments = await asyncGlob(runResultOutputDirGlob, {
+              nodir: true,
+            });
             console.log('Attachment files', attachments);
           }
 
