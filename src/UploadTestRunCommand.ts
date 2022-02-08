@@ -27,7 +27,7 @@ export class UploadTestRunCommand extends Command {
             .isDirectory();
 
           const runResultOutputDirGlob = ouputIsDir
-            ? `${runResultOutputDir}/**/*`
+            ? path.join(runResultOutputDir, '/**/*')
             : runResultOutputDir;
 
           if (!xmlFilesGlob) throw new Error('Must supply xmlfiles');
