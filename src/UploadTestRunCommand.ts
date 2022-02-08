@@ -1,11 +1,11 @@
 import { getResponse } from '@testquality/sdk';
-import * as glob from 'glob';
+import { Arguments, Argv } from 'yargs';
 import * as fs from 'fs';
 import * as path from 'path';
 import FormData = require('form-data');
 import { Command } from './Command';
-import { Arguments, Argv } from 'yargs';
 import { logError } from './logError';
+import asyncGlob from './asyncGlob';
 
 export class UploadTestRunCommand extends Command {
   constructor() {
@@ -18,69 +18,40 @@ export class UploadTestRunCommand extends Command {
           type: 'string',
         });
       },
-      (args: Arguments) => {
-        this.getProjectId(args).then(
-          (projectId) => {
-            this.getId(args, 'plan', projectId).then(
-              (planId) => {
-                this.getId(args, 'milestone', projectId, false).then(
-                  (milestoneId) => {
-                    if (args.xmlfiles) {
-                      glob(
-                        args.xmlfiles as string,
-                        { realpath: true },
-                        (err, xmlfiles) => {
-                          if (err) {
-                            logError(err);
-                          } else {
-                            if (args.run_result_output_dir) {
-                              console.log('file glob: ', args.run_result_output_dir);
-                              glob(
-                                args.run_result_output_dir as string,
-                                {},
-                                (errors, attachments) => {
-                                  console.log('Attachment files', attachments);
-                                  if (errors) {
-                                    logError(errors);
-                                  }
-                                  this.uploadTestResults(
-                                    args,
-                                    planId,
-                                    xmlfiles,
-                                    milestoneId,
-                                    attachments
-                                  ).then(
-                                    (response: any) =>
-                                      console.log(response),
-                                    (error: any) => logError(error)
-                                  );
-                                }
-                              );
-                            } else {
-                              this.uploadTestResults(
-                                args,
-                                planId,
-                                xmlfiles,
-                                milestoneId,
-                                undefined
-                              ).then(
-                                (response: any) => console.log(response),
-                                (error: any) => logError(error)
-                              );
-                            }
-                          }
-                        }
-                      );
-                    }
-                  },
-                  (error: any) => logError(error)
-                );
-              },
-              (error: any) => logError(error)
-            );
-          },
-          (error: any) => logError(error)
-        );
+      async (args: Arguments) => {
+        try {
+          const xmlFilesGlob = args.xmlfiles as string;
+          const runResultOutputDirGlob = args.run_result_output_dir as string;
+          if (!xmlFilesGlob) throw new Error('Must supply xmlfiles');
+
+          const projectId = await this.getProjectId(args);
+          const planId = await this.getId(args, 'plan', projectId);
+          const milestoneId = await this.getId(
+            args,
+            'milestone',
+            projectId,
+            false
+          );
+
+          const xmlFiles = await asyncGlob(xmlFilesGlob, { realpath: true });
+          let attachments;
+          if (runResultOutputDirGlob) {
+            console.log('file glob: ', runResultOutputDirGlob);
+            attachments = await asyncGlob(runResultOutputDirGlob);
+            console.log('Attachment files', attachments);
+          }
+
+          const response = await this.uploadTestResults(
+            args,
+            planId,
+            xmlFiles,
+            milestoneId,
+            attachments
+          );
+          console.log(response);
+        } catch (error) {
+          logError(error);
+        }
       }
     );
   }
@@ -90,12 +61,10 @@ export class UploadTestRunCommand extends Command {
     planId: number | undefined,
     xmlFiles: string[],
     milestoneId: number | undefined,
-    attachments: string[] | undefined
+    attachments: string[] | undefined = []
   ): Promise<any> {
-    if (planId === undefined) {
-      throw new Error('Must supply plan id');
-    }
-    const url = `/plan/${planId}/junit_xml`;
+    if (!planId) throw new Error('Must supply plan id');
+
     const data = new FormData();
 
     if (args.run_name) {
@@ -108,18 +77,14 @@ export class UploadTestRunCommand extends Command {
       data.append('create_manual_run', args.create_manual_run ? 1 : 0);
     }
 
-    if (xmlFiles.length === 1 && (attachments === undefined || attachments.length === 0)) {
+    const files = [...xmlFiles, ...attachments];
+
+    if (files.length === 1) {
       data.append('file', fs.createReadStream(xmlFiles[0]));
     } else {
-      xmlFiles.map((xmlFile) => {
-        data.append('files[]', fs.createReadStream(xmlFile), path.basename(xmlFile));
+      files.forEach((file) => {
+        data.append('files[]', fs.createReadStream(file), path.basename(file));
       });
-
-      if (attachments) {
-        attachments.map((attachment) => {
-          data.append('files[]', fs.createReadStream(attachment), path.basename(attachment));
-        });
-      }
 
       if (args.verbose) {
         console.log('Matching files: ', xmlFiles);
@@ -127,7 +92,7 @@ export class UploadTestRunCommand extends Command {
     }
 
     return getResponse(this.client.api, {
-      url,
+      url: `/plan/${planId}/junit_xml`,
       method: 'POST',
       data,
       headers: data.getHeaders(),
