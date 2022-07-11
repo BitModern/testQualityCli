@@ -144,13 +144,13 @@ export class Command {
   ): Promise<number | undefined> {
     return new Promise((resolve, reject) => {
       const name = args[type + '_name'] as string;
-      if (!projectId) {
-        reject(
-          `projectId is required. Try adding "--project_name=<name>" or "--project_id=<number>"`
-        );
-      }
 
       if (name) {
+        if (!projectId) {
+          reject(
+            `projectId is required. Try adding "--project_name=<name>" or "--project_id=<number>"`
+          );
+        }
         getResponse<ResourceList<HasId>>(this.client.api, {
           method: 'get',
           url: `/${type}`,

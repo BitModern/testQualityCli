@@ -17,6 +17,7 @@ import { DefectCommand } from './DefectCommand';
 import { RequirementCommand } from './RequirementCommand';
 import { PlanSuiteCommand } from './PlanSuiteCommand';
 import { SuiteTestCommand } from './SuiteTestCommand';
+import { PlanDelete } from './PlanDeleteCommand';
 
 const argv = yargs
   .command(new CreateManualRunCommand())
@@ -26,6 +27,7 @@ const argv = yargs
   .command(new MilestoneCommand())
   .command(new ProjectCommand())
   .command(new PlanCommand())
+  .command(new PlanDelete())
   .command(new PlanSuiteCommand())
   .command(new RestoreCommand())
   .command(new RequirementCommand())
