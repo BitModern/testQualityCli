@@ -49,7 +49,7 @@ export class TestCommand extends Command {
           if (!args.delete) {
             const url =
               (args.plan_id ? `/plan/${args.plan_id}` : '') +
-              (args.suite_id ? `/plan/${args.suite_id}` : '') +
+              (args.suite_id ? `/suite/${args.suite_id}` : '') +
               `/test`;
             console.log(url);
 
