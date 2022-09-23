@@ -22,9 +22,9 @@ export class UploadTestRunCommand extends Command {
         try {
           const xmlFilesGlob = args.xmlfiles as string;
           const runResultOutputDir = args.run_result_output_dir as string;
-          const ouputIsDir = runResultOutputDir && fs
-            .lstatSync(path.resolve(runResultOutputDir))
-            .isDirectory();
+          const ouputIsDir =
+            runResultOutputDir &&
+            fs.lstatSync(path.resolve(runResultOutputDir)).isDirectory();
 
           const runResultOutputDirGlob = ouputIsDir
             ? path.join(runResultOutputDir, '/**/*')

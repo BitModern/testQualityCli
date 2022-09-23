@@ -9,11 +9,10 @@ export class PlanDelete extends Command {
       'plan_delete <id>',
       'Delete a Cycle/Plan',
       (args: Argv) => {
-        return args
-          .positional('id', {
-            describe: 'Id of plan',
-            type: 'string',
-          });
+        return args.positional('id', {
+          describe: 'Id of plan',
+          type: 'string',
+        });
       },
       async (args: Arguments) => {
         try {
