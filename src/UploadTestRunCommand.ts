@@ -81,7 +81,7 @@ export class UploadTestRunCommand extends Command {
       data.append('project_id', projectId);
     }
     if (planId) {
-      data.append('plan_id', projectId);
+      data.append('plan_id', planId);
     } else if (args.plan_name) {
       data.append('plan_name', args.plan_name);
     }
