@@ -4,6 +4,7 @@ import { logger } from './Logger';
 import {
   ClientSdk,
   getResponse,
+  setGlobalClient,
   HttpError,
   LoggerInterface,
   projectGetMany,
@@ -25,6 +26,8 @@ const singleClient = new ClientSdk({
   persistentStorage: new EnvStorage(),
   logger: logger as LoggerInterface,
 });
+
+setGlobalClient(singleClient);
 
 export class Command {
   public client: ClientSdk;

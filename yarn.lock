@@ -72,8 +72,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@testquality/sdk@file:.yalc/@testquality/sdk":
-  version "1.4.35"
+"@testquality/sdk@1.8.0":
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/@testquality/sdk/-/sdk-1.8.0.tgz#56862d998488904553b5b2ae1b8abd0b997b2609"
+  integrity sha512-SHqwlo8yc3yIa7GEinLR67lwAoL/CyEwiKziFPQXezclHfbnN7kCN1yuNvO3WAN5x8y9epuH/sla4QqUP9FHHg==
   dependencies:
     axios "^0.21.1"
     querystring "^0.2.1"
