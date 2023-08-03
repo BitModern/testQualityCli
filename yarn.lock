@@ -72,12 +72,13 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@testquality/sdk@1.8.0":
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/@testquality/sdk/-/sdk-1.8.0.tgz#56862d998488904553b5b2ae1b8abd0b997b2609"
-  integrity sha512-SHqwlo8yc3yIa7GEinLR67lwAoL/CyEwiKziFPQXezclHfbnN7kCN1yuNvO3WAN5x8y9epuH/sla4QqUP9FHHg==
+"@testquality/sdk@1.12.5":
+  version "1.12.5"
+  resolved "https://registry.yarnpkg.com/@testquality/sdk/-/sdk-1.12.5.tgz#0ade7ba5524480430db2df7e5f96113824e9429d"
+  integrity sha512-+0hgsHxqt1d3C9XE9afWwhfQZ6I+i0w8Le0CaiFOWmtLt31h68/4M9TLD/C2iAtSt0KYqzOKCxMZ+OUkYpfDsg==
   dependencies:
     axios "^0.21.1"
+    debug "^4.3.4"
     querystring "^0.2.1"
 
 "@types/bunyan-format@^0.2.3":
@@ -425,6 +426,13 @@ debug@4:
   version "4.3.3"
   resolved "https://registry.npmjs.org/debug/-/debug-4.3.3.tgz#04266e0b70a98d4462e6e288e38259213332b664"
   integrity sha512-/zxw5+vh1Tfv+4Qn7a5nsbcJKPaSvCDhojn6FEl9vupwK2VCSDtEiEtqr8DFtzYFOdz63LBkxec7DYuc2jon6Q==
+  dependencies:
+    ms "2.1.2"
+
+debug@^4.3.4:
+  version "4.3.4"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.4.tgz#1319f6579357f2338d3337d2cdd4914bb5dcc865"
+  integrity sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==
   dependencies:
     ms "2.1.2"
 
@@ -1637,9 +1645,9 @@ type-check@~0.3.2:
     prelude-ls "~1.1.2"
 
 typescript@^3.7.5:
-  version "3.9.9"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.9.9.tgz#e69905c54bc0681d0518bd4d587cc6f2d0b1a674"
-  integrity sha512-kdMjTiekY+z/ubJCATUPlRDl39vXYiMV9iyeMuEuXZh2we6zz80uovNN2WlAxmmdE/Z/YQe+EbOEXB5RHEED3w==
+  version "3.9.10"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.9.10.tgz#70f3910ac7a51ed6bef79da7800690b19bf778b8"
+  integrity sha512-w6fIxVE/H1PkLKcCPsFqKE7Kv7QUwhU8qQY2MueZXWx5cPZdwFupLgKK3vntcK98BtNHZtAF4LA/yl2a7k8R6Q==
 
 universalify@^2.0.0:
   version "2.0.0"
