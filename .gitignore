@@ -83,3 +83,4 @@ schema.graphql
 .idea
 .yalc
 yalc.lock
+.DS_Store
