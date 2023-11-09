@@ -50,6 +50,9 @@ export class Command {
       logger.info(`TestQuality Host: ${env.api.url}`);
       logger.info('Current path ' + process.cwd());
     }
+    if (args.save) {
+      EnvStorage.enableSave();
+    }
     this.subHandler(args);
   };
   public getProjectId(args: any): Promise<number | undefined> {
@@ -93,14 +96,14 @@ export class Command {
       const un = (args.username as string) || env.auth.username;
       const pw = (args.password as string) || env.auth.password;
       if (un && pw) {
-        this.client.getAuth().login(un, pw).then(resolve, reject);
+        this.client.getAuth().login(un, pw, true).then(resolve, reject);
       } else {
         const at = args.access_token as string;
         const ea = args.expires_at as string;
         if (at) {
           this.client
             .getAuth()
-            .setToken({ access_token: at, expires_at: ea } as any);
+            .setToken({ access_token: at, expires_at: ea } as any, true);
         }
         resolve(undefined);
       }

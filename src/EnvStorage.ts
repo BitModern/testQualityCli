@@ -2,12 +2,20 @@ import { PersistentStorage } from '@testquality/sdk';
 import { env, saveEnv } from './env';
 
 export class EnvStorage implements PersistentStorage {
+  static save = false;
+
+  static enableSave(): void {
+    EnvStorage.save = true;
+  }
+
   public set<T>(property: string, value: T, that: any = this): void {
     (env.auth as any)[property] = JSON.stringify(value);
-    saveEnv();
-
     if (that[property] !== value) {
       that[property] = value; // eslint-disable-line
+    }
+    console.log('set', property, value, EnvStorage.save);
+    if (EnvStorage.save) {
+      saveEnv();
     }
   }
   public get<T>(property: string, defaultVal?: T, that: any = this): T {

@@ -1,7 +1,7 @@
 import { Command } from './Command';
 import { Arguments, Argv } from 'yargs';
 import { logError } from './logError';
-import * as glob from 'glob';
+import { glob } from 'glob';
 import * as fs from 'fs';
 import FormData = require('form-data');
 import { getResponse } from '@testquality/sdk';
@@ -22,24 +22,20 @@ export class UploadCSVCommand extends Command {
           () => {
             if (args.file) {
               console.log(args.file);
-              glob(args.file as string, { realpath: true }, (err, matches) => {
-                if (err) {
-                  logError(err);
+              glob(args.file as string, { realpath: true }).then((matches) => {
+                if (args.config_file) {
+                  this.uploadCSVFile(
+                    args,
+                    matches,
+                    args.config_file as string
+                  ).then(
+                    (response: any) => console.log(response),
+                    (error: any) => logError(error)
+                  );
                 } else {
-                  if (args.config_file) {
-                    this.uploadCSVFile(
-                      args,
-                      matches,
-                      args.config_file as string
-                    ).then(
-                      (response: any) => console.log(response),
-                      (error: any) => logError(error)
-                    );
-                  } else {
-                    logError('No config file was provided');
-                  }
+                  logError('No config file was provided');
                 }
-              });
+              }, (err) => logError(err));
             }
           },
           (error: any) => logError(error)

@@ -4,48 +4,57 @@
   "main": "dist/index.js",
   "bin": "dist/index.js",
   "license": "MIT",
+  "type": "commonjs",
   "scripts": {
     "start": "cross-env node dist/index.js",
     "serve": "ts-node ./src/index.ts",
     "build": "yarn run clean && tsc --project ./tsconfig.json",
     "rebuild": "tsc --project ./tsconfig.json",
-    "lint": "tslint -p tsconfig.json -c tslint.json 'src/**/*.ts' --fix",
+    "lint": "eslint src --ext .ts",
     "format:fix": "prettier --write 'src/**/*.ts'",
     "clean": "rimraf dist/*",
     "package": "rimraf .env && yarn package:macos && yarn package:win && yarn package:linux && yarn package:alpine",
-    "package:macos": "pkg . --target node10-macos-x64 --compress GZip --output commands/testquality-macos",
-    "package:win": "pkg . --target node10-win-x64 --compress GZip --output commands/testquality-win",
-    "package:linux": "pkg . --target node10-linux-x64 --compress GZip --output commands/testquality-linux",
-    "package:alpine": "pkg . --target node10-alpine-x64 --compress GZip --output commands/testquality-alpine"
+    "package:macos": "pkg . --target node16-macos-x64 --compress GZip --output commands/testquality-macos",
+    "package:win": "pkg . --target node16-win-x64 --compress GZip --output commands/testquality-win",
+    "package:linux": "pkg . --target node16-linux-x64 --compress GZip --output commands/testquality-linux",
+    "package:alpine": "pkg . --target node16-alpine-x64 --compress GZip --output commands/testquality-alpine"
   },
   "devDependencies": {
     "@types/bunyan": "^1.8.6",
     "@types/bunyan-format": "^0.2.3",
     "@types/dotenv": "^6.1.1",
-    "@types/glob": "^7.1.1",
-    "@types/node": "^12.6.9",
+    "@types/node": "^16.18.61",
     "@types/supports-color": "^8.1.0",
     "@types/yargs": "^13.0.2",
     "cross-env": "^5.1.4",
     "ora": "3.1.0",
-    "pkg": "5.5.2",
-    "prettier": "^2.2.1",
+    "pkg": "5.8.1",
+    "eslint": "^7.28.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-import-resolver-typescript": "^2.4.0",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-prettier": "^3.4.0",
+    "eslint-plugin-typescript": "^0.14.0",
+    "prettier": "^2.3.2",
     "rimraf": "^2.6.2",
-    "ts-node": "^8.3.0",
-    "tslint": "^5.13.1",
-    "tslint-config-airbnb": "^5.11.1",
-    "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.7.5"
+    "ts-node": "^10.2.1",
+    "typescript": "5.1.6"
   },
   "dependencies": {
-    "@testquality/sdk": "1.12.5",
-    "axios": "^0.21.4",
+    "@testquality/sdk": "1.12.17",
+    "axios": "^1.5.0",
     "bunyan": "^1.8.12",
     "bunyan-format": "^0.2.1",
     "dotenv": "^10.0.0",
     "fast-xml-parser": "^3.13.0",
     "form-data": "^4.0.0",
-    "glob": "^7.1.4",
+    "glob": "^10.3.10",
     "yargs": "^13.3.0"
+  },
+  "pkg": {
+    "assets": [
+      "node_modules/axios/**",
+      "node_modules/@isaacs/cliui/**"
+    ]
   }
 }

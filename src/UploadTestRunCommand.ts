@@ -5,7 +5,7 @@ import * as path from 'path';
 import FormData = require('form-data');
 import { Command } from './Command';
 import { logError } from './logError';
-import asyncGlob from './asyncGlob';
+import { glob } from 'glob';
 
 export class UploadTestRunCommand extends Command {
   constructor() {
@@ -41,11 +41,11 @@ export class UploadTestRunCommand extends Command {
             false
           );
 
-          const xmlFiles = await asyncGlob(xmlFilesGlob, { realpath: true });
+          const xmlFiles = await glob(xmlFilesGlob, { realpath: true });
           let attachments;
           if (runResultOutputDirGlob) {
             console.log('file glob: ', runResultOutputDirGlob);
-            attachments = await asyncGlob(runResultOutputDirGlob, {
+            attachments = await glob(runResultOutputDirGlob, {
               nodir: true,
             });
             console.log('Attachment files', attachments);

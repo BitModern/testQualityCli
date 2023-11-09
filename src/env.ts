@@ -1,9 +1,14 @@
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
+import * as path from 'path';
 
-const envFile = dotenv.config();
-if (envFile.error) {
-  // console.error(envFile.error);
+const envPath = path.resolve(process.cwd(), '.testquality')
+console.log(`Loading env vars from ${envPath} file`);
+if (fs.existsSync(envPath)) {
+  const envFile = dotenv.config({path: envPath});
+  if (envFile.error) {
+    console.error(envFile.error);
+  }
 }
 
 export function getOsEnv(key: string): string | undefined {
@@ -67,5 +72,5 @@ export const saveEnv = () => {
   if (env.api.url !== 'https://api.testquality.com') {
     content += `TQ_HOST=${env.api.url}\n`;
   }
-  fs.writeFileSync('.env', content, { encoding: 'UTF-8', flag: 'w' });
+  fs.writeFileSync(envPath, content, { encoding: 'utf-8', flag: 'w' });
 };

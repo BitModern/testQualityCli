@@ -1,25 +1,25 @@
 {
   "compilerOptions": {
-    "strict": true,
-    "outDir": "dist",
-    "module": "commonjs",
-    "target": "es6",
-    "lib": ["es6", "esnext"],
-    "sourceMap": true,
     "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "alwaysStrict": true,
+    "baseUrl": "./src",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "lib": ["es6", "esnext", "dom"],
+    "module": "CommonJS",
     "moduleResolution": "node",
+    "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "alwaysStrict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "baseUrl": "./src",
+    "outDir": "dist",
     "rootDir": "src",
-    "allowSyntheticDefaultImports": true
+    "sourceMap": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "target": "es6"
   },
   "include": [
     "src/index.ts"

@@ -1,7 +1,7 @@
 import { Command } from './Command';
 import { Arguments, Argv } from 'yargs';
 import { logError } from './logError';
-import * as glob from 'glob';
+import { glob } from 'glob';
 import * as fs from 'fs';
 import FormData = require('form-data');
 import { getResponse } from '@testquality/sdk';
@@ -27,24 +27,19 @@ export class UploadFeatureCommand extends Command {
                     if (args.files) {
                       glob(
                         args.files as string,
-                        { realpath: true },
-                        (err, matches) => {
-                          if (err) {
-                            logError(err);
-                          } else {
-                            if (planId) {
-                              this.uploadFeatureFiles(
-                                args,
-                                planId,
-                                matches,
-                                milestoneId
-                              ).then(
-                                (response: any) => console.log(response),
-                                (error: any) => logError(error)
-                              );
-                            }
+                        { realpath: true }).then((matches) => {
+                          if (planId) {
+                            this.uploadFeatureFiles(
+                              args,
+                              planId,
+                              matches,
+                              milestoneId
+                            ).then(
+                              (response: any) => console.log(response),
+                              (error: any) => logError(error)
+                            );
                           }
-                        }
+                        }, (err) => logError(err)
                       );
                     }
                   },
