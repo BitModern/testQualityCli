@@ -69,6 +69,7 @@ typings/
 
 # dotenv environment variables file
 .env
+.testquality
 
 # next.js build output
 .next
