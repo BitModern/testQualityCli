@@ -102,7 +102,7 @@ export class UploadTestRunCommand extends Command {
       data.append('create_manual_run', args.create_manual_run ? 1 : 0);
     }
     if (args.suite_id) {
-      data.append('defaultSuite', args.suite_id);
+      data.append('suite_id', args.suite_id);
     }
 
     const files = [...xmlFiles, ...attachments];
