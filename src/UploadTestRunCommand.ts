@@ -18,9 +18,9 @@ export class UploadTestRunCommand extends Command {
             describe: `glob JUnit/XUnit XML output file, example: upload_test_run '**/*.xml'`,
             type: 'string',
           })
-          .option('suite_id', {
-            alias: 'si',
-            describe: 'Suite id',
+          .option('folder_id', {
+            alias: 'fi',
+            describe: 'Folder id',
             type: 'string',
           }
         );
