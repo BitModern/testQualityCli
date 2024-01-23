@@ -13,10 +13,17 @@ export class UploadTestRunCommand extends Command {
       'upload_test_run <xmlfiles>',
       'JUnit/XUnit XML Upload',
       (args: Argv) => {
-        return args.positional('xmlfiles', {
-          describe: `glob JUnit/XUnit XML output file, example: upload_test_run '**/*.xml'`,
-          type: 'string',
-        });
+        return args
+          .positional('xmlfiles', {
+            describe: `glob JUnit/XUnit XML output file, example: upload_test_run '**/*.xml'`,
+            type: 'string',
+          })
+          .option('folder_id', {
+            alias: 'fi',
+            describe: 'Folder id',
+            type: 'string',
+          }
+        );
       },
       async (args: Arguments) => {
         try {
@@ -93,6 +100,9 @@ export class UploadTestRunCommand extends Command {
     }
     if (args.create_manual_run) {
       data.append('create_manual_run', args.create_manual_run ? 1 : 0);
+    }
+    if (args.suite_id) {
+      data.append('suite_id', args.suite_id);
     }
 
     const files = [...xmlFiles, ...attachments];
