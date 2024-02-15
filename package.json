@@ -17,7 +17,8 @@
     "package:macos": "pkg . --target node16-macos-x64 --compress GZip --output commands/testquality-macos",
     "package:win": "pkg . --target node16-win-x64 --compress GZip --output commands/testquality-win",
     "package:linux": "pkg . --target node16-linux-x64 --compress GZip --output commands/testquality-linux",
-    "package:alpine": "pkg . --target node16-alpine-x64 --compress GZip --output commands/testquality-alpine"
+    "package:alpine": "pkg . --target node16-alpine-x64 --compress GZip --output commands/testquality-alpine",
+    "changelog": "conventional-changelog -p conventionalcommits -i CHANGELOG.md -s -r 0"
   },
   "devDependencies": {
     "@types/bunyan": "^1.8.6",
@@ -26,15 +27,16 @@
     "@types/node": "^16.18.61",
     "@types/supports-color": "^8.1.0",
     "@types/yargs": "^13.0.2",
+    "conventional-changelog-cli": "4.1.0",
     "cross-env": "^5.1.4",
-    "ora": "3.1.0",
-    "pkg": "5.8.1",
     "eslint": "^7.28.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-import-resolver-typescript": "^2.4.0",
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-typescript": "^0.14.0",
+    "ora": "3.1.0",
+    "pkg": "5.8.1",
     "prettier": "^2.3.2",
     "rimraf": "^2.6.2",
     "ts-node": "^10.2.1",
