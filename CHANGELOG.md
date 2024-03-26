@@ -1,3 +1,10 @@
+## [1.2.0](https://github.com/BitModern/testQualityCli/compare/1.1.1...1.2.0) (2024-03-26)
+
+
+### Features
+
+* add feture results command ([5e203b7](https://github.com/BitModern/testQualityCli/commit/5e203b7cbebbc8e3e50e3ec2c250cc76ac66433a))
+
 ## [1.1.1](https://github.com/BitModern/testQualityCli/compare/1.1.0...1.1.1) (2024-02-15)
 
 
