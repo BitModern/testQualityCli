@@ -142,49 +142,46 @@ export class Command {
     return params;
   }
 
-  public getId(
+  public async getId(
     args: any,
     type: string,
     projectId?: number,
     required: boolean = true
   ): Promise<number | undefined> {
-    return new Promise((resolve, reject) => {
-      const name = args[type + '_name'] as string;
+    const id = args[type + '_id'];
+    if (id) {
+      return parseInt(id, 10);
+    }
 
-      if (name) {
-        if (!projectId) {
-          reject(
-            `projectId is required. Try adding "--project_name=<name>" or "--project_id=<number>"`
-          );
-        }
-        getResponse<ResourceList<HasId>>(this.client.api, {
-          method: 'get',
-          url: `/${type}`,
-          params: {
-            project_id: projectId,
-          } as any,
-        }).then((list) => {
-          const item = list.data.find(
-            (p) => p.name.toLowerCase() === name.toLowerCase()
-          );
-          if (item) {
-            resolve(item.id);
-          } else {
-            reject(`${type} ${name} not found!`);
-          }
-        }, reject);
-      } else {
-        const id = args[type + '_id'];
-        if (id) {
-          resolve(parseInt(id, 10));
-        } else if (required) {
-          reject(
-            `${type} is required. Try adding "--${type}_name=<name>" or "--${type}_id=<number>"`
-          );
-        } else {
-          resolve(undefined);
-        }
+    const name = args[type + '_name'] as string;
+    if (name) {
+      if (!projectId) {
+        return Promise.reject(
+          `projectId is required. Try adding "--project_name=<name>" or "--project_id=<number>"`
+        );
       }
-    });
+      return getResponse<ResourceList<HasId>>(this.client.api, {
+        method: 'get',
+        url: `/${type}`,
+        params: {
+          project_id: projectId,
+        } as any,
+      }).then((list) => {
+        const item = list.data.find(
+          (p) => p.name.toLowerCase() === name.toLowerCase()
+        );
+        if (!item) {
+          return Promise.reject(`${type} ${name} not found!`);
+        }
+        return item.id;
+      });
+    }
+
+    if (required) {
+      return Promise.reject(
+        `${type} is required. Try adding "--${type}_name=<name>" or "--${type}_id=<number>"`
+      );
+    }
+    return;
   }
 }

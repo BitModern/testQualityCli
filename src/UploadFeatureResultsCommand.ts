@@ -3,17 +3,17 @@ import { Arguments, Argv } from 'yargs';
 import { logError } from './logError';
 import { glob } from 'glob';
 import * as fs from 'fs';
+import { PlanRoute, getResponse } from '@testquality/sdk';
 import FormData = require('form-data');
-import { getResponse } from '@testquality/sdk';
 
-export class UploadFeatureCommand extends Command {
+export class UploadFeatureResultsCommand extends Command {
   constructor() {
     super(
-      'upload_feature <files>',
-      'Gherkin feature files Upload',
+      'upload_feature_results <files>',
+      'Gherkin Result files Upload',
       (args: Argv) => {
         return args.positional('files', {
-          describe: `glob Gherkin feature file, example: upload_feature '**/*.feature'`,
+          describe: `glob Gherkin result file, example: upload_feature_results '**/*.json`,
           type: 'string',
         });
       },
@@ -31,7 +31,7 @@ export class UploadFeatureCommand extends Command {
             const matches = await glob(args.files as string, {
               realpath: true,
             });
-            await this.uploadFeatureFiles(
+            await this.uploadFeatureResultFiles(
               args,
               planId,
               matches,
@@ -45,13 +45,12 @@ export class UploadFeatureCommand extends Command {
     );
   }
 
-  private uploadFeatureFiles(
+  private uploadFeatureResultFiles(
     args: Arguments,
-    planId: number | undefined,
+    planId: number,
     matches: string[],
     milestoneId: number | undefined
   ): Promise<any> {
-    const url = `/plan/${planId}/import_feature`;
     const data = new FormData();
 
     if (matches.length > 1) {
@@ -68,11 +67,13 @@ export class UploadFeatureCommand extends Command {
     } else {
       throw Error('No matching files');
     }
+
     if (milestoneId) {
       data.append('milestone_id', milestoneId);
     }
+
     return getResponse(this.client.api, {
-      url,
+      url: `${PlanRoute()}/${planId}/import_feature_results`,
       method: 'POST',
       data,
       headers: data.getHeaders(),

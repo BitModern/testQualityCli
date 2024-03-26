@@ -1,0 +1,796 @@
+[
+  {
+    "line": 1,
+    "elements": [
+      {
+        "start_timestamp": "2022-10-19T23:50:45.100Z",
+        "before": [
+          {
+            "result": {
+              "duration": 1560082,
+              "status": "passed"
+            },
+            "match": {
+              "location": "io.virtualan.cucumblan.core.BaseStepDefinition.before(io.cucumber.java.Scenario)"
+            }
+          },
+          {
+            "result": {
+              "duration": 1552088,
+              "status": "passed"
+            },
+            "match": {
+              "location": "io.virtualan.cucumblan.core.DBBaseStepDefinition.before(io.cucumber.java.Scenario)"
+            }
+          },
+          {
+            "result": {
+              "duration": 185163,
+              "status": "passed"
+            },
+            "match": {
+              "location": "io.virtualan.cucumblan.core.MsgBaseStepDefinition.before(io.cucumber.java.Scenario)"
+            }
+          }
+        ],
+        "line": 3,
+        "name": "Load initial set of data",
+        "description": "",
+        "id": "demoreport;load-initial-set-of-data",
+        "type": "scenario",
+        "keyword": "Scenario",
+        "steps": [
+          {
+            "result": {
+              "duration": 22752956,
+              "status": "passed"
+            },
+            "line": 4,
+            "name": "provided all the feature level parameters from file",
+            "match": {
+              "location": "io.virtualan.cucumblan.core.BaseStepDefinition.loadGlobalParamFromFile()"
+            },
+            "keyword": "Given "
+          }
+        ]
+      },
+      {
+        "start_timestamp": "2022-10-19T23:50:45.575Z",
+        "before": [
+          {
+            "result": {
+              "duration": 896059,
+              "status": "passed"
+            },
+            "match": {
+              "location": "io.virtualan.cucumblan.core.BaseStepDefinition.before(io.cucumber.java.Scenario)"
+            }
+          },
+          {
+            "result": {
+              "duration": 2290768,
+              "status": "passed"
+            },
+            "match": {
+              "location": "io.virtualan.cucumblan.core.DBBaseStepDefinition.before(io.cucumber.java.Scenario)"
+            }
+          },
+          {
+            "result": {
+              "duration": 402311,
+              "status": "passed"
+            },
+            "match": {
+              "location": "io.virtualan.cucumblan.core.MsgBaseStepDefinition.before(io.cucumber.java.Scenario)"
+            }
+          }
+        ],
+        "line": 7,
+        "name": "Read user infos - Example - api call",
+        "description": "",
+        "id": "demoreport;read-user-infos---example---api-call",
+        "type": "scenario",
+        "keyword": "Scenario",
+        "steps": [
+          {
+            "result": {
+              "duration": 517900,
+              "status": "passed"
+            },
+            "line": 8,
+            "name": "a user perform a api action",
+            "match": {
+              "arguments": [
+                {
+                  "val": "a user",
+                  "offset": 0
+                },
+                {
+                  "val": "a",
+                  "offset": 15
+                }
+              ],
+              "location": "io.virtualan.cucumblan.core.BaseStepDefinition.readRequestByPathParam(java.lang.String,java.lang.String)"
+            },
+            "keyword": "Given "
+          },
+          {
+            "result": {
+              "duration": 1783671,
+              "status": "passed"
+            },
+            "line": 9,
+            "name": "add request with given header params",
+            "match": {
+              "arguments": [
+                {
+                  "val": "request",
+                  "offset": 4
+                }
+              ],
+              "location": "io.virtualan.cucumblan.core.BaseStepDefinition.readAllHeaderParams(java.lang.String,java.util.Map<java.lang.String, java.lang.String>)"
+            },
+            "rows": [
+              {
+                "cells": [
+                  "contentType",
+                  "application/json"
+                ]
+              }
+            ],
+            "keyword": "And "
+          },
+          {
+            "embeddings": [
+              {
+                "data": "ewogICAgIkFjY2VwdENvbnRlbnRUeXBlIjogImFwcGxpY2F0aW9uL2pzb24iLAogICAgInJlc291cmNlIjogImh0dHBzOi8vbGl2ZS52aXJ0dWFsYW5kZW1vLmNvbS9hcGkvcGVyc29ucy9iZ2F0ZXMiLAogICAgImNvbnRleHQiOiB7fSwKICAgICJ1cmwiOiAiaHR0cHM6Ly9saXZlLnZpcnR1YWxhbmRlbW8uY29tL2FwaSIKfQ==",
+                "mime_type": "application/json",
+                "name": "RequestData:"
+              }
+            ],
+            "result": {
+              "duration": 197090603,
+              "status": "passed"
+            },
+            "line": 11,
+            "name": "a user get application/json in /persons/bgates resource on ep",
+            "match": {
+              "arguments": [
+                {
+                  "val": "a user",
+                  "offset": 0
+                },
+                {
+                  "val": "application/json",
+                  "offset": 11
+                },
+                {
+                  "val": "/persons/bgates",
+                  "offset": 31
+                },
+                {
+                  "val": "ep",
+                  "offset": 59
+                }
+              ],
+              "location": "io.virtualan.cucumblan.core.BaseStepDefinition.readRequest(java.lang.String,java.lang.String,java.lang.String,java.lang.String)"
+            },
+            "keyword": "When "
+          },
+          {
+            "embeddings": [
+              {
+                "data": "ewogICAgImZpcnN0TmFtZSI6ICJCaWxsIiwKICAgICJsYXN0TmFtZSI6ICJHYXRlcyIsCiAgICAibGFzdFRpbWVPbmxpbmUiOiAiMjAyMC0wOC0zMFQyMDoyODozNi4yNjdaIiwKICAgICJkYXRlT2ZCaXJ0aCI6ICIxOTU1LTEwLTI4IiwKICAgICJzcG9rZW5MYW5ndWFnZXMiOiB7CiAgICAgICAgImFkZGl0aW9uYWxQcm9wMSI6ICJUYW1pbCIsCiAgICAgICAgImFkZGl0aW9uYWxQcm9wMyI6ICJTcGFuaXNoIiwKICAgICAgICAiYWRkaXRpb25hbFByb3AyIjogIkVuZ2xpc2giCiAgICB9LAogICAgInVzZXJuYW1lIjogImJnYXRlcyIKfQ==",
+                "mime_type": "application/json",
+                "name": "Actual-Response:"
+              },
+              {
+                "data": "eyJTVEFUVVNfQ09ERSI6ICIyMDAifQ==",
+                "mime_type": "application/json",
+                "name": "Contextual-Dataset:"
+              }
+            ],
+            "result": {
+              "duration": 3687887,
+              "status": "passed"
+            },
+            "line": 12,
+            "name": "the status code is 200",
+            "match": {
+              "arguments": [
+                {
+                  "val": "200",
+                  "offset": 19
+                }
+              ],
+              "location": "io.virtualan.cucumblan.core.BaseStepDefinition.verifyStatusCode(int)"
+            },
+            "keyword": "Then "
+          },
+          {
+            "embeddings": [
+              {
+                "data": "W3siZGF0ZU9mQmlydGgiOiIxOTU1LTEwLTI4IiwiZmlyc3ROYW1lIjoiQmlsbCIsImxhc3ROYW1lIjoiR2F0ZXMiLCJsYXN0VGltZU9ubGluZSI6IjIwMjAtMDgtMzBUMjA6Mjg6MzYuMjY3WiIsInNwb2tlbkxhbmd1YWdlcyI6eyJhZGRpdGlvbmFsUHJvcDEiOiJUYW1pbCIsImFkZGl0aW9uYWxQcm9wMiI6IkVuZ2xpc2giLCJhZGRpdGlvbmFsUHJvcDMiOiJTcGFuaXNoIn0sInVzZXJuYW1lIjoiYmdhdGVzIn1d",
+                "mime_type": "application/json",
+                "name": "Expected json"
+              },
+              {
+                "data": "eyJmaXJzdE5hbWUiOiJCaWxsIiwibGFzdE5hbWUiOiJHYXRlcyIsImxhc3RUaW1lT25saW5lIjoiMjAyMC0wOC0zMFQyMDoyODozNi4yNjdaIiwiZGF0ZU9mQmlydGgiOiIxOTU1LTEwLTI4Iiwic3Bva2VuTGFuZ3VhZ2VzIjp7ImFkZGl0aW9uYWxQcm9wMSI6IlRhbWlsIiwiYWRkaXRpb25hbFByb3AzIjoiU3BhbmlzaCIsImFkZGl0aW9uYWxQcm9wMiI6IkVuZ2xpc2gifSwidXNlcm5hbWUiOiJiZ2F0ZXMifQ==",
+                "mime_type": "application/json",
+                "name": "Actual json"
+              }
+            ],
+            "result": {
+              "duration": 2517691,
+              "status": "passed"
+            },
+            "line": 13,
+            "name": "verify api response csvson includes in the response",
+            "match": {
+              "arguments": [
+                {
+                  "val": "api",
+                  "offset": 7
+                }
+              ],
+              "location": "io.virtualan.cucumblan.core.BaseStepDefinition.verify(java.lang.String,java.util.List<java.lang.String>)"
+            },
+            "rows": [
+              {
+                "cells": [
+                  "dateOfBirth,firstName,lastName,lastTimeOnline,spokenLanguages/additionalProp1:additionalProp2:additionalProp3,username"
+                ]
+              },
+              {
+                "cells": [
+                  "1955-10-28,Bill,Gates,2020-08-30T20:28:36.267Z,Tamil:English:Spanish,bgates"
+                ]
+              }
+            ],
+            "keyword": "And "
+          }
+        ],
+        "tags": [
+          "@simple-get",
+          "@csvson-example",
+          "@ep"
+        ]
+      },
+      {
+        "start_timestamp": "2022-10-19T23:50:46.405Z",
+        "before": [
+          {
+            "result": {
+              "duration": 1034808,
+              "status": "passed"
+            },
+            "match": {
+              "location": "io.virtualan.cucumblan.core.BaseStepDefinition.before(io.cucumber.java.Scenario)"
+            }
+          },
+          {
+            "result": {
+              "duration": 1491462,
+              "status": "passed"
+            },
+            "match": {
+              "location": "io.virtualan.cucumblan.core.DBBaseStepDefinition.before(io.cucumber.java.Scenario)"
+            }
+          },
+          {
+            "result": {
+              "duration": 155220,
+              "status": "passed"
+            },
+            "match": {
+              "location": "io.virtualan.cucumblan.core.MsgBaseStepDefinition.before(io.cucumber.java.Scenario)"
+            }
+          }
+        ],
+        "line": 18,
+        "name": "Read pet by customer by query params - api call",
+        "description": "",
+        "id": "demoreport;read-pet-by-customer-by-query-params---api-call",
+        "type": "scenario",
+        "keyword": "Scenario",
+        "steps": [
+          {
+            "result": {
+              "duration": 491851,
+              "status": "passed"
+            },
+            "line": 19,
+            "name": "a user perform a api action",
+            "match": {
+              "arguments": [
+                {
+                  "val": "a user",
+                  "offset": 0
+                },
+                {
+                  "val": "a",
+                  "offset": 15
+                }
+              ],
+              "location": "io.virtualan.cucumblan.core.BaseStepDefinition.readRequestByPathParam(java.lang.String,java.lang.String)"
+            },
+            "keyword": "Given "
+          },
+          {
+            "result": {
+              "duration": 1142682,
+              "status": "passed"
+            },
+            "line": 20,
+            "name": "add request with given query params",
+            "match": {
+              "arguments": [
+                {
+                  "val": "request",
+                  "offset": 4
+                }
+              ],
+              "location": "io.virtualan.cucumblan.core.BaseStepDefinition.readRequest(java.lang.String,java.util.Map<java.lang.String, java.lang.String>)"
+            },
+            "rows": [
+              {
+                "cells": [
+                  "tags",
+                  "validateEmpty"
+                ]
+              }
+            ],
+            "keyword": "And "
+          },
+          {
+            "result": {
+              "duration": 614233,
+              "status": "passed"
+            },
+            "line": 22,
+            "name": "add request with given header params",
+            "match": {
+              "arguments": [
+                {
+                  "val": "request",
+                  "offset": 4
+                }
+              ],
+              "location": "io.virtualan.cucumblan.core.BaseStepDefinition.readAllHeaderParams(java.lang.String,java.util.Map<java.lang.String, java.lang.String>)"
+            },
+            "rows": [
+              {
+                "cells": [
+                  "contentType",
+                  "application/json"
+                ]
+              }
+            ],
+            "keyword": "And "
+          },
+          {
+            "embeddings": [
+              {
+                "data": "ewogICAgIkFjY2VwdENvbnRlbnRUeXBlIjogImFwcGxpY2F0aW9uL2pzb24iLAogICAgInJlc291cmNlIjogImh0dHBzOi8vbGl2ZS52aXJ0dWFsYW5kZW1vLmNvbS9hcGkvcGV0cy9maW5kQnlUYWdzIiwKICAgICJjb250ZXh0IjogeyJTVEFUVVNfQ09ERSI6ICIyMDAifSwKICAgICJ1cmwiOiAiaHR0cHM6Ly9saXZlLnZpcnR1YWxhbmRlbW8uY29tL2FwaSIKfQ==",
+                "mime_type": "application/json",
+                "name": "RequestData:"
+              }
+            ],
+            "result": {
+              "duration": 69867945,
+              "status": "passed"
+            },
+            "line": 24,
+            "name": "a user get application/json in /pets/findByTags resource on ep",
+            "match": {
+              "arguments": [
+                {
+                  "val": "a user",
+                  "offset": 0
+                },
+                {
+                  "val": "application/json",
+                  "offset": 11
+                },
+                {
+                  "val": "/pets/findByTags",
+                  "offset": 31
+                },
+                {
+                  "val": "ep",
+                  "offset": 60
+                }
+              ],
+              "location": "io.virtualan.cucumblan.core.BaseStepDefinition.readRequest(java.lang.String,java.lang.String,java.lang.String,java.lang.String)"
+            },
+            "keyword": "When "
+          },
+          {
+            "embeddings": [
+              {
+                "data": "ewogICAgInBob3RvVXJscyI6IFsicGhvdG8uanBlZyJdLAogICAgIm5hbWUiOiAiIiwKICAgICJpZCI6IDIwMSwKICAgICJjYXRlZ29yeSI6IHsKICAgICAgICAibmFtZSI6ICJCdWxsZG9nIiwKICAgICAgICAiaWQiOiAyMDAKICAgIH0sCiAgICAic3RhdHVzIjogImF2YWlsYWJsZSIsCiAgICAidGFncyI6IFt7CiAgICAgICAgIm5hbWUiOiAicmVkIiwKICAgICAgICAiaWQiOiAyMDEKICAgIH1dCn0=",
+                "mime_type": "application/json",
+                "name": "Actual-Response:"
+              },
+              {
+                "data": "eyJTVEFUVVNfQ09ERSI6ICIyMDAifQ==",
+                "mime_type": "application/json",
+                "name": "Contextual-Dataset:"
+              }
+            ],
+            "result": {
+              "duration": 4308586,
+              "status": "passed"
+            },
+            "line": 25,
+            "name": "the status code is 200",
+            "match": {
+              "arguments": [
+                {
+                  "val": "200",
+                  "offset": 19
+                }
+              ],
+              "location": "io.virtualan.cucumblan.core.BaseStepDefinition.verifyStatusCode(int)"
+            },
+            "keyword": "Then "
+          },
+          {
+            "embeddings": [
+              {
+                "data": "W3siaWQiOjIwMSwibmFtZSI6IiIsImNhdGVnb3J5Ijp7ImlkIjoyMDAsIm5hbWUiOiJCdWxsZG9nIn0sInN0YXR1cyI6ImF2YWlsYWJsZSJ9XQ==",
+                "mime_type": "application/json",
+                "name": "Expected json"
+              },
+              {
+                "data": "eyJwaG90b1VybHMiOlsicGhvdG8uanBlZyJdLCJuYW1lIjoiIiwiaWQiOjIwMSwiY2F0ZWdvcnkiOnsibmFtZSI6IkJ1bGxkb2ciLCJpZCI6MjAwfSwic3RhdHVzIjoiYXZhaWxhYmxlIiwidGFncyI6W3sibmFtZSI6InJlZCIsImlkIjoyMDF9XX0=",
+                "mime_type": "application/json",
+                "name": "Actual json"
+              }
+            ],
+            "result": {
+              "duration": 1934158,
+              "status": "passed"
+            },
+            "line": 26,
+            "name": "verify api response csvson includes in the response",
+            "match": {
+              "arguments": [
+                {
+                  "val": "api",
+                  "offset": 7
+                }
+              ],
+              "location": "io.virtualan.cucumblan.core.BaseStepDefinition.verify(java.lang.String,java.util.List<java.lang.String>)"
+            },
+            "rows": [
+              {
+                "cells": [
+                  "id,name, category/id:name,status"
+                ]
+              },
+              {
+                "cells": [
+                  "i~201,,i~200:Bulldog,available"
+                ]
+              }
+            ],
+            "keyword": "And "
+          },
+          {
+            "embeddings": [
+              {
+                "data": "ewogICAgInBob3RvVXJscyI6IFsicGhvdG8uanBlZyJdLAogICAgIm5hbWUiOiAiIiwKICAgICJpZCI6IDIwMSwKICAgICJjYXRlZ29yeSI6IHsKICAgICAgICAibmFtZSI6ICJCdWxsZG9nIiwKICAgICAgICAiaWQiOiAyMDAKICAgIH0sCiAgICAic3RhdHVzIjogImF2YWlsYWJsZSIsCiAgICAidGFncyI6IFt7CiAgICAgICAgIm5hbWUiOiAicmVkIiwKICAgICAgICAiaWQiOiAyMDEKICAgIH1dCn0=",
+                "mime_type": "application/json",
+                "name": "Actual-Response:"
+              }
+            ],
+            "result": {
+              "duration": 196593851,
+              "status": "passed"
+            },
+            "line": 29,
+            "name": "verify across response includes following in the response",
+            "match": {
+              "arguments": [
+                {
+                  "val": "across response",
+                  "offset": 7
+                }
+              ],
+              "location": "io.virtualan.cucumblan.core.BaseStepDefinition.verifyResponse(java.lang.String,io.cucumber.datatable.DataTable)"
+            },
+            "rows": [
+              {
+                "cells": [
+                  "status",
+                  "available"
+                ]
+              }
+            ],
+            "keyword": "And "
+          }
+        ],
+        "tags": [
+          "@test_empty",
+          "@queryparam",
+          "@single-field-validation",
+          "@ep"
+        ]
+      },
+      {
+        "start_timestamp": "2022-10-19T23:50:47.235Z",
+        "before": [
+          {
+            "result": {
+              "duration": 951393,
+              "status": "passed"
+            },
+            "match": {
+              "location": "io.virtualan.cucumblan.core.BaseStepDefinition.before(io.cucumber.java.Scenario)"
+            }
+          },
+          {
+            "result": {
+              "duration": 1562673,
+              "status": "passed"
+            },
+            "match": {
+              "location": "io.virtualan.cucumblan.core.DBBaseStepDefinition.before(io.cucumber.java.Scenario)"
+            }
+          },
+          {
+            "result": {
+              "duration": 215392,
+              "status": "passed"
+            },
+            "match": {
+              "location": "io.virtualan.cucumblan.core.MsgBaseStepDefinition.before(io.cucumber.java.Scenario)"
+            }
+          }
+        ],
+        "line": 33,
+        "name": "Read pet by customer by query params - api call",
+        "description": "",
+        "id": "demoreport;read-pet-by-customer-by-query-params---api-call",
+        "type": "scenario",
+        "keyword": "Scenario",
+        "steps": [
+          {
+            "result": {
+              "duration": 454574,
+              "status": "passed"
+            },
+            "line": 34,
+            "name": "a user perform a api action",
+            "match": {
+              "arguments": [
+                {
+                  "val": "a user",
+                  "offset": 0
+                },
+                {
+                  "val": "a",
+                  "offset": 15
+                }
+              ],
+              "location": "io.virtualan.cucumblan.core.BaseStepDefinition.readRequestByPathParam(java.lang.String,java.lang.String)"
+            },
+            "keyword": "Given "
+          },
+          {
+            "result": {
+              "duration": 853319,
+              "status": "passed"
+            },
+            "line": 35,
+            "name": "add request with given query params",
+            "match": {
+              "arguments": [
+                {
+                  "val": "request",
+                  "offset": 4
+                }
+              ],
+              "location": "io.virtualan.cucumblan.core.BaseStepDefinition.readRequest(java.lang.String,java.util.Map<java.lang.String, java.lang.String>)"
+            },
+            "rows": [
+              {
+                "cells": [
+                  "tags",
+                  "validateNull"
+                ]
+              }
+            ],
+            "keyword": "And "
+          },
+          {
+            "result": {
+              "duration": 1023477,
+              "status": "passed"
+            },
+            "line": 37,
+            "name": "add request with given header params",
+            "match": {
+              "arguments": [
+                {
+                  "val": "request",
+                  "offset": 4
+                }
+              ],
+              "location": "io.virtualan.cucumblan.core.BaseStepDefinition.readAllHeaderParams(java.lang.String,java.util.Map<java.lang.String, java.lang.String>)"
+            },
+            "rows": [
+              {
+                "cells": [
+                  "contentType",
+                  "application/json"
+                ]
+              }
+            ],
+            "keyword": "And "
+          },
+          {
+            "embeddings": [
+              {
+                "data": "ewogICAgIkFjY2VwdENvbnRlbnRUeXBlIjogImFwcGxpY2F0aW9uL2pzb24iLAogICAgInJlc291cmNlIjogImh0dHBzOi8vbGl2ZS52aXJ0dWFsYW5kZW1vLmNvbS9hcGkvcGV0cy9maW5kQnlUYWdzIiwKICAgICJjb250ZXh0IjogeyJTVEFUVVNfQ09ERSI6ICIyMDAifSwKICAgICJ1cmwiOiAiaHR0cHM6Ly9saXZlLnZpcnR1YWxhbmRlbW8uY29tL2FwaSIKfQ==",
+                "mime_type": "application/json",
+                "name": "RequestData:"
+              }
+            ],
+            "result": {
+              "duration": 71595855,
+              "status": "passed"
+            },
+            "line": 39,
+            "name": "a user get application/json in /pets/findByTags resource on ep",
+            "match": {
+              "arguments": [
+                {
+                  "val": "a user",
+                  "offset": 0
+                },
+                {
+                  "val": "application/json",
+                  "offset": 11
+                },
+                {
+                  "val": "/pets/findByTags",
+                  "offset": 31
+                },
+                {
+                  "val": "ep",
+                  "offset": 60
+                }
+              ],
+              "location": "io.virtualan.cucumblan.core.BaseStepDefinition.readRequest(java.lang.String,java.lang.String,java.lang.String,java.lang.String)"
+            },
+            "keyword": "When "
+          },
+          {
+            "embeddings": [
+              {
+                "data": "ewogICAgInBob3RvVXJscyI6IFsicGhvdG8uanBlZyJdLAogICAgImlkIjogMjAxLAogICAgImNhdGVnb3J5IjogewogICAgICAgICJuYW1lIjogIkJ1bGxkb2ciLAogICAgICAgICJpZCI6IDIwMAogICAgfSwKICAgICJzdGF0dXMiOiAiYXZhaWxhYmxlIiwKICAgICJ0YWdzIjogW3sKICAgICAgICAibmFtZSI6ICJyZWQiLAogICAgICAgICJpZCI6IDIwMQogICAgfV0KfQ==",
+                "mime_type": "application/json",
+                "name": "Actual-Response:"
+              },
+              {
+                "data": "eyJTVEFUVVNfQ09ERSI6ICIyMDAifQ==",
+                "mime_type": "application/json",
+                "name": "Contextual-Dataset:"
+              }
+            ],
+            "result": {
+              "duration": 20784540,
+              "status": "passed"
+            },
+            "line": 40,
+            "name": "the status code is 200",
+            "match": {
+              "arguments": [
+                {
+                  "val": "200",
+                  "offset": 19
+                }
+              ],
+              "location": "io.virtualan.cucumblan.core.BaseStepDefinition.verifyStatusCode(int)"
+            },
+            "keyword": "Then "
+          },
+          {
+            "embeddings": [
+              {
+                "data": "W3siaWQiOjIwMSwiY2F0ZWdvcnkiOnsiaWQiOjIwMCwibmFtZSI6IkJ1bGxkb2cifSwic3RhdHVzIjoiYXZhaWxhYmxlIn1d",
+                "mime_type": "application/json",
+                "name": "Expected json"
+              },
+              {
+                "data": "eyJwaG90b1VybHMiOlsicGhvdG8uanBlZyJdLCJpZCI6MjAxLCJjYXRlZ29yeSI6eyJuYW1lIjoiQnVsbGRvZyIsImlkIjoyMDB9LCJzdGF0dXMiOiJhdmFpbGFibGUiLCJ0YWdzIjpbeyJuYW1lIjoicmVkIiwiaWQiOjIwMX1dfQ==",
+                "mime_type": "application/json",
+                "name": "Actual json"
+              }
+            ],
+            "result": {
+              "duration": 1387545,
+              "status": "passed"
+            },
+            "line": 41,
+            "name": "verify api response csvson includes in the response",
+            "match": {
+              "arguments": [
+                {
+                  "val": "api",
+                  "offset": 7
+                }
+              ],
+              "location": "io.virtualan.cucumblan.core.BaseStepDefinition.verify(java.lang.String,java.util.List<java.lang.String>)"
+            },
+            "rows": [
+              {
+                "cells": [
+                  "id,category/id:name,status"
+                ]
+              },
+              {
+                "cells": [
+                  "i~201,i~200:Bulldog,available"
+                ]
+              }
+            ],
+            "keyword": "And "
+          },
+          {
+            "embeddings": [
+              {
+                "data": "ewogICAgInBob3RvVXJscyI6IFsicGhvdG8uanBlZyJdLAogICAgImlkIjogMjAxLAogICAgImNhdGVnb3J5IjogewogICAgICAgICJuYW1lIjogIkJ1bGxkb2ciLAogICAgICAgICJpZCI6IDIwMAogICAgfSwKICAgICJzdGF0dXMiOiAiYXZhaWxhYmxlIiwKICAgICJ0YWdzIjogW3sKICAgICAgICAibmFtZSI6ICJyZWQiLAogICAgICAgICJpZCI6IDIwMQogICAgfV0KfQ==",
+                "mime_type": "application/json",
+                "name": "Actual-Response:"
+              }
+            ],
+            "result": {
+              "duration": 278426316,
+              "status": "passed"
+            },
+            "line": 44,
+            "name": "verify across response includes following in the response",
+            "match": {
+              "arguments": [
+                {
+                  "val": "across response",
+                  "offset": 7
+                }
+              ],
+              "location": "io.virtualan.cucumblan.core.BaseStepDefinition.verifyResponse(java.lang.String,io.cucumber.datatable.DataTable)"
+            },
+            "rows": [
+              {
+                "cells": [
+                  "name==null",
+                  "true"
+                ]
+              },
+              {
+                "cells": [
+                  "status",
+                  "available"
+                ]
+              }
+            ],
+            "keyword": "And "
+          }
+        ],
+        "tags": [
+          "@test_null",
+          "@queryparam",
+          "@ep"
+        ]
+      }
+    ],
+    "name": "DemoReport",
+    "description": "",
+    "id": "demoreport",
+    "keyword": "Feature",
+    "uri": "file:result/9234f1ca-37ba-4486-9b68-b6e1513ce520/feature/DemoReport.feature",
+    "tags": []
+  }
+]

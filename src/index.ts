@@ -6,6 +6,7 @@ import { PlanCommand } from './PlanCommand';
 import { MilestoneCommand } from './MilestoneCommand';
 import { UploadTestRunCommand } from './UploadTestRunCommand';
 import { UploadFeatureCommand } from './UploadFeatureCommand';
+import { UploadFeatureResultsCommand } from './UploadFeatureResultsCommand';
 import { UploadCSVCommand } from './UploadCSVCommand';
 import { CreateManualRunCommand } from './CreateManualRunCommand';
 import { RestoreCommand } from './RestoreCommand';
@@ -37,6 +38,7 @@ const argv = yargs
   .command(new TestCommand())
   .command(new UploadTestRunCommand())
   .command(new UploadFeatureCommand())
+  .command(new UploadFeatureResultsCommand())
   .command(new UploadCSVCommand())
   .option('verbose', {
     alias: 'v',
