@@ -11,16 +11,11 @@ jobs:
     environment: Release
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 20
-
-      - name: Install dependencies
-        run: yarn install
+          node-version: 18
+      - run: yarn install
 
       - name: Build library
         run: yarn build
@@ -33,7 +28,7 @@ jobs:
       - name: Build binaries
         run: yarn package
 
-      - name: Release with binaries
+      - name: Release binaries
         uses: softprops/action-gh-release@v2
         with:
           files: |
