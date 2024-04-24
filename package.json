@@ -12,7 +12,7 @@
   "type": "commonjs",
   "homepage": "https://github.com/BitModern/testQualityCli",
   "repository": {
-    "url": "https://github.com/BitModern/testQualityCli"
+    "url": "git+https://github.com/BitModern/testQualityCli.git"
   },
   "scripts": {
     "start": "cross-env node dist/index.js",
