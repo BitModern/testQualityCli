@@ -18,7 +18,7 @@
     "start": "cross-env node dist/index.js",
     "serve": "ts-node ./src/index.ts",
     "build": "yarn run clean && yarn run rebuild && yarn run makeExecutable",
-    "rebuild": "esbuild src/index.ts --bundle --outfile=dist/index.js --platform=node --target=node14 --banner:js='#!/usr/bin/env node'",
+    "rebuild": "esbuild src/index.ts --bundle --outfile=dist/index.js --platform=node --target=node14 --banner:js='#!/usr/bin/env node' --external:dtrace-provider",
     "makeExecutable": "chmod +x dist/index.js",
     "lint": "eslint src --ext .ts",
     "format:fix": "prettier --write 'src/**/*.ts'",
