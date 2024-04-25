@@ -16,19 +16,30 @@
   },
   "scripts": {
     "start": "cross-env node dist/index.js",
-    "serve": "ts-node ./src/index.ts",
-    "build": "yarn run clean && yarn run rebuild && yarn run makeExecutable",
-    "rebuild": "esbuild src/index.ts --bundle --outfile=dist/index.js --platform=node --target=node14 --banner:js='#!/usr/bin/env node' --external:dtrace-provider",
-    "makeExecutable": "chmod +x dist/index.js",
+    "dev": "ts-node ./src/index.ts",
+    "build": "run-s build:clean build:bundle build:xperm",
+    "build:clean": "rimraf dist/*",
+    "build:bundle": "esbuild src/index.ts --bundle --outfile=dist/index.js --platform=node --target=node14 --banner:js='#!/usr/bin/env node' --external:dtrace-provider",
+    "build:xperm": "chmod +x dist/index.js",
     "lint": "eslint src --ext .ts",
     "format:fix": "prettier --write 'src/**/*.ts'",
-    "clean": "rimraf dist/*",
-    "package": "rimraf .env && yarn package:macos && yarn package:win && yarn package:linux && yarn package:alpine",
+    "package": "rimraf .env && run-s package:*",
     "package:macos": "pkg . --target node16-macos-x64 --compress GZip --output commands/testquality-macos",
     "package:win": "pkg . --target node16-win-x64 --compress GZip --output commands/testquality-win",
     "package:linux": "pkg . --target node16-linux-x64 --compress GZip --output commands/testquality-linux",
     "package:alpine": "pkg . --target node16-alpine-x64 --compress GZip --output commands/testquality-alpine",
     "changelog": "conventional-changelog -p conventionalcommits -i CHANGELOG.md -s -r 0"
+  },
+  "dependencies": {
+    "@testquality/sdk": "1.12.17",
+    "axios": "1.5.0",
+    "bunyan": "1.8.12",
+    "bunyan-format": "0.2.1",
+    "dotenv": "10.0.0",
+    "fast-xml-parser": "3.13.0",
+    "form-data": "4.0.0",
+    "glob": "10.3.10",
+    "yargs": "13.3.0"
   },
   "devDependencies": {
     "@types/bunyan": "^1.8.6",
@@ -46,23 +57,13 @@
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-typescript": "^0.14.0",
+    "npm-run-all": "^4.1.5",
     "ora": "3.1.0",
     "pkg": "5.8.1",
     "prettier": "^2.3.2",
     "rimraf": "^2.6.2",
     "ts-node": "^10.2.1",
     "typescript": "5.1.6"
-  },
-  "dependencies": {
-    "@testquality/sdk": "1.12.17",
-    "axios": "^1.5.0",
-    "bunyan": "^1.8.12",
-    "bunyan-format": "^0.2.1",
-    "dotenv": "^10.0.0",
-    "fast-xml-parser": "^3.13.0",
-    "form-data": "^4.0.0",
-    "glob": "^10.3.10",
-    "yargs": "^13.3.0"
   },
   "pkg": {
     "assets": [
