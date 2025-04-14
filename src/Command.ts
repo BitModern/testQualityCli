@@ -1,5 +1,4 @@
 import { Arguments, Argv } from 'yargs';
-import { env, saveEnv } from './env';
 import { logger } from './Logger';
 import {
   ClientSdk,
@@ -11,19 +10,19 @@ import {
   ResourceList,
   ReturnToken,
 } from '@testquality/sdk';
-import { EnvStorage } from './EnvStorage';
+import { EnvironmentStorage, env, saveEnv } from './Environment';
 import { HasId } from 'HasId';
 import { logError } from './logError';
 
 const singleClient = new ClientSdk({
-  clientId: env.client_id,
-  clientSecret: env.client_secret,
+  clientId: env.clientId,
+  clientSecret: env.clientSecret,
   baseUrl: env.api.url,
   debug: env.api.xDebug,
   errorHandler: (newError: HttpError) => {
     logError(newError);
   },
-  persistentStorage: new EnvStorage(),
+  persistentStorage: new EnvironmentStorage(),
   logger: logger as LoggerInterface,
 });
 
@@ -45,16 +44,18 @@ export class Command {
   public builder = (args: Argv): Argv => {
     return this.subBuilder(args);
   };
+
   public handler = (args: Arguments): void => {
     if (args.verbose) {
       logger.info(`TestQuality Host: ${env.api.url}`);
       logger.info('Current path ' + process.cwd());
     }
     if (args.save) {
-      EnvStorage.enableSave();
+      EnvironmentStorage.enableSave();
     }
     this.subHandler(args);
   };
+
   public getProjectId(args: any): Promise<number | undefined> {
     return new Promise((resolve, reject) => {
       this.reLogin(args).then(() => {
@@ -67,7 +68,7 @@ export class Command {
             if (project) {
               this.projectId = project.id;
               if (args.save) {
-                env.auth.project_id = this.projectId.toString();
+                env.variables.projectId = this.projectId.toString();
                 saveEnv();
               }
               resolve(this.projectId);
@@ -76,11 +77,11 @@ export class Command {
             }
           }, reject);
         } else {
-          const value = (args.project_id as string) || env.auth.project_id;
+          const value = (args.project_id as string) || env.variables.projectId;
           if (value) {
             this.projectId = parseInt(value, 10);
             if (args.save) {
-              env.auth.project_id = value;
+              env.variables.projectId = value;
               saveEnv();
             }
           }
@@ -89,40 +90,43 @@ export class Command {
       }, reject);
     });
   }
+
   public reLogin(args: any): Promise<ReturnToken | undefined> {
-    this.migrateOldVariables(args);
-    this.client.getAuth(); // initiate auth
     return new Promise((resolve, reject) => {
-      const un = (args.username as string) || env.auth.username;
-      const pw = (args.password as string) || env.auth.password;
-      if (un && pw) {
-        this.client.getAuth().login(un, pw, true).then(resolve, reject);
+      const user = (args.username as string) || env.variables.username;
+      const password = (args.password as string) || env.variables.password;
+
+      if (user && password) {
+        this.client.getAuth().login(user, password, !!args.save).then(resolve, reject);
       } else {
-        const at = args.access_token as string;
-        const ea = args.expires_at as string;
-        if (at) {
-          this.client
-            .getAuth()
-            .setToken({ access_token: at, expires_at: ea } as any, true);
+        const accessToken = (args.access_token as string) || env.variables.accessToken;
+        const expiresAt = (args.expires_at as string) || env.variables.expiresAt;
+        const refreshToken = (args.refresh_token as string) || env.variables.refreshToken;
+
+        // In the unlikely case that we end up with both a PAT token and a token set in ClientSdk.Auth,
+        // we prioritize the PAT token.
+        let token: ReturnToken | undefined;
+        if (accessToken) {
+          token = {
+            access_token: accessToken,
+            expires_at: expiresAt,
+            refresh_token: refreshToken,
+          };
+        } else if (env.auth.token) {
+          try {
+            token = JSON.parse(env.auth.token);
+          } catch (error) {
+            logger.warn('Error parsing token from env.auth.token');
+            reject(error);
+          }
+        }
+
+        if (token) {
+          this.client.getAuth().setToken(token, !!args.save);
         }
         resolve(undefined);
       }
     });
-  }
-
-  public migrateOldVariables(args: any) {
-    if (!args.username && !env.auth.username) {
-      if (env.variables.username?.value) {
-        env.auth.username = env.variables.username.value;
-        env.auth.password = env.variables.password.value;
-      } else if (env.variables.access_token.value) {
-        env.auth.token = JSON.stringify({
-          access_token: env.variables.access_token.value,
-          refresh_token: env.variables.refresh_token.value,
-          expires_at: env.variables.expires_at.value,
-        });
-      }
-    }
   }
 
   public getParams(args: any) {

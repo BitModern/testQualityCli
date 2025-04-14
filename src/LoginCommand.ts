@@ -36,6 +36,9 @@ export class LoginCommand extends Command {
               !!args.save,
               prop
             )
+            // If successful the token will be stored in
+            // client.persistentStorage (env.auth.token)
+            // (if save option is true)
             .then(
               (body) => {
                 console.log(body);

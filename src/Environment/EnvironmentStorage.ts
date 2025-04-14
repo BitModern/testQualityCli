@@ -1,11 +1,14 @@
 import { PersistentStorage } from '@testquality/sdk';
-import { env, saveEnv } from './env';
+import { env, saveEnv } from './EnvironmentManager';
 
-export class EnvStorage implements PersistentStorage {
+import Debug from 'debug';
+const debug = Debug('tq:cli:EnvironmentStorage');
+
+export class EnvironmentStorage implements PersistentStorage {
   static save = false;
 
   static enableSave(): void {
-    EnvStorage.save = true;
+    EnvironmentStorage.save = true;
   }
 
   public set<T>(property: string, value: T, that: any = this): void {
@@ -13,11 +16,12 @@ export class EnvStorage implements PersistentStorage {
     if (that[property] !== value) {
       that[property] = value; // eslint-disable-line
     }
-    console.log('set', property, value, EnvStorage.save);
-    if (EnvStorage.save) {
+    debug('set', { property, value, save: EnvironmentStorage.save });
+    if (EnvironmentStorage.save) {
       saveEnv();
     }
   }
+
   public get<T>(property: string, defaultVal?: T, that: any = this): T {
     if (that[property] === undefined) {
       const value = (env.auth as any)[property];

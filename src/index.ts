@@ -1,4 +1,4 @@
-import './env';
+import './Environment';
 import * as yargs from 'yargs';
 import { LoginCommand } from './LoginCommand';
 import { ProjectCommand } from './ProjectCommand';

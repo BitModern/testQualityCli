@@ -6,7 +6,7 @@
  */
 import * as Logger from 'bunyan';
 import * as BunyanFormat from 'bunyan-format';
-import { env } from './env';
+import { env } from './Environment';
 import { errSerializer } from './errSerializer';
 
 export const logger = new Logger({
