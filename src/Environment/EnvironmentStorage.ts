@@ -14,11 +14,11 @@ export class EnvironmentStorage implements PersistentStorage {
   public set<T>(property: string, value: T, that: any = this): void {
     (env.auth as any)[property] = JSON.stringify(value);
     if (that[property] !== value) {
+      debug('set', { property, value, save: EnvironmentStorage.save });
       that[property] = value; // eslint-disable-line
-    }
-    debug('set', { property, value, save: EnvironmentStorage.save });
-    if (EnvironmentStorage.save) {
-      saveEnv();
+      if (EnvironmentStorage.save) {
+        saveEnv();
+      }
     }
   }
 
