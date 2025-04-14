@@ -11,13 +11,13 @@ import {
 const debug = Debug('tq:cli:EnvironmentManager');
 const defaultPath = path.resolve(process.cwd(), '.testquality');
 
-export class EnvironmentManager<T = DefaultSchemaType> {
+export class EnvironmentManager<T> {
   private envPath: string;
   private envSchema: Schema<any>;
   private schemaDefaults: Record<string, any>;
   public env: T;
 
-  constructor(envSchema = defaultSchema, envPath = defaultPath) {
+  constructor(envSchema: Schema<any>, envPath: string) {
     // Define the path to the config file
     this.envPath = envPath;
     
@@ -188,7 +188,7 @@ export class EnvironmentManager<T = DefaultSchemaType> {
 }
 
 // Create singleton instance
-const environmentManager = new EnvironmentManager();
+const environmentManager = new EnvironmentManager<DefaultSchemaType>(defaultSchema, defaultPath);
 
 // Export env and saveEnv for backward compatibility
 export const env = environmentManager.env;
