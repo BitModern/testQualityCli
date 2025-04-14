@@ -97,11 +97,17 @@ export class Command {
       const password = (args.password as string) || env.variables.password;
 
       if (user && password) {
-        this.client.getAuth().login(user, password, !!args.save).then(resolve, reject);
+        this.client
+          .getAuth()
+          .login(user, password, !!args.save)
+          .then(resolve, reject);
       } else {
-        const accessToken = (args.access_token as string) || env.variables.accessToken;
-        const expiresAt = (args.expires_at as string) || env.variables.expiresAt;
-        const refreshToken = (args.refresh_token as string) || env.variables.refreshToken;
+        const accessToken =
+          (args.access_token as string) || env.variables.accessToken;
+        const expiresAt =
+          (args.expires_at as string) || env.variables.expiresAt;
+        const refreshToken =
+          (args.refresh_token as string) || env.variables.refreshToken;
 
         // In the unlikely case that we end up with both a PAT token and a token set in ClientSdk.Auth,
         // we prioritize the PAT token.

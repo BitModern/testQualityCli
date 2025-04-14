@@ -22,8 +22,7 @@ export class UploadTestRunCommand extends Command {
             alias: 'fi',
             describe: 'Folder id',
             type: 'string',
-          }
-        );
+          });
       },
       async (args: Arguments) => {
         try {

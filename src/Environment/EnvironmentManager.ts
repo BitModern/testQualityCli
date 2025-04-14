@@ -20,16 +20,16 @@ export class EnvironmentManager<T> {
   constructor(envSchema: Schema<any>, envPath: string) {
     // Define the path to the config file
     this.envPath = envPath;
-    
+
     // Define schema
     this.envSchema = envSchema;
-    
+
     // Extract default values
     this.schemaDefaults = this.extractDefaultsFromSchema(this.envSchema);
-    
+
     // Load environment variables
     this.loadEnvFile();
-    
+
     // Build and validate environment object
     const envObject = this.buildEnvObject();
     debug('Loaded environment variables:', envObject);
@@ -54,25 +54,27 @@ export class EnvironmentManager<T> {
    */
   private extractDefaultsFromSchema(schema: Schema<any>): Record<string, any> {
     const defaults: Record<string, any> = {};
-    
+
     if (schema.type === 'object') {
       const fields = (schema as any).fields || {};
-      
-      Object.entries(fields).forEach(([fieldName, fieldSchema]: [string, any]) => {
-        // For object types, recursively extract defaults
-        if (fieldSchema.type === 'object') {
-          const nestedDefaults = this.extractDefaultsFromSchema(fieldSchema);
-          if (Object.keys(nestedDefaults).length > 0) {
-            defaults[fieldName] = nestedDefaults;
+
+      Object.entries(fields).forEach(
+        ([fieldName, fieldSchema]: [string, any]) => {
+          // For object types, recursively extract defaults
+          if (fieldSchema.type === 'object') {
+            const nestedDefaults = this.extractDefaultsFromSchema(fieldSchema);
+            if (Object.keys(nestedDefaults).length > 0) {
+              defaults[fieldName] = nestedDefaults;
+            }
           }
-        } 
-        // For primitive types, get the default if defined
-        else if (fieldSchema.spec?.default !== undefined) {
-          defaults[fieldName] = fieldSchema.spec.default;
+          // For primitive types, get the default if defined
+          else if (fieldSchema.spec?.default !== undefined) {
+            defaults[fieldName] = fieldSchema.spec.default;
+          }
         }
-      });
+      );
     }
-    
+
     return defaults;
   }
 
@@ -82,11 +84,11 @@ export class EnvironmentManager<T> {
   private getEnvVar(name: string): any {
     const value = process.env[name];
     if (value === undefined) return undefined;
-    
+
     // Convert string boolean values to actual booleans
     if (value === 'true') return true;
     if (value === 'false') return false;
-    
+
     return value;
   }
 
@@ -95,34 +97,36 @@ export class EnvironmentManager<T> {
    */
   private extractEnvVarsFromSchema(schema: Schema<any>): Record<string, any> {
     const result: Record<string, any> = {};
-  
+
     // Handle object schema type
     if (schema.type === 'object') {
       const fields = (schema as any).fields || {};
-      
+
       // Process each field in the object
-      Object.entries(fields).forEach(([fieldName, fieldSchema]: [string, any]) => {
-        // Recursive case: nested object
-        if (fieldSchema.type === 'object') {
-          const nestedResult = this.extractEnvVarsFromSchema(fieldSchema);
-          
-          if (Object.keys(nestedResult).length > 0) {
-            result[fieldName] = nestedResult;
+      Object.entries(fields).forEach(
+        ([fieldName, fieldSchema]: [string, any]) => {
+          // Recursive case: nested object
+          if (fieldSchema.type === 'object') {
+            const nestedResult = this.extractEnvVarsFromSchema(fieldSchema);
+
+            if (Object.keys(nestedResult).length > 0) {
+              result[fieldName] = nestedResult;
+            }
           }
-        } 
-        // Base case: primitive field with env metadata
-        else {
-          const envVarName = fieldSchema.spec?.meta?.env;
-          if (envVarName) {
-            const value = this.getEnvVar(envVarName);
-            if (value !== undefined) {
-              result[fieldName] = value;
+          // Base case: primitive field with env metadata
+          else {
+            const envVarName = fieldSchema.spec?.meta?.env;
+            if (envVarName) {
+              const value = this.getEnvVar(envVarName);
+              if (value !== undefined) {
+                result[fieldName] = value;
+              }
             }
           }
         }
-      });
+      );
     }
-    
+
     return result;
   }
 
@@ -143,7 +147,7 @@ export class EnvironmentManager<T> {
       if (!defaultValue || typeof defaultValue !== 'object') return true;
       defaultValue = defaultValue[key];
     }
-    
+
     // If no default found or values differ, return true
     return defaultValue === undefined || value !== defaultValue;
   }
@@ -154,32 +158,41 @@ export class EnvironmentManager<T> {
    */
   public saveEnv(): void {
     let content = '';
-    
+
     // Recursive function to extract env var names and values
-    const extractEnvVars = (schema: Schema<any>, obj: any, path: string[] = []) => {
+    const extractEnvVars = (
+      schema: Schema<any>,
+      obj: any,
+      path: string[] = []
+    ) => {
       if (schema.type === 'object' && obj) {
         const fields = (schema as any).fields || {};
-        
-        Object.entries(fields).forEach(([fieldName, fieldSchema]: [string, any]) => {
-          const fieldValue = obj[fieldName];
-          const newPath = [...path, fieldName];
-          
-          if (fieldSchema.type === 'object' && fieldValue) {
-            // Recursive case for nested objects
-            extractEnvVars(fieldSchema, fieldValue, newPath);
-          } else {
-            // Get env var name from metadata
-            const envVarName = fieldSchema.spec?.meta?.env;
-            
-            // Only save if the value differs from default and is defined
-            if (envVarName && fieldValue !== undefined && 
-                this.isDifferentFromDefault(newPath, fieldValue)) {
-              content += `${envVarName}=${fieldValue}\n`;
+
+        Object.entries(fields).forEach(
+          ([fieldName, fieldSchema]: [string, any]) => {
+            const fieldValue = obj[fieldName];
+            const newPath = [...path, fieldName];
+
+            if (fieldSchema.type === 'object' && fieldValue) {
+              // Recursive case for nested objects
+              extractEnvVars(fieldSchema, fieldValue, newPath);
+            } else {
+              // Get env var name from metadata
+              const envVarName = fieldSchema.spec?.meta?.env;
+
+              // Only save if the value differs from default and is defined
+              if (
+                envVarName &&
+                fieldValue !== undefined &&
+                this.isDifferentFromDefault(newPath, fieldValue)
+              ) {
+                content += `${envVarName}=${fieldValue}\n`;
+              }
             }
           }
-        });
+        );
       }
-    };    
+    };
     extractEnvVars(this.envSchema, this.env);
 
     debug('saveEnv', content);
@@ -188,7 +201,10 @@ export class EnvironmentManager<T> {
 }
 
 // Create singleton instance
-const environmentManager = new EnvironmentManager<DefaultSchemaType>(defaultSchema, defaultPath);
+const environmentManager = new EnvironmentManager<DefaultSchemaType>(
+  defaultSchema,
+  defaultPath
+);
 
 // Export env and saveEnv for backward compatibility
 export const env = environmentManager.env;
