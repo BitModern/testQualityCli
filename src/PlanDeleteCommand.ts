@@ -1,6 +1,6 @@
 import { planDeleteOne } from '@testquality/sdk';
 import { Command } from './Command';
-import { Arguments, Argv } from 'yargs';
+import { type Arguments, type Argv } from 'yargs';
 import { logError } from './logError';
 
 export class PlanDelete extends Command {
@@ -27,7 +27,7 @@ export class PlanDelete extends Command {
         } catch (error) {
           logError(error);
         }
-      }
+      },
     );
   }
 }

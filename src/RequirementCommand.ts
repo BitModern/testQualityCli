@@ -1,6 +1,6 @@
 import { Command } from './Command';
 import {
-  RequirementApi,
+  type RequirementApi,
   requirementGetMany,
   testGetOne,
 } from '@testquality/sdk';
@@ -31,56 +31,56 @@ export class RequirementCommand extends Command {
             type: 'array',
           });
       },
-      (args) => {
-        this.getProjectId(args).then(
-          (projectId) => {
-            const params = this.getParams(args);
-            if (projectId) {
-              params.project_id = projectId;
-            }
-            if (args.revision_log) {
-              params.revision_log = 'true';
-            }
+      async (args) => {
+        try {
+          const projectId = await this.getProjectId(args);
 
-            if (args.external_referece_id) {
-              params.external_reference_id = args.external_reference_id;
-            }
-            requirementGetMany({
-              params,
-            }).then(
-              (requirements) => {
-                if (args.revision_log) {
-                  console.log(requirements);
-                } else {
-                  if (requirements.total > 0) {
-                    if (args.verbose) {
-                      console.log(requirements.data);
-                    } else {
-                      Promise.all(
-                        requirements.data.map((r) => {
-                          return this.getRequirementDetails(r);
-                        })
-                      ).then((data) => {
-                        console.log(data);
-                      });
-                    }
-                  } else {
-                    console.log('Result is empty');
-                  }
+          const params = this.getParams(args);
+          if (projectId) {
+            params.project_id = projectId;
+          }
+          if (args.revision_log) {
+            params.revision_log = 'true';
+          }
+
+          if (args.external_referece_id) {
+            params.external_reference_id = args.external_reference_id;
+          }
+          const requirements = await requirementGetMany({
+            params,
+          });
+          if (args.revision_log) {
+            console.log(requirements);
+          } else {
+            if (requirements.total > 0) {
+              if (args.verbose) {
+                console.log(requirements.data);
+              } else {
+                try {
+                  const data = await Promise.all(
+                    requirements.data.map(async (r) => {
+                      return await this.getRequirementDetails(r);
+                    }),
+                  );
+                  console.log(data);
+                } catch (error) {
+                  logError(error);
                 }
-              },
-              (error) => logError(error)
-            );
-          },
-          (error) => logError(error)
-        );
-      }
+              }
+            } else {
+              console.log('Result is empty');
+            }
+          }
+        } catch (err) {
+          logError(err);
+        }
+      },
     );
   }
 
-  public getRequirementDetails(requirement: RequirementApi) {
-    const testId = requirement.related_id as number;
-    return testGetOne(testId, {
+  public async getRequirementDetails(requirement: RequirementApi) {
+    const testId = requirement.related_id!;
+    return await testGetOne(testId, {
       params: { _with: 'suite,RunResult,RunResult.run,RunResult.status' },
     }).then((test) => {
       const runResults = test.run_result?.map((runResult) => {

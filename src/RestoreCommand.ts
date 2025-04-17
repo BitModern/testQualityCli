@@ -33,35 +33,53 @@ export class RestoreCommand extends Command {
                 ? { suite_id: args.suite_id }
                 : undefined;
               this.postRestore('test', args.test_id as string, data).then(
-                (response) => console.log(response),
-                (error) => logError(error)
+                (response) => {
+                  console.log(response);
+                },
+                (error) => {
+                  logError(error);
+                },
               );
             } else if (args.suite_id) {
               const data = args.plan_id ? { plan_id: args.plan_id } : undefined;
               this.postRestore('suite', args.suite_id as string, data).then(
-                (response) => console.log(response),
-                (error) => logError(error)
+                (response) => {
+                  console.log(response);
+                },
+                (error) => {
+                  logError(error);
+                },
               );
             } else if (args.plan_id) {
               this.postRestore('plan', args.plan_id as string).then(
-                (response) => console.log(response),
-                (error) => logError(error)
+                (response) => {
+                  console.log(response);
+                },
+                (error) => {
+                  logError(error);
+                },
               );
             } else {
               logError(
-                `plan or test is required. Try adding "--plan_id=<number>" or "--test_id=<number>`
+                `plan or test is required. Try adding "--plan_id=<number>" or "--test_id=<number>`,
               );
             }
           },
-          (error) => logError(error)
+          (error) => {
+            logError(error);
+          },
         );
-      }
+      },
     );
   }
 
-  private postRestore(type: string, id: string, data?: any): Promise<any> {
+  private async postRestore(
+    type: string,
+    id: string,
+    data?: any,
+  ): Promise<any> {
     const url = `/${type}/${id}/restore`;
-    return getResponse(this.client.api, {
+    return await getResponse(this.client.api, {
       method: 'post',
       url,
       data,

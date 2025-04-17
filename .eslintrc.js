@@ -2,15 +2,12 @@ module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
   plugins: [
-    '@typescript-eslint',
     'prettier',
     'import',
   ],
   extends: [
-    'eslint:recommended',
+    'standard-with-typescript',
     'plugin:import/typescript',
-    'plugin:@typescript-eslint/eslint-recommended',
-    'plugin:@typescript-eslint/recommended',
     'prettier',
   ],
   parserOptions: {
@@ -39,5 +36,13 @@ module.exports = {
     'no-shadow': 'off', // replaced by ts-eslint rule below
     '@typescript-eslint/no-shadow': 'error',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/promise-function-async': 'off',
+    '@typescript-eslint/strict-boolean-expressions': 'off',
+    '@typescript-eslint/no-invalid-void-type': 'off',
+    '@typescript-eslint/naming-convention': 'off',
+    '@typescript-eslint/no-unsafe-argument': 'off',
+    '@typescript-eslint/array-type': 'off',
+    '@typescript-eslint/consistent-type-exports': 'off',
+    '@typescript-eslint/no-non-null-assertion': 'off',
   },
 };
