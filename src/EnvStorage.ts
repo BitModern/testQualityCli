@@ -9,6 +9,10 @@ export class EnvStorage implements PersistentStorage {
   }
 
   public set<T>(property: string, value: T, that: any = this): void {
+    if (!env.auth) {
+      (env as any).auth = {};
+    }
+
     (env.auth as any)[property] = JSON.stringify(value);
     if (that[property] !== value) {
       that[property] = value; // eslint-disable-line
@@ -18,9 +22,10 @@ export class EnvStorage implements PersistentStorage {
       saveEnv();
     }
   }
+
   public get<T>(property: string, defaultVal?: T, that: any = this): T {
     if (that[property] === undefined) {
-      const value = (env.auth as any)[property];
+      const value = env.auth && (env.auth as any)[property];
       if (value !== undefined && value !== null) {
         that[property] = JSON.parse(value); // eslint-disable-line
       } else if (defaultVal !== undefined) {

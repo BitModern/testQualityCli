@@ -112,14 +112,14 @@ export class Command {
 
   public migrateOldVariables(args: any) {
     if (!args.username && !env.auth.username) {
-      if (env.variables.username?.value) {
-        env.auth.username = env.variables.username.value;
-        env.auth.password = env.variables.password.value;
-      } else if (env.variables.access_token.value) {
+      if (env.variables.username) {
+        env.auth.username = env.variables.username;
+        env.auth.password = env.variables.password;
+      } else if (env.variables.access_token) {
         env.auth.token = JSON.stringify({
-          access_token: env.variables.access_token.value,
-          refresh_token: env.variables.refresh_token.value,
-          expires_at: env.variables.expires_at.value,
+          access_token: env.variables.access_token,
+          refresh_token: env.variables.refresh_token,
+          expires_at: env.variables.expires_at,
         });
       }
     }
