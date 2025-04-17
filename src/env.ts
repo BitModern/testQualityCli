@@ -20,6 +20,7 @@ export interface EnvironmentSource {
  */
 class DotenvSource implements EnvironmentSource {
   private configPath: string;
+  private modifiedKeys: Set<string> = new Set<string>();
 
   constructor(configPath: string) {
     this.configPath = configPath;
@@ -40,21 +41,14 @@ class DotenvSource implements EnvironmentSource {
   }
 
   set(key: string, value: string): void {
+    this.modifiedKeys.add(key);
     process.env[key] = value;
   }
 
   save(): void {
-    // Collect environment variable keys from the mappings
-    const keysToSave = new Set<string>();
-
-    // Add known environment variable keys from the mappings
-    for (const mapping of Object.values(envMappings)) {
-      keysToSave.add(mapping.envKey);
-    }
-
     // Filter for only keys with values
     const content =
-      Array.from(keysToSave)
+      Array.from(this.modifiedKeys)
         .filter(
           (key) => process.env[key] !== undefined && process.env[key] !== ''
         )
