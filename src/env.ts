@@ -128,8 +128,6 @@ export class EnvironmentAdapter<T> {
     this.cachedConfig = { ...this.getConfig(), ...config };
 
     // Only save environment variables that differ from defaults
-    const contentParts: Record<string, string> = {};
-
     for (const [path, mapping] of Object.entries(this.mappings)) {
       const value = this.getNestedValue(this.cachedConfig, path);
       const defaultValue = this.getNestedValue(this.schema, path);
@@ -138,7 +136,6 @@ export class EnvironmentAdapter<T> {
       if (value !== undefined && value !== null && value !== defaultValue) {
         const stringValue = String(value);
         this.source.set(mapping.envKey, stringValue);
-        contentParts[mapping.envKey] = stringValue;
       }
     }
 
