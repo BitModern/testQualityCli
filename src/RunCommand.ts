@@ -1,4 +1,8 @@
-import { Run, runGetMany, TQRequestParameters } from '@testquality/sdk';
+import {
+  type Run,
+  runGetMany,
+  type TQRequestParameters,
+} from '@testquality/sdk';
 import { Command } from './Command';
 import { logError } from './logError';
 
@@ -55,12 +59,16 @@ export class RunCommand extends Command {
                   }
                 }
               },
-              (error) => logError(error)
+              (error) => {
+                logError(error);
+              },
             );
           },
-          (error) => logError(error)
+          (error) => {
+            logError(error);
+          },
         );
-      }
+      },
     );
   }
 }

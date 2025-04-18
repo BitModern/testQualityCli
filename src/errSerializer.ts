@@ -4,12 +4,12 @@
  * Proprietary and confidential
  * Created by jamespitts on 3/30/20.
  */
-import { AxiosError } from 'axios';
-import { ApiException, ServerError } from '@testquality/sdk';
+import { type AxiosError } from 'axios';
+import { type ApiException, type ServerError } from '@testquality/sdk';
 import * as Logger from 'bunyan';
 
 export const errSerializer = (err: AxiosError<ApiException>): ServerError => {
-  if (err.response && err.response.data) {
+  if (err.response?.data) {
     const serverError = Logger.stdSerializers.err(err);
     if (err.response.status) {
       serverError.statusCode = err.response.status;

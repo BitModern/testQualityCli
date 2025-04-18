@@ -1,5 +1,5 @@
 import { getResponse } from '@testquality/sdk';
-import { Arguments, Argv } from 'yargs';
+import { type Arguments, type Argv } from 'yargs';
 import * as fs from 'fs';
 import * as path from 'path';
 import FormData = require('form-data');
@@ -18,22 +18,59 @@ export class UploadTestRunCommand extends Command {
             describe: `glob JUnit/XUnit XML output file, example: upload_test_run '**/*.xml'`,
             type: 'string',
           })
+          .option('milestone_id', {
+            alias: 'mi',
+            describe: 'Milestone ID',
+            type: 'string',
+          })
+          .option('plan_id', {
+            alias: 'pi',
+            describe: 'Plan ID',
+            type: 'string',
+          })
+          .option('plan_name', {
+            alias: 'pn',
+            describe: 'Plan Name',
+            type: 'string',
+          })
+          .option('run_name', {
+            alias: 'rn',
+            describe: 'Run name',
+            type: 'string',
+          })
+          .option('run_result_output_dir', {
+            alias: 'rr_output_dir',
+            describe:
+              'Run results output directory where potential attachments are located',
+            type: 'string',
+          })
           .option('folder_id', {
             alias: 'fi',
             describe: 'Folder id',
             type: 'string',
-          }
-        );
+          })
+          .option('version2', {
+            alias: 'v2',
+            describe: 'Version 2 of Upload',
+            boolean: true,
+            type: 'boolean',
+            default: false,
+          })
+          .option('delimiter', {
+            alias: 'd',
+            describe: 'Delimiter',
+            type: 'string',
+          });
       },
       async (args: Arguments) => {
         try {
           const xmlFilesGlob = args.xmlfiles as string;
           const runResultOutputDir = args.run_result_output_dir as string;
-          const ouputIsDir =
+          const outputIsDir =
             runResultOutputDir &&
             fs.lstatSync(path.resolve(runResultOutputDir)).isDirectory();
 
-          const runResultOutputDirGlob = ouputIsDir
+          const runResultOutputDirGlob = outputIsDir
             ? path.join(runResultOutputDir, '/**/*')
             : runResultOutputDir;
 
@@ -45,10 +82,14 @@ export class UploadTestRunCommand extends Command {
             args,
             'milestone',
             projectId,
-            false
+            false,
           );
 
           const xmlFiles = await glob(xmlFilesGlob, { realpath: true });
+          if (args.verbose) {
+            console.log('XML Glob: ', xmlFilesGlob);
+            console.log('Matching files: ', xmlFiles);
+          }
           let attachments;
           if (runResultOutputDirGlob) {
             console.log('file glob: ', runResultOutputDirGlob);
@@ -64,23 +105,23 @@ export class UploadTestRunCommand extends Command {
             attachments,
             projectId,
             planId,
-            milestoneId
+            milestoneId,
           );
           console.log(response);
         } catch (error) {
           logError(error);
         }
-      }
+      },
     );
   }
 
-  private uploadTestResults(
+  private async uploadTestResults(
     args: Arguments,
     xmlFiles: string[],
     attachments: string[] = [],
     projectId?: number,
     planId?: number,
-    milestoneId?: number
+    milestoneId?: number,
   ): Promise<any> {
     const data = new FormData();
 
@@ -105,6 +146,10 @@ export class UploadTestRunCommand extends Command {
       data.append('suite_id', args.folder_id);
     }
 
+    if (args.delimiter) {
+      data.append('delimiter', args.delimiter);
+    }
+
     const files = [...xmlFiles, ...attachments];
 
     if (files.length === 1) {
@@ -119,8 +164,13 @@ export class UploadTestRunCommand extends Command {
       }
     }
 
-    return getResponse(this.client.api, {
-      url: `/junit_xml`,
+    if (args.verbose) {
+      console.log('using new version of upload: ', args.version2);
+    }
+    const url = args.version2 ? '/import_xml' : '/junit_xml';
+
+    return await getResponse(this.client.api, {
+      url,
       method: 'POST',
       data,
       headers: data.getHeaders(),

@@ -21,7 +21,7 @@ export class MilestoneCommand extends Command {
           (projectId) => {
             if (!projectId) {
               logError(
-                'Project is required. Try adding "--project_name=<name>" or "--project_id=<number>"'
+                'Project is required. Try adding "--project_name=<name>" or "--project_id=<number>"',
               );
             } else {
               milestoneGetMany({
@@ -39,17 +39,21 @@ export class MilestoneCommand extends Command {
                         ? milestoneList
                         : milestoneList.data.map((p) => {
                             return { id: p.id, name: p.name };
-                          })
+                          }),
                     );
                   }
                 },
-                (error) => logError(error)
+                (error) => {
+                  logError(error);
+                },
               );
             }
           },
-          (error) => logError(error)
+          (error) => {
+            logError(error);
+          },
         );
-      }
+      },
     );
   }
 }

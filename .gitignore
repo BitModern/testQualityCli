@@ -85,3 +85,4 @@ schema.graphql
 .yalc
 yalc.lock
 .DS_Store
+.vscode

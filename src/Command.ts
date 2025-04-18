@@ -1,18 +1,18 @@
-import { Arguments, Argv } from 'yargs';
+import type { Arguments, Argv } from 'yargs';
 import { env, saveEnv } from './env';
 import { logger } from './Logger';
 import {
   ClientSdk,
   getResponse,
   setGlobalClient,
-  HttpError,
-  LoggerInterface,
+  type HttpError,
+  type LoggerInterface,
   projectGetMany,
-  ResourceList,
-  ReturnToken,
+  type ResourceList,
+  type ReturnToken,
 } from '@testquality/sdk';
 import { EnvStorage } from './EnvStorage';
-import { HasId } from 'HasId';
+import { type HasId } from 'HasId';
 import { logError } from './logError';
 
 const singleClient = new ClientSdk({
@@ -37,7 +37,7 @@ export class Command {
     public command: string,
     public description: string,
     public subBuilder: (args: Argv) => Argv,
-    public subHandler: (args: Arguments) => void
+    public subHandler: (args: Arguments) => void,
   ) {
     this.client = singleClient;
   }
@@ -45,6 +45,7 @@ export class Command {
   public builder = (args: Argv): Argv => {
     return this.subBuilder(args);
   };
+
   public handler = (args: Arguments): void => {
     if (args.verbose) {
       logger.info(`TestQuality Host: ${env.api.url}`);
@@ -55,6 +56,7 @@ export class Command {
     }
     this.subHandler(args);
   };
+
   public getProjectId(args: any): Promise<number | undefined> {
     return new Promise((resolve, reject) => {
       this.reLogin(args).then(() => {
@@ -62,7 +64,7 @@ export class Command {
         if (projectName) {
           projectGetMany().then((projectList) => {
             const project = projectList.data.find(
-              (p) => p.name.toLowerCase() === projectName.toLowerCase()
+              (p) => p.name.toLowerCase() === projectName.toLowerCase(),
             );
             if (project) {
               this.projectId = project.id;
@@ -89,25 +91,26 @@ export class Command {
       }, reject);
     });
   }
-  public reLogin(args: any): Promise<ReturnToken | undefined> {
+
+  public async reLogin(args: any): Promise<ReturnToken | undefined> {
     this.migrateOldVariables(args);
     this.client.getAuth(); // initiate auth
-    return new Promise((resolve, reject) => {
-      const un = (args.username as string) || env.auth.username;
-      const pw = (args.password as string) || env.auth.password;
-      if (un && pw) {
-        this.client.getAuth().login(un, pw, true).then(resolve, reject);
-      } else {
-        const at = args.access_token as string;
-        const ea = args.expires_at as string;
-        if (at) {
-          this.client
-            .getAuth()
-            .setToken({ access_token: at, expires_at: ea } as any, true);
-        }
-        resolve(undefined);
+    const un = (args.username as string) || env.auth.username;
+    const pw = (args.password as string) || env.auth.password;
+    if (un && pw) {
+      return await this.client.getAuth().login(un, pw, true);
+    } else {
+      const at = args.access_token
+        ? (args.access_token as string).trim()
+        : undefined;
+      const ea = args.expires_at as string;
+      if (at) {
+        return await this.client
+          .getAuth()
+          .setToken({ access_token: at, expires_at: ea } as any, true);
       }
-    });
+      return undefined;
+    }
   }
 
   public migrateOldVariables(args: any) {
@@ -136,7 +139,7 @@ export class Command {
           }
         }
       } else {
-        params = { ...(args.params as any) };
+        params = { ...args.params };
       }
     }
     return params;
@@ -146,7 +149,7 @@ export class Command {
     args: any,
     type: string,
     projectId?: number,
-    required: boolean = true
+    required: boolean = true,
   ): Promise<number | undefined> {
     const id = args[type + '_id'];
     if (id) {
@@ -154,34 +157,33 @@ export class Command {
     }
 
     const name = args[type + '_name'] as string;
-    if (name) {
-      if (!projectId) {
-        return Promise.reject(
-          `projectId is required. Try adding "--project_name=<name>" or "--project_id=<number>"`
+    if (!name) {
+      if (required) {
+        throw new Error(
+          `${type}_name is required. Try adding "--${type}_name=<name>" or "--${type}_id=<number>"`,
         );
       }
-      return getResponse<ResourceList<HasId>>(this.client.api, {
-        method: 'get',
-        url: `/${type}`,
-        params: {
-          project_id: projectId,
-        } as any,
-      }).then((list) => {
-        const item = list.data.find(
-          (p) => p.name.toLowerCase() === name.toLowerCase()
-        );
-        if (!item) {
-          return Promise.reject(`${type} ${name} not found!`);
-        }
-        return item.id;
-      });
+      return undefined;
     }
-
-    if (required) {
-      return Promise.reject(
-        `${type} is required. Try adding "--${type}_name=<name>" or "--${type}_id=<number>"`
+    if (!projectId) {
+      throw new Error(
+        `projectId is required. Try adding "--project_name=<name>" or "--project_id=<number>"`,
       );
     }
-    return;
+    const list = await getResponse<ResourceList<HasId>>(this.client.api, {
+      method: 'get',
+      url: `/${type}`,
+      params: {
+        project_id: projectId,
+        name,
+      } as any,
+    });
+    const item = list.data.find(
+      (p) => p.name.toLowerCase() === name.toLowerCase(),
+    );
+    if (!item) {
+      throw new Error(`${type} ${name} not found!`);
+    }
+    return item.id;
   }
 }

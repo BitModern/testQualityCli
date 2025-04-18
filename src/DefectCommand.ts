@@ -1,6 +1,6 @@
 import { Command } from './Command';
 import {
-  DefectApi,
+  type DefectApi,
   defectGetMany,
   defectRunResultGetMany,
 } from '@testquality/sdk';
@@ -64,18 +64,18 @@ export class DefectCommand extends Command {
           }
 
           const data = await Promise.all(
-            defects.data.map((d) => this.getDefectDetails(d))
+            defects.data.map(async (d) => await this.getDefectDetails(d)),
           );
           console.dir(data, { depth: 3 });
         } catch (err) {
           logError(err);
         }
-      }
+      },
     );
   }
 
-  public getDefectDetails(defect: DefectApi) {
-    return defectRunResultGetMany({
+  public async getDefectDetails(defect: DefectApi) {
+    return await defectRunResultGetMany({
       params: {
         defect_id: defect.id,
         _with: 'runResult,runResult.run,runResult.test,runResult.status',

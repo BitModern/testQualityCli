@@ -1,4 +1,4 @@
-import { PersistentStorage } from '@testquality/sdk';
+import { type PersistentStorage } from '@testquality/sdk';
 import { env, saveEnv } from './env';
 
 export class EnvStorage implements PersistentStorage {
@@ -18,6 +18,7 @@ export class EnvStorage implements PersistentStorage {
       saveEnv();
     }
   }
+
   public get<T>(property: string, defaultVal?: T, that: any = this): T {
     if (that[property] === undefined) {
       const value = (env.auth as any)[property];

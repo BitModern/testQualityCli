@@ -45,16 +45,20 @@ export class ProjectCommand extends Command {
                   console.log(
                     projectList.data.map((p) => {
                       return { id: p.id, key: p.key, name: p.name };
-                    })
+                    }),
                   );
                 }
               },
-              (error) => logError(error)
+              (error) => {
+                logError(error);
+              },
             );
           },
-          (error) => logError(error)
+          (error) => {
+            logError(error);
+          },
         );
-      }
+      },
     );
   }
 }

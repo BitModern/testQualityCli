@@ -1,6 +1,6 @@
 import { Command } from './Command';
 import { logError } from './logError';
-import { Arguments, Argv } from 'yargs';
+import { type Arguments, type Argv } from 'yargs';
 
 export class LoginCommand extends Command {
   constructor() {
@@ -34,7 +34,7 @@ export class LoginCommand extends Command {
               args.username as string,
               args.password as string,
               !!args.save,
-              prop
+              prop,
             )
             .then(
               (body) => {
@@ -42,10 +42,10 @@ export class LoginCommand extends Command {
               },
               (error: any) => {
                 logError(error);
-              }
+              },
             );
         }
-      }
+      },
     );
   }
 }

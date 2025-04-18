@@ -52,7 +52,7 @@ export class PlanSuiteCommand extends Command {
                             parent_id: p.parent_id,
                             hierarchy_level: p.hierarchy_level,
                           };
-                        })
+                        }),
                       );
                     }
                   } else {
@@ -60,12 +60,16 @@ export class PlanSuiteCommand extends Command {
                   }
                 }
               },
-              (error) => logError(error)
+              (error) => {
+                logError(error);
+              },
             );
           },
-          (error) => logError(error)
+          (error) => {
+            logError(error);
+          },
         );
-      }
+      },
     );
   }
 }

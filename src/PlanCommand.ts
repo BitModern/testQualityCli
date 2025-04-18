@@ -52,7 +52,7 @@ export class PlanCommand extends Command {
                             name: p.name,
                             project_id: p.project_id,
                           };
-                        })
+                        }),
                       );
                     }
                   } else {
@@ -60,12 +60,16 @@ export class PlanCommand extends Command {
                   }
                 }
               },
-              (error) => logError(error)
+              (error) => {
+                logError(error);
+              },
             );
           },
-          (error) => logError(error)
+          (error) => {
+            logError(error);
+          },
         );
-      }
+      },
     );
   }
 }

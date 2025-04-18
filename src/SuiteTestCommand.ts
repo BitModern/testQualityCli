@@ -49,7 +49,7 @@ export class SuiteTestCommand extends Command {
                             test_id: p.test_id,
                             sequence_suite: p.sequence_suite,
                           };
-                        })
+                        }),
                       );
                     }
                   } else {
@@ -57,12 +57,16 @@ export class SuiteTestCommand extends Command {
                   }
                 }
               },
-              (error) => logError(error)
+              (error) => {
+                logError(error);
+              },
             );
           },
-          (error) => logError(error)
+          (error) => {
+            logError(error);
+          },
         );
-      }
+      },
     );
   }
 }

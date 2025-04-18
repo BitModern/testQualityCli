@@ -1,5 +1,5 @@
 import { Command } from './Command';
-import { Arguments, Argv } from 'yargs';
+import { type Arguments, type Argv } from 'yargs';
 import { logError } from './logError';
 import { glob } from 'glob';
 import * as fs from 'fs';
@@ -12,10 +12,16 @@ export class UploadFeatureResultsCommand extends Command {
       'upload_feature_results <files>',
       'Gherkin Result files Upload',
       (args: Argv) => {
-        return args.positional('files', {
-          describe: `glob Gherkin result file, example: upload_feature_results '**/*.json`,
-          type: 'string',
-        });
+        return args
+          .positional('files', {
+            describe: `glob Gherkin result file, example: upload_feature_results '**/*.json`,
+            type: 'string',
+          })
+          .option('milestone_id', {
+            alias: 'mi',
+            describe: 'Milestone ID',
+            type: 'string',
+          });
       },
       async (args: Arguments) => {
         try {
@@ -25,7 +31,7 @@ export class UploadFeatureResultsCommand extends Command {
             args,
             'milestone',
             projectId,
-            false
+            false,
           );
           if (args.files && planId) {
             const matches = await glob(args.files as string, {
@@ -35,28 +41,28 @@ export class UploadFeatureResultsCommand extends Command {
               args,
               planId,
               matches,
-              milestoneId
+              milestoneId,
             ).then(console.log);
           }
         } catch (error) {
           logError(error);
         }
-      }
+      },
     );
   }
 
-  private uploadFeatureResultFiles(
+  private async uploadFeatureResultFiles(
     args: Arguments,
     planId: number,
     matches: string[],
-    milestoneId: number | undefined
+    milestoneId: number | undefined,
   ): Promise<any> {
     const data = new FormData();
 
     if (matches.length > 1) {
       data.append(
         'files[]',
-        matches.map((f) => fs.createReadStream(f))
+        matches.map((f) => fs.createReadStream(f)),
       );
       if (args.verbose) {
         console.log('Matching files: ', matches);
@@ -72,7 +78,7 @@ export class UploadFeatureResultsCommand extends Command {
       data.append('milestone_id', milestoneId);
     }
 
-    return getResponse(this.client.api, {
+    return await getResponse(this.client.api, {
       url: `${PlanRoute()}/${planId}/import_feature_results`,
       method: 'POST',
       data,

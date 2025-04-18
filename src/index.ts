@@ -83,42 +83,6 @@ const argv = yargs
     describe: 'Project Name',
     type: 'string',
   })
-  .option('milestone_id', {
-    alias: 'mi',
-    describe: 'Milestone ID',
-    type: 'string',
-  })
-  .option('milestone_name', {
-    alias: 'mn',
-    describe: 'Milestone Name',
-    type: 'string',
-  })
-  .option('plan_id', {
-    alias: 'pi',
-    describe: 'Plan ID',
-    type: 'string',
-  })
-  .option('plan_name', {
-    alias: 'pn',
-    describe: 'Plan Name',
-    type: 'string',
-  })
-  .option('run_name', {
-    alias: 'rn',
-    describe: 'Run name',
-    type: 'string',
-  })
-  .option('run_result_output_dir', {
-    alias: 'rr_output_dir',
-    describe:
-      'Run results output directory where potential attachments are located',
-    type: 'string',
-  })
-  .option('config_file', {
-    alias: 'cf',
-    describe: 'CSV upload configuration file with data mapping information',
-    type: 'string',
-  })
   .demandCommand()
   .recommendCommands()
   .strict()
