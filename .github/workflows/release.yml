@@ -1,0 +1,42 @@
+name: Release Workflow
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    environment: Release
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Create .npmrc file
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+      - run: yarn install --frozen-lockfile
+
+      - name: Build library
+        run: yarn build
+
+      - name: Publish to npm
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Build binaries
+        run: yarn package
+
+      - name: Release binaries
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            commands/testquality-alpine
+            commands/testquality-linux
+            commands/testquality-macos
+            commands/testquality-win.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

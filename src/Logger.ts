@@ -4,8 +4,8 @@
  * Proprietary and confidential
  * Created by jamespitts on 1/24/20.
  */
-import * as Logger from 'bunyan';
-import * as BunyanFormat from 'bunyan-format';
+import Logger from 'bunyan';
+import BunyanFormat from 'bunyan-format';
 import { env } from './env';
 import { errSerializer } from './errSerializer';
 
