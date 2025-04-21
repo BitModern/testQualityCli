@@ -144,7 +144,7 @@ const envToDotEnv = (env: SchemaType): DotEnvParsed => {
     TQ_PASSWORD: env.variables.password,
     TQ_PROJECT_ID: env.variables.projectId,
     TQ_REFRESH_TOKEN: env.variables.refreshToken,
-    TQ_REMEMBER: env.auth.remember?.toString(),
+    TQ_REMEMBER: env.auth.remember,
     TQ_TOKEN: env.auth.token,
     TQ_USERNAME: env.variables.username,
   };
