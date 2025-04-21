@@ -31,7 +31,7 @@
     "changelog": "conventional-changelog -p conventionalcommits -i CHANGELOG.md -s -r 0"
   },
   "dependencies": {
-    "@testquality/sdk": "1.16.9-alpha.3",
+    "@testquality/sdk": "1.16.10",
     "axios": "1.5.0",
     "bunyan": "1.8.12",
     "bunyan-format": "0.2.1",
