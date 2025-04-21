@@ -11,9 +11,6 @@ export const logError = (err: any) => {
     // new SDK only
     err.id === 'REFRESH_TOKEN_ERROR' ||
     err.code === 'REFRESH_TOKEN_ERROR' ||
-    // got 401, tried to refresh token, refresh token request failed due to...
-    // old SDK only
-    err.message === 'The refresh token is invalid.' ||
     // got 401, unknown reason (simply not authorized)
     err.message === 'Unauthenticated.'
   ) {
