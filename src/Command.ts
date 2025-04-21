@@ -15,9 +15,12 @@ import { EnvStorage } from './EnvStorage';
 import { type HasId } from 'HasId';
 import { logError } from './logError';
 
+import Debug from 'debug';
+const debug = Debug('tq:cli:Command');
+
 const singleClient = new ClientSdk({
-  clientId: env.client_id,
-  clientSecret: env.client_secret,
+  clientId: env.clientId,
+  clientSecret: env.clientSecret,
   baseUrl: env.api.url,
   debug: env.api.xDebug,
   errorHandler: (newError: HttpError) => {
@@ -69,7 +72,7 @@ export class Command {
             if (project) {
               this.projectId = project.id;
               if (args.save) {
-                env.auth.project_id = this.projectId.toString();
+                env.variables.projectId = this.projectId.toString();
                 saveEnv();
               }
               resolve(this.projectId);
@@ -78,11 +81,11 @@ export class Command {
             }
           }, reject);
         } else {
-          const value = (args.project_id as string) || env.auth.project_id;
+          const value = (args.project_id as string) || env.variables.projectId;
           if (value) {
             this.projectId = parseInt(value, 10);
             if (args.save) {
-              env.auth.project_id = value;
+              env.variables.projectId = value;
               saveEnv();
             }
           }
@@ -92,40 +95,47 @@ export class Command {
     });
   }
 
-  public async reLogin(args: any): Promise<ReturnToken | undefined> {
-    this.migrateOldVariables(args);
-    this.client.getAuth(); // initiate auth
-    const un = (args.username as string) || env.auth.username;
-    const pw = (args.password as string) || env.auth.password;
-    if (un && pw) {
-      return await this.client.getAuth().login(un, pw, true);
-    } else {
-      const at = args.access_token
-        ? (args.access_token as string).trim()
-        : undefined;
-      const ea = args.expires_at as string;
-      if (at) {
-        return await this.client
-          .getAuth()
-          .setToken({ access_token: at, expires_at: ea } as any, true);
-      }
-      return undefined;
-    }
-  }
+  public reLogin(args: any): Promise<ReturnToken | undefined> {
+    debug('reLogin %j', args);
+    return new Promise((resolve, reject) => {
+      const user = (args.username as string) || env.variables.username;
+      const password = (args.password as string) || env.variables.password;
 
-  public migrateOldVariables(args: any) {
-    if (!args.username && !env.auth.username) {
-      if (env.variables.username?.value) {
-        env.auth.username = env.variables.username.value;
-        env.auth.password = env.variables.password.value;
-      } else if (env.variables.access_token.value) {
-        env.auth.token = JSON.stringify({
-          access_token: env.variables.access_token.value,
-          refresh_token: env.variables.refresh_token.value,
-          expires_at: env.variables.expires_at.value,
-        });
+      if (user && password) {
+        this.client.getAuth().login(user, password, true).then(resolve, reject);
+      } else {
+        const accessToken =
+          (args.access_token as string) || env.variables.accessToken;
+        const expiresAt =
+          (args.expires_at as string) || env.variables.expiresAt;
+        const refreshToken =
+          (args.refresh_token as string) || env.variables.refreshToken;
+
+        // In the unlikely case that we end up with both a PAT token and a token set in ClientSdk.Auth,
+        // we prioritize the PAT token.
+        let token: ReturnToken | undefined;
+        if (accessToken) {
+          token = {
+            access_token: accessToken,
+            expires_at: expiresAt,
+            refresh_token: refreshToken,
+          };
+        } else if (env.auth.token) {
+          try {
+            token = JSON.parse(env.auth.token);
+          } catch (error) {
+            logger.warn('Error parsing token from env.auth.token');
+            reject(error);
+          }
+        }
+
+        if (token) {
+          this.client.getAuth().setToken(token, true).then(resolve, reject);
+        } else {
+          resolve(undefined);
+        }
       }
-    }
+    });
   }
 
   public getParams(args: any) {
