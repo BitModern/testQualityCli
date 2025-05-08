@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+This JUnit XML example shows a basic structure with test suites and test cases.
+-->
+<testsuites time="1.123">
+    <testsuite name="Tests.Start">
+        <testcase name="test1" classname="Tests.Start" time="1.123" />
+        <testcase name="test2" classname="Tests.Start" time="1.123456" />
+        <testcase name="test3" classname="Tests.Start" time="3.45" />
+    </testsuite>
+    <testsuite name="Tests.Login">
+        <testsuite name="Tests.Login.SSO">
+            <testcase name="test4" classname="Tests.Login.SSO" time="1.123" />
+            <testcase name="test5" classname="Tests.Login.SSO" time="1.123" />
+            <testcase name="test6" classname="Tests.Login.SSO" time="1.123" />
+        </testsuite>
+        <testcase name="test7" classname="Tests.Login" time="1.123" />
+        <testcase name="test8" classname="Tests.Login" time="1.123" />
+        <testcase name="test9" classname="Tests.Login" time="1.123">
+            <failure message="Exception error message" type="Exception">
+                <!-- code output -->
+            </failure>
+        </testcase>
+    </testsuite>
+</testsuites>

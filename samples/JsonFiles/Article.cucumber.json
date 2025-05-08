@@ -1,0 +1,49 @@
+[
+  {
+    "keyword": "Feature",
+    "name": "Article",
+    "line": 1,
+    "id": "article",
+    "tags": [],
+    "uri": "Article.feature",
+    "elements": [
+      {
+        "id": "article;create-article",
+        "keyword": "Scenario",
+        "line": 6,
+        "name": "Create Article",
+        "tags": [
+          {
+            "name": "@e2e-test",
+            "line": 5
+          }
+        ],
+        "type": "scenario",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 3,
+            "name": "I'm at CMS",
+            "result": {
+              "status": "passed",
+              "duration": 2581000000
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 7,
+            "name": "I go to menu option: \"Atoms>Typography>Heading>Heading 1\"",
+            "result": {
+              "status": "failed",
+              "duration": 10394000000,
+              "error_message": "AssertionError: Timed out retrying after 10000ms: Expected to find element: `#atoms-typography`, but never found it.\n    at Function.goToMenuOption (https://d8-alpha-help.pinterest.com/__cypress/tests?p=cypress/integration/CMS/Article.feature:706:14)\n    at Context.eval (https://d8-alpha-help.pinterest.com/__cypress/tests?p=cypress/integration/CMS/Article.feature:195:35)\n    at Context.resolveAndRunStepDefinition (https://d8-alpha-help.pinterest.com/__cypress/tests?p=cypress/integration/CMS/Article.feature:11251:9)\n    at Context.eval (https://d8-alpha-help.pinterest.com/__cypress/tests?p=cypress/integration/CMS/Article.feature:10594:35)"
+            }
+          }
+        ]
+      }
+    ],
+    "embeddings": []
+  }
+]

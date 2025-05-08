@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites>
+    <testsuite name="pytest" errors="0" failures="0" skipped="0" tests="5" time="55.031"
+               timestamp="2025-04-09T08:33:14.391951" hostname="lime-DMXC2369PQ">
+        <testcase classname="tests.account_setup.account_registration.test_account_creation"
+                  name="test_create_account[chromium]" time="28.410"/>
+        <testcase classname="tests.account_setup.account_registration.test_account_creation"
+                  name="test_create_account_fail[chromium]" time="4.195"/>
+        <testcase classname="tests.account_setup.account_registration.test_login_verification"
+                  name="test_login_verification[chromium]" time="6.092"/>
+        <testcase classname="tests.account_setup.account_registration.test_login_verification"
+                  name="test_login_unverified_account[chromium]" time="9.252"/>
+        <testcase classname="tests.account_setup.account_registration.test_reset_account_password"
+                  name="test_reset_account_password[chromium]" time="7.051"/>
+    </testsuite>
+</testsuites>

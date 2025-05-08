@@ -1,0 +1,316 @@
+[
+  {
+    "description": "",
+    "elements": [
+      {
+        "description": "",
+        "id": "login-to-staging-dbw;login-success",
+        "keyword": "Scenario",
+        "line": 4,
+        "name": "login success",
+        "steps": [
+          {
+            "keyword": "Given ",
+            "line": 5,
+            "name": "User is on dbw properties page",
+            "result": {
+              "duration": 7847000000,
+              "status": "passed"
+            },
+            "match": {
+              "location": "not available:0"
+            }
+          },
+          {
+            "keyword": "And ",
+            "line": 6,
+            "name": "User clicks on login icon",
+            "result": {
+              "duration": 1059000000,
+              "status": "passed"
+            },
+            "match": {
+              "location": "not available:0"
+            }
+          },
+          {
+            "keyword": "When ",
+            "line": 7,
+            "name": "User enters email and password",
+            "result": {
+              "duration": 3567000000,
+              "status": "passed"
+            },
+            "match": {
+              "location": "not available:0"
+            }
+          },
+          {
+            "keyword": "Then ",
+            "line": 8,
+            "name": "properties page is displayed",
+            "result": {
+              "duration": 6211000000,
+              "status": "passed"
+            },
+            "match": {
+              "location": "not available:0"
+            }
+          }
+        ],
+        "type": "scenario",
+        "tags": [
+          {
+            "line": 1,
+            "name": "@regression"
+          },
+          {
+            "line": 1,
+            "name": "@smoke"
+          }
+        ]
+      }
+    ],
+    "id": "login-to-staging-dbw",
+    "keyword": "Feature",
+    "line": 2,
+    "name": "login to staging dbw",
+    "uri": "cypress/e2e/features/DBW/login/dbw_Login.feature",
+    "tags": [
+      {
+        "line": 1,
+        "name": "@regression"
+      },
+      {
+        "line": 1,
+        "name": "@smoke"
+      }
+    ]
+  },
+  {
+    "description": "",
+    "elements": [
+      {
+        "description": "",
+        "keyword": "Background",
+        "line": 4,
+        "name": "",
+        "steps": [
+          {
+            "keyword": "Given ",
+            "line": 5,
+            "name": "User is on pms login screen",
+            "result": {
+              "duration": 6863000000,
+              "status": "passed"
+            },
+            "match": {
+              "location": "not available:0"
+            }
+          }
+        ],
+        "type": "background"
+      },
+      {
+        "description": "",
+        "id": "login-to-pms;login-success",
+        "keyword": "Scenario",
+        "line": 7,
+        "name": "login success",
+        "steps": [
+          {
+            "keyword": "When ",
+            "line": 8,
+            "name": "User enters valid credentials",
+            "result": {
+              "duration": 1844000000,
+              "status": "passed"
+            },
+            "match": {
+              "location": "not available:0"
+            }
+          },
+          {
+            "keyword": "Then ",
+            "line": 9,
+            "name": "Landing page is displayed",
+            "result": {
+              "duration": 8057000000,
+              "status": "passed"
+            },
+            "match": {
+              "location": "not available:0"
+            }
+          }
+        ],
+        "type": "scenario",
+        "tags": [
+          {
+            "line": 1,
+            "name": "@regression"
+          },
+          {
+            "line": 1,
+            "name": "@smoke"
+          }
+        ]
+      },
+      {
+        "description": "",
+        "keyword": "Background",
+        "line": 4,
+        "name": "",
+        "steps": [
+          {
+            "keyword": "Given ",
+            "line": 5,
+            "name": "User is on pms login screen",
+            "result": {
+              "duration": 2437000000,
+              "status": "passed"
+            },
+            "match": {
+              "location": "not available:0"
+            }
+          }
+        ],
+        "type": "background"
+      },
+      {
+        "description": "",
+        "id": "login-to-pms;login-failure",
+        "keyword": "Scenario",
+        "line": 11,
+        "name": "login failure",
+        "steps": [
+          {
+            "keyword": "When ",
+            "line": 12,
+            "name": "User enters invalid credentials",
+            "result": {
+              "duration": 1882000000,
+              "status": "passed"
+            },
+            "match": {
+              "location": "not available:0"
+            }
+          },
+          {
+            "keyword": "Then ",
+            "line": 13,
+            "name": "error is displayed",
+            "result": {
+              "duration": 1040000000,
+              "status": "passed"
+            },
+            "match": {
+              "location": "not available:0"
+            }
+          }
+        ],
+        "type": "scenario",
+        "tags": [
+          {
+            "line": 1,
+            "name": "@regression"
+          },
+          {
+            "line": 1,
+            "name": "@smoke"
+          }
+        ]
+      }
+    ],
+    "id": "login-to-pms",
+    "keyword": "Feature",
+    "line": 2,
+    "name": "login to PMS",
+    "uri": "cypress/e2e/features/PMS/login/pms_Login.feature",
+    "tags": [
+      {
+        "line": 1,
+        "name": "@regression"
+      },
+      {
+        "line": 1,
+        "name": "@smoke"
+      }
+    ]
+  },
+  {
+    "description": "    All page titles headers in the PMS system to be sized at 24px font size",
+    "elements": [
+      {
+        "description": "",
+        "id": "uniform-font-size-for-all-page-titles;all-page-titles-are-the-same-size",
+        "keyword": "Scenario",
+        "line": 5,
+        "name": "All page titles are the same size",
+        "steps": [
+          {
+            "keyword": "Given ",
+            "line": 6,
+            "name": "the PMS landing page is displayed",
+            "result": {
+              "duration": 8331000000,
+              "status": "passed"
+            },
+            "match": {
+              "location": "not available:0"
+            }
+          },
+          {
+            "keyword": "When ",
+            "line": 7,
+            "name": "user navigates through the PMS system",
+            "result": {
+              "duration": 383000000,
+              "status": "passed"
+            },
+            "match": {
+              "location": "not available:0"
+            }
+          },
+          {
+            "keyword": "Then ",
+            "line": 8,
+            "name": "all page titles are 24px font size",
+            "result": {
+              "duration": 75056000000,
+              "status": "passed"
+            },
+            "match": {
+              "location": "not available:0"
+            }
+          }
+        ],
+        "type": "scenario",
+        "tags": [
+          {
+            "line": 1,
+            "name": "@regression"
+          },
+          {
+            "line": 1,
+            "name": "@smoke"
+          }
+        ]
+      }
+    ],
+    "id": "uniform-font-size-for-all-page-titles",
+    "keyword": "Feature",
+    "line": 2,
+    "name": "Uniform font size for all page titles",
+    "uri": "cypress/e2e/features/PMS/page_title_font/pageHeaderSize.feature",
+    "tags": [
+      {
+        "line": 1,
+        "name": "@regression"
+      },
+      {
+        "line": 1,
+        "name": "@smoke"
+      }
+    ]
+  }
+]

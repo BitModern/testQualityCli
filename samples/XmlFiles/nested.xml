@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<testsuites failures="0" errors="0" tests="16" skipped="0">
+  <testsuite name="Tests Cypress" timestamp="2024-01-17T11:07:37" tests="0" file="cypress/e2e/Navigation/Logout.cy.ts" time="0.000" failures="0"/>
+  <testsuite name="Page Logout" timestamp="2024-01-17T11:07:37" tests="1" time="32.207" failures="0">
+    <testcase name="Page Logout First Nest" time="31.957" classname="First Nest"/>
+  </testsuite>
+  <testsuite name="Tests Cypress" timestamp="2024-01-17T11:08:22" tests="0" file="cypress/e2e/Navigation/Pages.cy.ts" time="0.000" failures="0"/>
+  <testsuite name="Navigation" timestamp="2024-01-17T11:08:23" tests="15" time="319.277" failures="0">
+    <testcase name="Navigation Test Nest" time="46.483" classname="Test Nest"/>
+    <testcase name="Navigation Test Nest1" time="46.483" classname="Test Nest1"/>
+  </testsuite>
+  <testsuite name="Second Nest" timestamp="2024-01-17T11:08:23" tests="15" time="319.277" failures="0">
+    <testcase name="Navigation Second Nest Test Nest2" time="46.483" classname="Test Nest2"/>
+    <testcase name="Navigation Second Nest Test Nest3" time="46.483" classname="Test Nest3"/>
+  </testsuite>
+  <testsuite name="Third Nest" timestamp="2024-01-17T11:08:23" tests="15" time="319.277" failures="0">
+    <testcase name="Navigation Second Nest Third Nest Test Nest4" time="46.483" classname="Test Nest4"/>
+    <testcase name="Navigation Second Nest Third Nest Test Nest5" time="46.483" classname="Test Nest5"/>
+  </testsuite>
+</testsuites>

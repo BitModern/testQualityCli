@@ -75,7 +75,7 @@ Example workflow.
 
 ```sh
 testquality-macos login larry@bitmodern.com *password* --save
-testquality-macos upload_test_run 'sampleXml/*.xml' --project_name=Test --plan_name=Test
+testquality-macos upload_test_run 'sample/XmlFiles/*.xml' --project_name=Test --plan_name=Test
 ```
 
 You can also create a manual test plan run.

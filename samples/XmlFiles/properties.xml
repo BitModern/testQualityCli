@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+    <testsuite name="Tests">
+        <testcase name="testExample" classname="Tests">
+            <properties>
+                <property name="priority" value="highest" />
+                <property name="author" value="Larry" />
+                <property name="description">
+                    Step Text
+                </property>
+                <property name="browser" value="Google Chrome" />
+                <property name="ci" value="https://github.com/actions/runs/1234" />
+                <property name="version" value="1.0" />
+                <property name="commit" value="abcdefgh" />
+
+                <property name="defect" value="TQ-1234" />
+                <property name="defect" value="12" />
+                <property name="attachment" value="example.png" />
+                <property name="attachment1" value="logs/browser/console.txt" />
+                <property name="attachment2" value="logs/server/access.txt" />
+                <property name="attachment" value="https://localhost:8000/files/image.jpg" />
+                <property name="attachment" value="data:text/html;base64,SSBsb3ZlIHRlc3Rpbmc=" />
+
+                <property name="step" value="This is a test step." />
+                <property name="step" value="This is next step." />
+                <property name="step1" value="Make this first step." />
+                <property name="step2" value="Make second test step." />
+                <property name="step">
+                    Two lines
+                    of step text
+                </property>
+                <property name="step[passed]" value="something passed." />
+                <property name="step[failure]" value="Do something that fails." />
+                <property name="step[skipped]" value="Skipped." />
+                <property name="step[error]" value="And an error." />
+                <property name="step[failed]">
+                    <![CDATA[
+            <test-step-subfield name="Step">
+                Do something that fails.
+            </test-step-subfield>
+            <test-step-subfield name="Actual">
+                Step failed
+            </test-step-subfield>
+            <test-step-subfield name="Expected">
+                Expected step to pass
+            </test-step-subfield>
+            <test-step-subfield name="Time">
+                3.0
+            </test-step-subfield>
+          ]]>
+                </property>
+            </properties>
+        </testcase>
+        <testcase name="testExample2" classname="Tests">
+            <system-out><![CDATA[
+Junk
+[[PROPERTY|author=Larry]]
+[[PROPERTY|language=english]]
+
+[[PROPERTY|browser-log]]
+Log line #1
+Log line #2
+Log line #3
+[[/PROPERTY]]
+
+[[PROPERTY|html:output]]
+<h1>Title</h1>
+<p>This is an <strong>HTML</strong> example.</p>
+[[/PROPERTY]]
+
+[[DEFECT|TQ-1234]]
+[[DEFECT|12]]
+
+[[ATTACHMENT|screenshots/somethingelse.png]]
+[[ATTACHMENT|http://localhost:8000/files/image.jpg]]]]>
+            </system-out>
+        </testcase>
+    </testsuite>
+</testsuites>

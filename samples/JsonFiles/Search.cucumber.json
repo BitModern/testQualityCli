@@ -1,0 +1,84 @@
+[
+  {
+    "keyword": "Feature",
+    "name": "Search",
+    "line": 2,
+    "id": "search",
+    "tags": [
+      {
+        "name": "@Search",
+        "line": 1
+      }
+    ],
+    "uri": "Search.feature",
+    "elements": [
+      {
+        "id": "search;search-field:-can-you-type-a-search-term?",
+        "keyword": "Scenario",
+        "line": 7,
+        "name": "Search field: can you type a search term?",
+        "tags": [
+          {
+            "name": "@Search",
+            "line": 1
+          },
+          {
+            "name": "@e2e-test",
+            "line": 6
+          }
+        ],
+        "type": "scenario",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I'm at Subsites - Help Center",
+            "result": {
+              "status": "passed",
+              "duration": 1543000000
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 8,
+            "name": "I search the word \"Board\"",
+            "result": {
+              "status": "passed",
+              "duration": 1134000000
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 9,
+            "name": "at least 1 search result should be displayed",
+            "result": {
+              "status": "passed",
+              "duration": 3247000000
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 10,
+            "name": "all results should include the word \"Board\"",
+            "result": {
+              "status": "passed",
+              "duration": 133000000
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 0
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

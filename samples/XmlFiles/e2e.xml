@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites>
+ <testsuite name="Redirects before login" timestamp="2016-11-07T12:06:04" hostname="localhost" time="0" errors="0" tests="0" skipped="0" disabled="0" failures="0">
+ </testsuite>
+ <testsuite name="Login page" timestamp="2016-11-07T12:06:04" hostname="localhost" time="5.872" errors="0" tests="1" skipped="0" disabled="0" failures="0">
+  <testcase classname="Login page" name="should login" time="5.872" />
+  <testcase classname="Redirect page" name="redirect" time="5.872" >
+   <system-err><![CDATA[]]></system-err>
+   <system-out>Project=TestQuality Tour status=created total=30 average=0.28571428571429 % change=16.666666666667&#13;
+   Project=Project 3 status=created total=8 average=1.1428571428571 % change=91.666666666667&#13;
+   Project=Project 2 status=created total=8 average=1.1428571428571 % change=45.833333333333&#13;
+   Project=Project 1 status=created total=8 average=1.4285714285714 % change=93.333333333333&#13;
+   </system-out>
+  </testcase>
+ </testsuite>
+ <testsuite name="Dashboard select project" timestamp="2016-11-07T12:06:10" hostname="localhost" time="5.94" errors="0" tests="1" skipped="0" disabled="0" failures="1">
+  <testcase classname="Dashboard select project" name="should select project 5" time="5.94">
+   <failure type="exception" message="Failed: No element found using locator: By(css selector, a[href=&quot;/project/5&quot;])"><![CDATA[NoSuchElementError: No element found using locator: By(css selector, a[href="/project/5"])
+    at WebDriverError (/Users/jamespitts/Dev/testQualityApp/node_modules/selenium-webdriver/lib/error.js:27:10)
+    at NoSuchElementError (/Users/jamespitts/Dev/testQualityApp/node_modules/selenium-webdriver/lib/error.js:242:10)
+    at /Users/jamespitts/Dev/testQualityApp/node_modules/protractor/built/element.js:719:27
+    at ManagedPromise.invokeCallback_ (/Users/jamespitts/Dev/testQualityApp/node_modules/selenium-webdriver/lib/promise.js:1379:14)
+    at TaskQueue.execute_ (/Users/jamespitts/Dev/testQualityApp/node_modules/selenium-webdriver/lib/promise.js:2913:14)
+    at TaskQueue.executeNext_ (/Users/jamespitts/Dev/testQualityApp/node_modules/selenium-webdriver/lib/promise.js:2896:21)
+    at /Users/jamespitts/Dev/testQualityApp/node_modules/selenium-webdriver/lib/promise.js:2775:27
+    at /Users/jamespitts/Dev/testQualityApp/node_modules/selenium-webdriver/lib/promise.js:639:7
+    at process._tickCallback (node.js:369:9)Error
+    at ElementArrayFinder.applyAction_ (/Users/jamespitts/Dev/testQualityApp/node_modules/protractor/built/element.js:406:27)
+    at ElementArrayFinder._this.(anonymous function) [as click] (/Users/jamespitts/Dev/testQualityApp/node_modules/protractor/built/element.js:101:30)
+    at ElementFinder.(anonymous function) [as click] (/Users/jamespitts/Dev/testQualityApp/node_modules/protractor/built/element.js:742:22)
+    at Object.<anonymous> (/Users/jamespitts/Dev/testQualityApp/src/test/e2e/dashboard/dashboard-select-project.spec.js:12:49)
+    at /Users/jamespitts/Dev/testQualityApp/node_modules/jasminewd2/index.js:94:23
+    at new ManagedPromise (/Users/jamespitts/Dev/testQualityApp/node_modules/selenium-webdriver/lib/promise.js:1082:7)
+    at controlFlowExecute (/Users/jamespitts/Dev/testQualityApp/node_modules/jasminewd2/index.js:80:18)
+    at TaskQueue.execute_ (/Users/jamespitts/Dev/testQualityApp/node_modules/selenium-webdriver/lib/promise.js:2913:14)
+    at TaskQueue.executeNext_ (/Users/jamespitts/Dev/testQualityApp/node_modules/selenium-webdriver/lib/promise.js:2896:21)
+    at /Users/jamespitts/Dev/testQualityApp/node_modules/selenium-webdriver/lib/promise.js:2820:25
+From: Task: Run it("should select project 5") in control flow
+    at Object.<anonymous> (/Users/jamespitts/Dev/testQualityApp/node_modules/jasminewd2/index.js:79:14)
+    at attemptAsync (/Users/jamespitts/Dev/testQualityApp/node_modules/jasmine-core/lib/jasmine-core/jasmine.js:1980:24)
+    at QueueRunner.run (/Users/jamespitts/Dev/testQualityApp/node_modules/jasmine-core/lib/jasmine-core/jasmine.js:1935:9)
+    at /Users/jamespitts/Dev/testQualityApp/node_modules/jasmine-core/lib/jasmine-core/jasmine.js:1962:16
+    at /Users/jamespitts/Dev/testQualityApp/node_modules/jasmine-core/lib/jasmine-core/jasmine.js:1905:9
+    at /Users/jamespitts/Dev/testQualityApp/node_modules/jasminewd2/index.js:16:5
+    at ManagedPromise.invokeCallback_ (/Users/jamespitts/Dev/testQualityApp/node_modules/selenium-webdriver/lib/promise.js:1379:14)
+    at TaskQueue.execute_ (/Users/jamespitts/Dev/testQualityApp/node_modules/selenium-webdriver/lib/promise.js:2913:14)
+    at TaskQueue.executeNext_ (/Users/jamespitts/Dev/testQualityApp/node_modules/selenium-webdriver/lib/promise.js:2896:21)
+    at /Users/jamespitts/Dev/testQualityApp/node_modules/selenium-webdriver/lib/promise.js:2775:27
+From asynchronous test:
+Error
+    at Suite.<anonymous> (/Users/jamespitts/Dev/testQualityApp/src/test/e2e/dashboard/dashboard-select-project.spec.js:10:5)
+    at addSpecsToSuite (/Users/jamespitts/Dev/testQualityApp/node_modules/jasmine-core/lib/jasmine-core/jasmine.js:867:25)
+    at Env.describe (/Users/jamespitts/Dev/testQualityApp/node_modules/jasmine-core/lib/jasmine-core/jasmine.js:836:7)
+    at jasmineInterface.describe (/Users/jamespitts/Dev/testQualityApp/node_modules/jasmine-core/lib/jasmine-core/jasmine.js:3576:18)
+    at Object.<anonymous> (/Users/jamespitts/Dev/testQualityApp/src/test/e2e/dashboard/dashboard-select-project.spec.js:1:1)
+    at Module._compile (module.js:409:26)
+    at Object.Module._extensions..js (module.js:416:10)
+    at Module.load (module.js:343:32)
+    at Function.Module._load (module.js:300:12)]]>
+   </failure>
+  </testcase>
+ </testsuite>
+</testsuites>
