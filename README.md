@@ -1,217 +1,244 @@
 # TestQuality CLI
 
-This command line interface allows you to upload your automated test results to TestQuality. Automated test results must be outputted in JUnit XML format, which most test automation tools will provide. Test result attachments and related defects are also supported through test name tags or console outputs.
+The TestQuality CLI is a robust, command-line tool designed to streamline your testing workflows with TestQuality projects. It helps you to programmatically interact with TestQuality organize your testing efforts and upload your automated test results from CI/CD pipelines or your local development environment
 
-For DEFECTS we expect the following tag format for both test name tags and console ouptuts.
+## Prerequisites
 
-- GitHub Defects [[DEFECT|22]]
-- Jira Defects [[DEFECT|TQ-123]]
+Before you begin, ensure you have the following:
 
-For ATTACHMENTS the following format is expected:
+1.  **Node.js and npm:** Required for the primary installation method.
+2.  **A TestQuality Account:** You'll need credentials to log in.
+3.  **A Target Cycle in TestQuality:** Create a Cycle in your TestQuality Project where you intend to upload results.
+4.  **Automated Test Results:** Your test automation framework should produce results in JUnit XML format.
 
-- Attachments from test name tag [[ATTACHMENT|ScreenshotFileName.png]]
-- Attachments from console output [[ATTACHMENT|path/to/file]]
+## Installation
 
-Note that for attachment you will need to use 'run_result_output_dir' option to specify the test result output directory.
+Install the TestQuality CLI globally using `npm` (or your preferred Node.js package manager):
 
-## Requirements
+```sh
+npm install -g @testquality/cli
+```
 
-In order to upload xml you will need to:
+After installation, you can run the CLI using the `testquality` command.
 
-1. Create a target Test Plan
-2. Authenticate with TestQuality
-3. Run command to upload files
+### Alternative: Standalone Binary
 
-# Compiled Commands
+If you prefer not to use `npm` or need a standalone executable, you can download compiled binaries. These are larger as they include the Node.js runtime.
 
-There are compiled commands for
+**Download**
 
-- Windows
-- MacOS
-- Linux
-- Alpine
+Download the binary from [cli.testquality.com](http://cli.testquality.com/) or directly from GitHub releases:
 
-Commands can be downloaded from [cli.testquality.com](http://cli.testquality.com)
+```sh
+wget https://github.com/BitModern/testQualityCli/releases/download/{{ version }}/testquality-linux -O testquality
+```
 
-Note: For _alpine_ you must install libstdc++
+Replace `{{ version }}` with the actual release tag (e.g., `v1.0.0`) and adjust the filename based on your operating system:
+
+- Windows: `testquality-win.exe`
+- MacOS: `testquality-macos`
+- Linux: `testquality-linux`
+- Alpine Linux: `testquality-alpine`
+
+**Set Permissions**
+
+Once downloaded, grant execute permissions:
+
+```sh
+chmod 744 testquality
+```
+
+For easier access, consider moving the binary to a directory in your PATH (e.g., `/usr/local/bin` for Linux/MacOS).
+
+**Note for Alpine Linux:** If using the standalone binary on Alpine Linux, you must install `libstdc++`:
 
 ```sh
 apk add --no-cache libstdc++
 ```
 
-# Usage
+## Authentication
 
-For list of commands
+You need to authenticate with TestQuality to use the CLI.
 
-```sh
-yarn start --help
-```
+### 1. Login with Email and Password
 
-or
+Use the `login` command with your TestQuality email and password.
 
 ```sh
-testquality-macos --help
+testquality login your_email@example.com YourPassword
 ```
 
-For command help
+**Save Credentials:**
+To avoid logging in repeatedly, include the `--save` flag. This will store your authentication token locally for subsequent commands.
 
 ```sh
-yarn start login --help
+testquality login your_email@example.com YourPassword --save
 ```
 
-or
+### 2. Personal Access Token (PAT)
+
+You can also authenticate using a Personal Access Token (PAT).
+
+**Option A: Environment Variable**
+Set the `TQ_ACCESS_TOKEN` environment variable:
 
 ```sh
-testquality-macos login --help
+export TQ_ACCESS_TOKEN=your_personal_access_token
 ```
 
-# Save
+The CLI will automatically pick up this variable.
 
-Include `--save` to save tokens to use with other commands.
-
-# Example
-
-Example workflow.
+**Option B: Command Line Argument**
+Add the `--access_token=<YOUR_PAT>` argument to any command:
 
 ```sh
-testquality-macos login larry@bitmodern.com *password* --save
-testquality-macos upload_test_run 'sample/XmlFiles/*.xml' --project_name=Test --plan_name=Test
+testquality upload_test_run 'path/to/*.xml' --project_name=MyProject --plan_name=MyPlan --access_token=your_personal_access_token
 ```
 
-You can also create a manual test plan run.
+## Core Usage: Uploading Test Results
+
+This is the primary function of the CLI. Ensure your test results are in JUnit XML format.
+
+### Basic Upload
 
 ```sh
-testquality-macos create_manual_run --project_name=My_Project --plan_name=My_Test_Plan --run_name=Test_Run_Name
+testquality upload_test_run 'sampleXml/*.xml' --project_name="Your Project Name" --plan_name="Your Cycle Name"
 ```
 
-CSV Files
+- Replace `'sampleXml/*.xml'` with the glob pattern matching your JUnit XML files.
+- Replace `"Your Project Name"` and `"Your Cycle Name"` with the actual names from your TestQuality instance.
+
+### Including Attachments
+
+Attach files like screenshots or logs to your test results.
+
+- **From Test Name Tag:** `[[ATTACHMENT|ScreenshotFileName.png]]`
+  - Example: `Test with UI screenshot [[ATTACHMENT|error_screenshot.png]]`
+- **From Console Output:** `[[ATTACHMENT|path/to/your/file.log]]`
+  - Example: If your test prints `[[ATTACHMENT|logs/test_run_details.log]]` to console output.
+
+**Important:** When using attachments, you **must** specify the root directory where these attachment files are located using the `run_result_output_dir` option:
 
 ```sh
-testquality-macos upload_csv ./test_run_results.csv --cf ./test_run_results.config
+testquality upload_test_run 'output/results/*.xml' --project_name="MyProject" --plan_name="MainCycle" --run_result_output_dir="output/attachments_and_logs/"
 ```
 
-Personal Access Token (PAT)
+In this example, if a test tag mentions `[[ATTACHMENT|error_screenshot.png]]`, the CLI will look for `output/attachments_and_logs/error_screenshot.png`. If console output mentions `[[ATTACHMENT|logs/test_run_details.log]]`, it will look for `output/attachments_and_logs/logs/test_run_details.log`.
 
-Add the `--access_token=pat` where pat equals token to any command.
+### Linking Defects
 
-Or
+You can link test results to defects in GitHub or Jira directly from your test reports. Modify your test names or include console output within your tests using the following formats:
 
-Save token into .env or environment with `TQ_ACCESS_TOKEN=pat` where pat equals token
+- **GitHub Defects:** `[[DEFECT|GH_ISSUE_NUMBER]]`
+  - Example: `My Test Case [[DEFECT|22]]`
+- **Jira Defects:** `[[DEFECT|JIRA_ISSUE_KEY]]`
+  - Example: `Another Test Scenario [[DEFECT|TQ-123]]`
 
-# Contributing
+The CLI will parse these tags and create the necessary links in TestQuality.
 
-## Development
+## Other Common Commands
 
-### Running in Development Mode
+### Upload CSV Files
 
-To run the project in development mode (with watch mode enabled):
+For specific scenarios, you might need to upload results via CSV:
+
+```sh
+testquality upload_csv ./test_run_results.csv --cf ./test_run_results.config
+```
+
+(Ensure you have the corresponding config file for your CSV structure.)
+
+## Getting Help
+
+To see a list of all available commands:
+
+```sh
+testquality --help
+```
+
+For help with a specific command (e.g., `login`):
+
+```sh
+testquality login --help
+```
+
+## Advanced Usage
+
+### Restoring a Plan or Suite
+
+This section is for recovering deleted items.
+
+**Restore a Plan:**
+
+1.  Login (if you haven't already).
+2.  List deleted plans:
+    ```sh
+    testquality plans --revision_log -p _sort=-updated_at -p operation=delete
+    ```
+3.  Restore the plan using its ID:
+    ```sh
+    testquality restore --plan_id <PLAN_ID>
+    ```
+
+**Restore a Suite:**
+
+1.  Login.
+2.  List deleted suites:
+    ```sh
+    testquality suites --revision_log -p _sort=-updated_at -p operation=delete
+    ```
+3.  Find associated plans for the deleted suite:
+    ```sh
+    testquality plan_suite --revision_log -p _sort=-updated_at -p operation=delete -p suite_id=<SUITE_ID>
+    ```
+4.  Restore the suite with its ID and an associated plan ID:
+    ```sh
+    testquality restore --suite_id <SUITE_ID> --plan_id <ASSOCIATED_PLAN_ID>
+    ```
+
+### Using Custom Parameters
+
+You can pass additional parameters to the API using the `--params` prefix:
+
+```sh
+testquality some_command --params.per_page -1 --params._with test
+```
+
+This translates to API parameters: `{per_page: -1, _with: 'test'}`
+
+## Contributing (For Developers)
+
+If you want to contribute to the development of the TestQuality CLI itself:
+
+### Development Environment
+
+The project uses Yarn for dependency management. You'll need Node.js and Yarn installed.
+
+1.  **Clone the repository.**
+2.  **Install dependencies:**
+    ```sh
+    yarn install
+    ```
+
+**Running in Development Mode (with watch):**
+This command will watch for file changes and automatically rebuild.
 
 ```sh
 yarn dev
 ```
 
-This command will watch for file changes and automatically rebuild
-
-### Running Directly
-
-To run a specific command without watching for changes:
+**Running a Specific Command Directly (without watch):**
+Use `yarn start` followed by the command and its arguments.
 
 ```sh
 yarn start login <username> <password>
 ```
 
-### Building for Production
+(Replace `<username>` and `<password>` or other command arguments as needed.)
 
-To build the project for production:
+**Building for Production:**
+This command builds the project for production (creates the binaries mentioned in the alternative installation).
 
 ```sh
 yarn build
-```
-
-## Docker
-
-Retrieve an authentication token and authenticate your Docker client to your registry.
-Use the AWS CLI:
-
-```sh
-aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 092049816521.dkr.ecr.us-east-1.amazonaws.com/test-quality-cli
-```
-
-Note: If you receive an error using the AWS CLI, make sure that you have the latest version of the AWS CLI and Docker installed.
-
-Build your Docker image using the following command. For information on building a Docker file from scratch see the instructions [here](http://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-basics.html)
-
-```sh
-docker build -t test-quality-cli .
-```
-
-Run your Docker image local.
-
-```sh
-docker run --name test-quality-cli -p 80:80 --rm test-quality-cli
-```
-
-After the build completes, tag your image so you can push the image to this repository:
-
-```sh
-docker tag test-quality-cli:latest 092049816521.dkr.ecr.us-east-1.amazonaws.com/test-quality-cli:latest
-```
-
-Run the following command to push this image to your newly created AWS repository:
-
-```sh
-docker push 092049816521.dkr.ecr.us-east-1.amazonaws.com/test-quality-cli:latest
-```
-
-Kubernetes
-
-```sh
-kustomize build kustomize/overlays/<<environment>> | kubectl apply --dry-run --validate -f -
-
-kustomize build kustomize/overlays/<<parameters.environment>> | kubectl apply --record=true -f -
-```
-
-## Restoring a plan or suite
-
-For Plan
-
-1. Login
-2. List plans that have been deleted
-
-```sh
-testquality-macos plans --revision_log -p \_sort=-updated_at -p operation=delete
-```
-
-3. Restore
-
-```sh
-testquality-macos restore --plan_id 17452
-```
-
-For Suite
-
-1. Login
-2. List suites that have been deleted
-
-```sh
-testquality-macos suites --revision_log -p \_sort=-updated_at -p operation=delete
-```
-
-3. Find associated plans
-
-```sh
-testquality-macos plan_suite --revision_log -p \_sort=-updated_at -p operation=delete -p suite_id=105923
-```
-
-4. Restore
-
-```sh
-testquality-macos restore --suite_id 105923 --plan_id 17452
-```
-
-## Calling with params
-
-```
---params.per_page -1 --params.\_with test
-// gives us: {per_page: -1, with: 'test'}
 ```
