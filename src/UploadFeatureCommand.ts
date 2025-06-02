@@ -17,32 +17,46 @@ export class UploadFeatureCommand extends Command {
             describe: `glob Gherkin feature file, example: upload_feature '**/*.feature'`,
             type: 'string',
           })
-          .option('milestone_id', {
-            alias: 'mi',
-            describe: 'Milestone ID',
+          .option('plan_id', {
+            alias: 'pi',
+            describe: 'Plan ID',
+            type: 'string',
+          })
+          .option('plan_name', {
+            alias: 'pn',
+            describe: 'Plan Name',
+            type: 'string',
+          })
+          .option('automation_id', {
+            alias: 'ai',
+            describe: 'Automation ID',
+            type: 'string',
+          })
+          .option('automation_name', {
+            alias: 'an',
+            describe: 'Automation Name',
+            type: 'string',
+          })
+          .option('folder_id', {
+            alias: 'fi',
+            describe: 'Folder id',
             type: 'string',
           });
       },
       async (args: Arguments) => {
         try {
           const projectId = await this.getProjectId(args);
-          const planId = await this.getId(args, 'plan', projectId);
-          const milestoneId = await this.getId(
-            args,
-            'milestone',
-            projectId,
-            false,
-          );
-          if (args.files && planId) {
+
+          if (args.files) {
             const matches = await glob(args.files as string, {
               realpath: true,
             });
-            await this.uploadFeatureFiles(
+            const response = await this.uploadFeatureFiles(
               args,
-              planId,
               matches,
-              milestoneId,
-            ).then(console.log);
+              projectId,
+            );
+            console.log(response);
           }
         } catch (error) {
           logError(error);
@@ -53,13 +67,27 @@ export class UploadFeatureCommand extends Command {
 
   private async uploadFeatureFiles(
     args: Arguments,
-    planId: number | undefined,
     matches: string[],
-    milestoneId: number | undefined,
+    projectId?: number,
   ): Promise<any> {
-    const url = `/plan/${planId}/import_feature`;
     const data = new FormData();
 
+    if (projectId) {
+      data.append('project_id', projectId);
+    }
+    if (args.plan_id) {
+      data.append('plan_id', args.plan_id);
+    } else if (args.plan_name) {
+      data.append('plan_name', args.plan_name);
+    } else if (args.automation_id) {
+      data.append('automation_id', args.automation_id);
+    } else if (args.automation_name) {
+      data.append('automation_name', args.automation_name);
+    }
+
+    if (args.folder_id) {
+      data.append('suite_id', args.folder_id);
+    }
     if (matches.length > 1) {
       data.append(
         'files[]',
@@ -74,11 +102,9 @@ export class UploadFeatureCommand extends Command {
     } else {
       throw Error('No matching files');
     }
-    if (milestoneId) {
-      data.append('milestone_id', milestoneId);
-    }
+
     return await getResponse(this.client.api, {
-      url,
+      url: `/import_feature`,
       method: 'POST',
       data,
       headers: data.getHeaders(),

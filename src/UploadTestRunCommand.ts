@@ -23,6 +23,11 @@ export class UploadTestRunCommand extends Command {
             describe: 'Milestone ID',
             type: 'string',
           })
+          .option('milestone_name', {
+            alias: 'mn',
+            describe: 'Milestone Name',
+            type: 'string',
+          })
           .option('plan_id', {
             alias: 'pi',
             describe: 'Plan ID',
@@ -31,6 +36,16 @@ export class UploadTestRunCommand extends Command {
           .option('plan_name', {
             alias: 'pn',
             describe: 'Plan Name',
+            type: 'string',
+          })
+          .option('automation_id', {
+            alias: 'ai',
+            describe: 'Automation ID',
+            type: 'string',
+          })
+          .option('automation_name', {
+            alias: 'an',
+            describe: 'Automation Name',
             type: 'string',
           })
           .option('run_name', {
@@ -77,13 +92,6 @@ export class UploadTestRunCommand extends Command {
           if (!xmlFilesGlob) throw new Error('Must supply xmlfiles');
 
           const projectId = await this.getProjectId(args);
-          const planId = await this.getId(args, 'plan', projectId, false);
-          const milestoneId = await this.getId(
-            args,
-            'milestone',
-            projectId,
-            false,
-          );
 
           const xmlFiles = await glob(xmlFilesGlob, { realpath: true });
           if (args.verbose) {
@@ -104,8 +112,6 @@ export class UploadTestRunCommand extends Command {
             xmlFiles,
             attachments,
             projectId,
-            planId,
-            milestoneId,
           );
           console.log(response);
         } catch (error) {
@@ -120,24 +126,28 @@ export class UploadTestRunCommand extends Command {
     xmlFiles: string[],
     attachments: string[] = [],
     projectId?: number,
-    planId?: number,
-    milestoneId?: number,
   ): Promise<any> {
     const data = new FormData();
 
     if (projectId) {
       data.append('project_id', projectId);
     }
-    if (planId) {
-      data.append('plan_id', planId);
+    if (args.plan_id) {
+      data.append('plan_id', args.plan_id);
     } else if (args.plan_name) {
       data.append('plan_name', args.plan_name);
+    } else if (args.automation_id) {
+      data.append('automation_id', args.automation_id);
+    } else if (args.automation_name) {
+      data.append('automation_name', args.automation_name);
     }
     if (args.run_name) {
       data.append('run_name', args.run_name);
     }
-    if (milestoneId) {
-      data.append('milestone_id', milestoneId);
+    if (args.milestone_id) {
+      data.append('milestone_id', args.milestone_id);
+    } else if (args.milestone_name) {
+      data.append('milestone_name', args.milestone_name);
     }
     if (args.create_manual_run) {
       data.append('create_manual_run', args.create_manual_run ? 1 : 0);
