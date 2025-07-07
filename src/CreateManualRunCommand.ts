@@ -17,10 +17,32 @@ export class CreateManualRunCommand extends Command {
       'create_manual_run',
       'Create a Plan Test Run for manual execution without uploading test results',
       (args: Argv) => {
-        return args.option('run_name', {
-          describe: `Plan Test Run name, example: create_manual_run --run_name 'My_Manual_Run'`,
-          type: 'string',
-        });
+        return args
+          .option('milestone_id', {
+            alias: 'mi',
+            describe: 'Milestone ID',
+            type: 'string',
+          })
+          .option('milestone_name', {
+            alias: 'mn',
+            describe: 'Milestone Name',
+            type: 'string',
+          })
+          .option('plan_id', {
+            alias: 'pi',
+            describe: 'Plan ID',
+            type: 'string',
+          })
+          .option('plan_name', {
+            alias: 'pn',
+            describe: 'Plan Name',
+            type: 'string',
+          })
+          .option('run_name', {
+            alias: 'rn',
+            describe: `Test Run name, example: create_manual_run --run_name 'My_Manual_Run'`,
+            type: 'string',
+          });
       },
       async (args: Arguments<CreateManualRunCommandArgs>) => {
         try {

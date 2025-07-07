@@ -149,9 +149,6 @@ export class UploadTestRunCommand extends Command {
     } else if (args.milestone_name) {
       data.append('milestone_name', args.milestone_name);
     }
-    if (args.create_manual_run) {
-      data.append('create_manual_run', args.create_manual_run ? 1 : 0);
-    }
     if (args.folder_id) {
       data.append('suite_id', args.folder_id);
     }
