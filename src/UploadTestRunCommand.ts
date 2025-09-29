@@ -64,9 +64,9 @@ export class UploadTestRunCommand extends Command {
             describe: 'Folder id',
             type: 'string',
           })
-          .option('version2', {
-            alias: 'v2',
-            describe: 'Version 2 of Upload',
+          .option('version1', {
+            alias: 'v1',
+            describe: 'Version 1 of Upload',
             boolean: true,
             type: 'boolean',
             default: false,
@@ -172,9 +172,9 @@ export class UploadTestRunCommand extends Command {
     }
 
     if (args.verbose) {
-      console.log('using new version of upload: ', args.version2);
+      console.log('using version of upload: ', args.version1);
     }
-    const url = args.version2 ? '/import_xml' : '/junit_xml';
+    const url = args.version1 ? '/junit_xml' : '/import_xml';
 
     return await getResponse(this.client.api, {
       url,
