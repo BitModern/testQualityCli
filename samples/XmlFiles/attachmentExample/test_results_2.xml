@@ -34,11 +34,11 @@
     at Async._drainQueue (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:129184:16)
     at Async._drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:129194:10)
     at Async.drainQueues (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:129068:14)]]></failure>
-      <system-err>[[ATTACHMENT|./sampleXml/TQ-596.png]]</system-err>
+      <system-err>[[ATTACHMENT|./attachments/TQ-596.png]]</system-err>
     </testcase>
     <testcase name="I as a user want to delete the user and then I to see that this user is missing in the list" time="18.872" classname="LS-519 - Check the correct behaviour of the add user functionality I as a user want to delete the user and then I to see that this user is missing in the list">
     </testcase>
-    <testcase name="[[ATTACHMENT|TQ-597.png]] I as a user want to delete a user" time="0" classname="LS-519 - Check the correct behaviour of the add user functionality (FIX-by LS1167) I as a user want to delete a user">
+    <testcase name="[[ATTACHMENT|TQ-596_2.png]] I as a user want to delete a user" time="0" classname="LS-519 - Check the correct behaviour of the add user functionality (FIX-by LS1167) I as a user want to delete a user">
       <failure message="Timed out retrying: Expected not to find content: &apos;qaTesterName&apos; within the element: &lt;tbody.ant-table-tbody&gt; but continuously found it." type="CypressError"><![CDATA[CypressError: Timed out retrying: Expected not to find content: 'qaTesterName' within the element: <tbody.ant-table-tbody> but continuously found it.
     at Object.cypressErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:85007:11)
     at Object.throwErr (https://appqa.lansweeper.com/__cypress/runner/cypress_runner.js:84960:18)

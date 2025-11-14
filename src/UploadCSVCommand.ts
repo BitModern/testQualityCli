@@ -3,7 +3,7 @@ import { type Arguments, type Argv } from 'yargs';
 import { logError } from './logError';
 import { glob } from 'glob';
 import * as fs from 'fs';
-import FormData = require('form-data');
+import FormData from 'form-data';
 import { getResponse } from '@testquality/sdk';
 
 export class UploadCSVCommand extends Command {

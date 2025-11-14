@@ -86,3 +86,5 @@ schema.graphql
 yalc.lock
 .DS_Store
 .vscode
+
+.yarn/install-state.gz

@@ -5,9 +5,9 @@
  * Created by jamespitts on 1/24/20.
  */
 import Logger from 'bunyan';
-import BunyanFormat from 'bunyan-format';
 import { env } from './env';
 import { errSerializer } from './errSerializer';
+const BunyanFormat = require('bunyan-format');
 
 export const logger = new Logger({
   level: env.log.level as Logger.LogLevelString,

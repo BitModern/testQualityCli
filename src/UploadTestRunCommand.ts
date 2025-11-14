@@ -2,7 +2,7 @@ import { getResponse } from '@testquality/sdk';
 import { type Arguments, type Argv } from 'yargs';
 import * as fs from 'fs';
 import * as path from 'path';
-import FormData = require('form-data');
+import FormData from 'form-data';
 import { Command } from './Command';
 import { logError } from './logError';
 import { glob } from 'glob';
@@ -85,9 +85,11 @@ export class UploadTestRunCommand extends Command {
             runResultOutputDir &&
             fs.lstatSync(path.resolve(runResultOutputDir)).isDirectory();
 
+          console.log('Current directory: ', process.cwd());
+
           const runResultOutputDirGlob = outputIsDir
-            ? path.join(runResultOutputDir, '/**/*')
-            : runResultOutputDir;
+            ? path.join(runResultOutputDir, '**/*').replace(/\\/g, '/')
+            : runResultOutputDir.replace(/\\/g, '/');
 
           if (!xmlFilesGlob) throw new Error('Must supply xmlfiles');
 
@@ -112,6 +114,7 @@ export class UploadTestRunCommand extends Command {
             xmlFiles,
             attachments,
             projectId,
+            outputIsDir ? runResultOutputDir : undefined,
           );
           console.log(response);
         } catch (error) {
@@ -126,6 +129,7 @@ export class UploadTestRunCommand extends Command {
     xmlFiles: string[],
     attachments: string[] = [],
     projectId?: number,
+    runResultOutputDir?: string,
   ): Promise<any> {
     const data = new FormData();
 
@@ -160,10 +164,22 @@ export class UploadTestRunCommand extends Command {
     const files = [...xmlFiles, ...attachments];
 
     if (files.length === 1) {
-      data.append('file', fs.createReadStream(files[0]));
-    } else {
+      data.append(
+        'file',
+        fs.createReadStream(files[0]),
+        path.basename(files[0]),
+      );
+      const filePath = runResultOutputDir
+        ? path.relative(runResultOutputDir, files[0])
+        : files[0];
+      data.append('filepath', filePath);
+    } else if (files.length > 1) {
       files.forEach((file) => {
         data.append('files[]', fs.createReadStream(file), path.basename(file));
+        const filePath = runResultOutputDir
+          ? path.relative(runResultOutputDir, file)
+          : file;
+        data.append('filepaths[]', filePath);
       });
 
       if (args.verbose) {

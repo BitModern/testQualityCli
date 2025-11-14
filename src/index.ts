@@ -59,7 +59,7 @@ const argv = yargs
     type: 'string',
   })
   .option('access_token', {
-    alias: 't',
+    alias: ['t', 'at'], // Multiple aliases as an array
     describe: 'Access Token',
     type: 'string',
   })
