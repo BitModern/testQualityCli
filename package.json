@@ -24,7 +24,7 @@
     "build:xperm": "chmod +x dist/index.js",
     "lint": "eslint src --ext .ts",
     "format:fix": "prettier --write 'src/**/*.ts'",
-    "package": "rimraf .env && run-s package:*",
+    "package": "rimraf .env && run-s 'package:*'",
     "package:macos": "pkg . --target node16-macos-x64 --compress GZip --output commands/testquality-macos",
     "package:win": "pkg . --target node16-win-x64 --compress GZip --output commands/testquality-win",
     "package:linux": "pkg . --target node16-linux-x64 --compress GZip --output commands/testquality-linux",
