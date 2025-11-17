@@ -19,7 +19,7 @@
     "start": "cross-env node dist/index.js",
     "dev": "run-s build:clean \"build:bundle -- --watch --sourcemap\"",
     "build": "run-s build:clean build:bundle build:xperm",
-    "build:clean": "rimraf dist/*",
+    "build:clean": "rimraf dist",
     "build:bundle": "esbuild src/index.ts --bundle --outfile=dist/index.js --platform=node --target=node14 --banner:js='#!/usr/bin/env node' --external:dtrace-provider",
     "build:xperm": "chmod +x dist/index.js",
     "lint": "eslint src --ext .ts",
