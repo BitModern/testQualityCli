@@ -15,9 +15,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 18
+      - name: Enable Corepack
+        run: corepack enable
+      - name: Set Yarn version
+        run: corepack prepare yarn@4.9.2 --activate
       - name: Create .npmrc file
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
-      - run: yarn install --frozen-lockfile
+      - run: yarn install --immutable
 
       - name: Build library
         run: yarn build
