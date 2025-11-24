@@ -85,11 +85,13 @@ export class UploadTestRunCommand extends Command {
             runResultOutputDir &&
             fs.lstatSync(path.resolve(runResultOutputDir)).isDirectory();
 
-          console.log('Current directory: ', process.cwd());
+          console.log('Current directory: ', process.cwd(), args);
 
-          const runResultOutputDirGlob = outputIsDir
-            ? path.join(runResultOutputDir, '**/*').replace(/\\/g, '/')
-            : runResultOutputDir.replace(/\\/g, '/');
+          const runResultOutputDirGlob = runResultOutputDir
+            ? outputIsDir
+              ? path.join(runResultOutputDir, '**/*').replace(/\\/g, '/')
+              : runResultOutputDir?.replace(/\\/g, '/')
+            : undefined;
 
           if (!xmlFilesGlob) throw new Error('Must supply xmlfiles');
 
