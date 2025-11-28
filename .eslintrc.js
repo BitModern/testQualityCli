@@ -44,5 +44,6 @@ module.exports = {
     '@typescript-eslint/array-type': 'off',
     '@typescript-eslint/consistent-type-exports': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
+    '@typescript-eslint/no-var-requires': 'off',
   },
 };

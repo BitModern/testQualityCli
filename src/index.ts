@@ -19,10 +19,12 @@ import { RequirementCommand } from './RequirementCommand';
 import { PlanSuiteCommand } from './PlanSuiteCommand';
 import { SuiteTestCommand } from './SuiteTestCommand';
 import { PlanDelete } from './PlanDeleteCommand';
+import { CycleDetailsCommand } from './CycleDetailsCommand';
 
 const argv = yargs
   .command(new CreateManualRunCommand())
   .command(new CreatePlan())
+  .command(new CycleDetailsCommand())
   .command(new DefectCommand())
   .command(new LoginCommand())
   .command(new MilestoneCommand())
