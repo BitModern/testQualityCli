@@ -1,7 +1,7 @@
 {
   "name": "@testquality/cli",
   "version": "1.2.10",
-  "packageManager": "yarn@4.9.2",
+  "packageManager": "yarn@4.10.2",
   "main": "dist/index.js",
   "bin": {
     "testquality": "dist/index.js"
