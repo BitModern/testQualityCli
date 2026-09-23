@@ -2,6 +2,7 @@ import { logger } from './Logger';
 
 export const logError = (err: any) => {
   if (!err) return;
+  process.exitCode = 1;
 
   if (
     // got 401, tried to refresh token, didn't find (ReturnToken.)refresh_token
