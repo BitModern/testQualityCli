@@ -6,6 +6,7 @@ import FormData from 'form-data';
 import { Command } from './Command';
 import { logError } from './logError';
 import { glob } from 'glob';
+import { appendFiles, assertRunUploadFileLimit } from './uploadFiles';
 
 export class UploadTestRunCommand extends Command {
   constructor() {
@@ -133,6 +134,10 @@ export class UploadTestRunCommand extends Command {
     projectId?: number,
     runResultOutputDir?: string,
   ): Promise<any> {
+    // XML results and attachments go in one request because it creates one
+    // run, so they cannot be batched.
+    const files = [...xmlFiles, ...attachments];
+    assertRunUploadFileLimit(files.length);
     const data = new FormData();
 
     if (projectId) {
@@ -163,8 +168,6 @@ export class UploadTestRunCommand extends Command {
       data.append('delimiter', args.delimiter);
     }
 
-    const files = [...xmlFiles, ...attachments];
-
     if (files.length === 1) {
       data.append(
         'file',
@@ -176,13 +179,9 @@ export class UploadTestRunCommand extends Command {
         : files[0];
       data.append('filepath', filePath);
     } else if (files.length > 1) {
-      files.forEach((file) => {
-        data.append('files[]', fs.createReadStream(file), path.basename(file));
-        const filePath = runResultOutputDir
-          ? path.relative(runResultOutputDir, file)
-          : file;
-        data.append('filepaths[]', filePath);
-      });
+      appendFiles(data, files, (file) =>
+        runResultOutputDir ? path.relative(runResultOutputDir, file) : file,
+      );
 
       if (args.verbose) {
         console.log('Matching files: ', xmlFiles);

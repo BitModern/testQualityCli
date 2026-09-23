@@ -3,9 +3,9 @@ import { type Arguments, type Argv } from 'yargs';
 import { logError } from './logError';
 import { glob } from 'glob';
 import * as fs from 'fs';
-import * as path from 'path';
 import { getResponse } from '@testquality/sdk';
 import FormData from 'form-data';
+import { appendFiles, assertRunUploadFileLimit } from './uploadFiles';
 
 export class UploadFeatureResultsCommand extends Command {
   constructor() {
@@ -85,6 +85,8 @@ export class UploadFeatureResultsCommand extends Command {
     matches: string[],
     projectId?: number,
   ): Promise<any> {
+    // One request creates one run, so these files cannot be batched.
+    assertRunUploadFileLimit(matches.length);
     const data = new FormData();
 
     if (projectId) {
@@ -112,9 +114,7 @@ export class UploadFeatureResultsCommand extends Command {
       data.append('suite_id', args.folder_id);
     }
     if (matches.length > 1) {
-      matches.forEach((file) => {
-        data.append('files[]', fs.createReadStream(file), path.basename(file));
-      });
+      appendFiles(data, matches);
       if (args.verbose) {
         console.log('Matching files: ', matches);
         console.log('Form data to send: ', data);
