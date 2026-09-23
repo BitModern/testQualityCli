@@ -136,6 +136,47 @@ You can link test results to defects in GitHub or Jira directly from your test r
 
 The CLI will parse these tags and create the necessary links in TestQuality.
 
+## Gherkin / BDD Feature Files
+
+### Import Feature Files as Test Cases
+
+Import Gherkin `.feature` files into a project. Each `Feature` becomes a folder and each `Scenario` becomes a test case.
+
+```sh
+testquality upload_feature 'features/**/*.feature' --project_id=1234
+```
+
+- Quote the glob so your shell doesn't expand it.
+- Use `--folder_id` to import into a specific folder.
+
+### Upload Feature Results
+
+Upload Cucumber JSON results for your feature files:
+
+```sh
+testquality upload_feature_results 'reports/**/*.json' --project_name="MyProject" --plan_name="MainCycle"
+```
+
+### Running From CI (GitHub Actions)
+
+Import feature files whenever changes are merged into `main`:
+
+```yaml
+on:
+  push:
+    branches: [main]
+    paths: ['**/*.feature']
+
+jobs:
+  sync-features:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npx @testquality/cli upload_feature 'features/**/*.feature' --project_id=${{ vars.TQ_PROJECT_ID }}
+        env:
+          TQ_ACCESS_TOKEN: ${{ secrets.TQ_ACCESS_TOKEN }}
+```
+
 ## Other Common Commands
 
 ### Upload CSV Files

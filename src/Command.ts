@@ -65,7 +65,7 @@ export class Command {
       this.reLogin(args).then(() => {
         const projectName = args.project_name as string;
         if (projectName) {
-          projectGetMany().then((projectList) => {
+          projectGetMany({ params: { per_page: -1 } }).then((projectList) => {
             const project = projectList.data.find(
               (p) => p.name.toLowerCase() === projectName.toLowerCase(),
             );
@@ -77,7 +77,7 @@ export class Command {
               }
               resolve(this.projectId);
             } else {
-              resolve(undefined);
+              reject(new Error(`Project "${projectName}" not found`));
             }
           }, reject);
         } else {

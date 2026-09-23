@@ -3,6 +3,7 @@ import { type Arguments, type Argv } from 'yargs';
 import { logError } from './logError';
 import { glob } from 'glob';
 import * as fs from 'fs';
+import * as path from 'path';
 import { getResponse } from '@testquality/sdk';
 import FormData from 'form-data';
 
@@ -111,10 +112,9 @@ export class UploadFeatureResultsCommand extends Command {
       data.append('suite_id', args.folder_id);
     }
     if (matches.length > 1) {
-      data.append(
-        'files[]',
-        matches.map((f) => fs.createReadStream(f)),
-      );
+      matches.forEach((file) => {
+        data.append('files[]', fs.createReadStream(file), path.basename(file));
+      });
       if (args.verbose) {
         console.log('Matching files: ', matches);
         console.log('Form data to send: ', data);
