@@ -108,7 +108,7 @@ testquality upload_test_run 'sampleXml/*.xml' --project_name="Your Project Name"
 - Replace `'sampleXml/*.xml'` with the glob pattern matching your JUnit XML files.
 - Replace `"Your Project Name"` and `"Your Cycle Name"` with the actual names from your TestQuality instance.
 - `--project_name` matches the exact name first, then falls back to a case-insensitive match. If that fallback matches more than one project (for example "Alpha" and "ALPHA"), the command stops and lists them; use `--project_id` instead.
-- A single upload creates one run, so it is limited to **200 files**, counting XML files and attachments together. Larger sets fail before anything is sent; narrow the glob or split them into separate runs.
+- A single upload creates one run, so it is limited to **200 files** and **32 MB** in total, counting XML files and attachments together. Larger sets fail before anything is sent; narrow the glob or split them into separate runs.
 
 ### Including Attachments
 
@@ -150,7 +150,7 @@ testquality upload_feature 'features/**/*.feature' --project_id=1234
 
 - Quote the glob so your shell doesn't expand it.
 - Use `--folder_id` to import into a specific folder.
-- Large sets of feature files are uploaded automatically in batches of up to 200 files per request (the server's per-request limit). Batches are sent one after another; if one fails, the command stops, reports which batch and files were not uploaded, and exits non-zero. Files in earlier batches have already been imported. Use `--batch_size=<n>` (1-200) to send smaller batches.
+- Large sets of feature files are uploaded automatically in batches of up to 200 files and 32 MB per request (the server's per-request limits); a new batch starts when either limit would be exceeded. A single file larger than 32 MB cannot be uploaded and fails before anything is sent. Batches are sent one after another; if one fails, the command stops, reports which batch and files were not uploaded, and exits non-zero. Files in earlier batches have already been imported. Use `--batch_size=<n>` (1-200) to send smaller batches.
 
 ### Upload Feature Results
 
@@ -160,7 +160,7 @@ Upload Cucumber JSON results for your feature files:
 testquality upload_feature_results 'reports/**/*.json' --project_name="MyProject" --plan_name="MainCycle"
 ```
 
-Like `upload_test_run`, this creates one run per upload, so it is limited to **200 files** and is not batched.
+Like `upload_test_run`, this creates one run per upload, so it is limited to **200 files** and **32 MB** in total, and is not batched.
 
 ### Running From CI (GitHub Actions)
 

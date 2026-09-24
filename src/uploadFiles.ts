@@ -11,14 +11,70 @@ import type FormData from 'form-data';
  */
 export const MAX_FILES_PER_REQUEST = 200;
 
-/** Split `items` into consecutive batches of at most `size` elements. */
-export function chunk<T>(items: T[], size: number): T[][] {
-  if (!Number.isInteger(size) || size < 1) {
-    throw new Error(`Batch size must be a positive integer, got ${size}`);
+/**
+ * The most bytes of file content the CLI sends in a single upload request.
+ *
+ * The server's PHP `post_max_size` is 36M. A body over that is discarded
+ * whole, including `file_count`, and the server answers with a misleading
+ * 422 "file field is required". 32 MiB leaves headroom for multipart
+ * overhead and the other form fields.
+ */
+export const MAX_BYTES_PER_REQUEST = 32 * 1024 * 1024;
+
+export interface SizedFile {
+  path: string;
+  size: number;
+}
+
+/** Format a byte count as MB with one decimal place (MiB, matching PHP's M). */
+export function formatMB(bytes: number): string {
+  const mb = bytes / (1024 * 1024);
+  return `${Number.isInteger(mb) ? mb : mb.toFixed(1)} MB`;
+}
+
+/** Stat each file once and pair it with its size in bytes. */
+export function statFiles(files: string[]): SizedFile[] {
+  return files.map((file) => ({ path: file, size: fs.statSync(file).size }));
+}
+
+/**
+ * Split `files` into consecutive batches, starting a new batch whenever adding
+ * the next file would exceed `maxCount` files or `maxBytes` total bytes.
+ * Order is preserved. A single file larger than `maxBytes` can never be sent,
+ * so it is rejected before any batch is produced.
+ */
+export function batchFiles(
+  files: SizedFile[],
+  maxCount: number = MAX_FILES_PER_REQUEST,
+  maxBytes: number = MAX_BYTES_PER_REQUEST,
+): string[][] {
+  if (!Number.isInteger(maxCount) || maxCount < 1) {
+    throw new Error(`Batch size must be a positive integer, got ${maxCount}`);
   }
-  const batches: T[][] = [];
-  for (let i = 0; i < items.length; i += size) {
-    batches.push(items.slice(i, i + size));
+  const oversize = files.find((f) => f.size > maxBytes);
+  if (oversize) {
+    throw new Error(
+      `File ${oversize.path} is ${formatMB(oversize.size)}; ` +
+        `max ${formatMB(maxBytes)} per upload request.`,
+    );
+  }
+  const batches: string[][] = [];
+  let current: string[] = [];
+  let currentBytes = 0;
+  for (const file of files) {
+    if (
+      current.length > 0 &&
+      (current.length + 1 > maxCount || currentBytes + file.size > maxBytes)
+    ) {
+      batches.push(current);
+      current = [];
+      currentBytes = 0;
+    }
+    current.push(file.path);
+    currentBytes += file.size;
+  }
+  if (current.length > 0) {
+    batches.push(current);
   }
   return batches;
 }
@@ -59,6 +115,24 @@ export function assertRunUploadFileLimit(
   if (count > max) {
     throw new Error(
       `Too many files (${count}); max ${max} per run upload. ` +
+        'Narrow the glob or split the results into separate runs.',
+    );
+  }
+}
+
+/**
+ * Run uploads go in one request, so their total size must fit under the
+ * server's body limit. Refuse up front instead of letting PHP discard the
+ * body and answer with a misleading 422.
+ */
+export function assertRunUploadByteLimit(
+  files: string[],
+  max: number = MAX_BYTES_PER_REQUEST,
+): void {
+  const total = statFiles(files).reduce((sum, f) => sum + f.size, 0);
+  if (total > max) {
+    throw new Error(
+      `Upload is ${formatMB(total)}; max ${formatMB(max)} per run upload. ` +
         'Narrow the glob or split the results into separate runs.',
     );
   }

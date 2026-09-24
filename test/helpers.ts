@@ -46,3 +46,17 @@ export function makeTempFiles(n: number, ext = '.feature'): string[] {
   }
   return files;
 }
+
+/**
+ * Create sparse files of the given byte sizes in a fresh temp directory.
+ * `truncate` extends without writing, so large sizes cost no disk or time.
+ */
+export function makeSizedTempFiles(sizes: number[], ext = '.json'): string[] {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'tq-cli-test-'));
+  return sizes.map((size, i) => {
+    const file = path.join(dir, `s${i}${ext}`);
+    fs.writeFileSync(file, '');
+    fs.truncateSync(file, size);
+    return file;
+  });
+}

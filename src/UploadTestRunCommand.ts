@@ -6,7 +6,11 @@ import FormData from 'form-data';
 import { Command } from './Command';
 import { logError } from './logError';
 import { glob } from 'glob';
-import { appendFiles, assertRunUploadFileLimit } from './uploadFiles';
+import {
+  appendFiles,
+  assertRunUploadByteLimit,
+  assertRunUploadFileLimit,
+} from './uploadFiles';
 
 export class UploadTestRunCommand extends Command {
   constructor() {
@@ -138,6 +142,7 @@ export class UploadTestRunCommand extends Command {
     // run, so they cannot be batched.
     const files = [...xmlFiles, ...attachments];
     assertRunUploadFileLimit(files.length);
+    assertRunUploadByteLimit(files);
     const data = new FormData();
 
     if (projectId) {

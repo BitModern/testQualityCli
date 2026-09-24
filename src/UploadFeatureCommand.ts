@@ -6,7 +6,14 @@ import * as fs from 'fs';
 import FormData from 'form-data';
 import { getResponse } from '@testquality/sdk';
 import { logger } from './Logger';
-import { appendFiles, chunk, MAX_FILES_PER_REQUEST } from './uploadFiles';
+import {
+  appendFiles,
+  batchFiles,
+  formatMB,
+  MAX_BYTES_PER_REQUEST,
+  MAX_FILES_PER_REQUEST,
+  statFiles,
+} from './uploadFiles';
 
 export class UploadFeatureCommand extends Command {
   constructor() {
@@ -122,19 +129,26 @@ export class UploadFeatureCommand extends Command {
       );
     }
 
+    // Stat once and batch by both count and bytes. This also rejects any
+    // single file too large to send, before anything goes over the wire.
+    const batches = batchFiles(
+      statFiles(matches),
+      batchSize,
+      MAX_BYTES_PER_REQUEST,
+    );
+
     if (matches.length === 1) {
       const data = this.buildForm(args, projectId);
       data.append('file', fs.createReadStream(matches[0]));
       return await this.post(data);
     }
 
-    const batches = chunk(matches, batchSize);
     if (args.verbose) {
       console.log('Matching files: ', matches);
     }
     if (batches.length > 1) {
       console.log(
-        `Uploading ${matches.length} files in ${batches.length} batches of up to ${batchSize}`,
+        `Uploading ${matches.length} files in ${batches.length} batches of up to ${batchSize} files / ${formatMB(MAX_BYTES_PER_REQUEST)}`,
       );
     }
 

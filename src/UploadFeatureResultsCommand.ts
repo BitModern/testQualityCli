@@ -5,7 +5,11 @@ import { glob } from 'glob';
 import * as fs from 'fs';
 import { getResponse } from '@testquality/sdk';
 import FormData from 'form-data';
-import { appendFiles, assertRunUploadFileLimit } from './uploadFiles';
+import {
+  appendFiles,
+  assertRunUploadByteLimit,
+  assertRunUploadFileLimit,
+} from './uploadFiles';
 
 export class UploadFeatureResultsCommand extends Command {
   constructor() {
@@ -87,6 +91,7 @@ export class UploadFeatureResultsCommand extends Command {
   ): Promise<any> {
     // One request creates one run, so these files cannot be batched.
     assertRunUploadFileLimit(matches.length);
+    assertRunUploadByteLimit(matches);
     const data = new FormData();
 
     if (projectId) {

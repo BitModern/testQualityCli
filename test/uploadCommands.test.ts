@@ -3,6 +3,7 @@ import type FormData from 'form-data';
 import {
   countParts,
   fieldValue,
+  makeSizedTempFiles,
   makeTempFiles,
   serializeForm,
 } from './helpers';
@@ -31,6 +32,8 @@ const { UploadFeatureResultsCommand } = await import(
 );
 const { UploadTestRunCommand } = await import('../src/UploadTestRunCommand');
 const { logger } = await import('../src/Logger');
+
+const MB = 1024 * 1024;
 
 const fakePaths = (n: number) =>
   Array.from({ length: n }, (_, i) => `/nonexistent/f${i}.json`);
@@ -88,6 +91,34 @@ describe('upload_feature batching', () => {
     expect(sent).toHaveLength(0);
   });
 
+  it('splits by bytes: two 20 MB files go in separate requests', async () => {
+    const files = makeSizedTempFiles([20 * MB, 20 * MB], '.feature');
+    const responses = await upload(files);
+    expect(responses).toHaveLength(2);
+    expect(sent).toHaveLength(2);
+    const bodies = await Promise.all(sent.map((r) => serializeForm(r.data)));
+    expect(bodies.map((b) => countParts(b, 'files[]'))).toEqual([1, 1]);
+    expect(bodies.map((b) => fieldValue(b, 'file_count'))).toEqual(['1', '1']);
+  });
+
+  it('refuses a single file over 32 MB before sending anything', async () => {
+    const files = [
+      ...makeTempFiles(2),
+      ...makeSizedTempFiles([33 * MB], '.feature'),
+    ];
+    await expect(upload(files)).rejects.toThrow(
+      /File .*s0\.feature is 33 MB; max 32 MB per upload request/,
+    );
+    expect(sent).toHaveLength(0);
+  });
+
+  it('refuses a lone file over 32 MB too', async () => {
+    await expect(
+      upload(makeSizedTempFiles([33 * MB], '.feature')),
+    ).rejects.toThrow(/is 33 MB; max 32 MB/);
+    expect(sent).toHaveLength(0);
+  });
+
   it('stops at the first failed batch and does not send later ones', async () => {
     const files = makeTempFiles(450);
     failOnCall = 2;
@@ -121,6 +152,13 @@ describe('upload_feature_results', () => {
     expect(sent).toHaveLength(0);
   });
 
+  it('refuses more than 32 MB in total before sending anything', async () => {
+    await expect(
+      upload(makeSizedTempFiles([20 * MB, 20 * MB])),
+    ).rejects.toThrow('Upload is 40 MB; max 32 MB per run upload');
+    expect(sent).toHaveLength(0);
+  });
+
   it('sends up to 200 files in one request with file_count', async () => {
     await upload(makeTempFiles(200, '.json'));
     expect(sent).toHaveLength(1);
@@ -143,6 +181,16 @@ describe('upload_test_run', () => {
     await expect(upload(fakePaths(150), fakePaths(51))).rejects.toThrow(
       'Too many files (201); max 200 per run upload',
     );
+    expect(sent).toHaveLength(0);
+  });
+
+  it('counts attachments toward the 32 MB limit', async () => {
+    await expect(
+      upload(
+        makeSizedTempFiles([20 * MB], '.xml'),
+        makeSizedTempFiles([13 * MB], '.png'),
+      ),
+    ).rejects.toThrow('Upload is 33 MB; max 32 MB per run upload');
     expect(sent).toHaveLength(0);
   });
 
