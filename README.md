@@ -164,7 +164,7 @@ Like `upload_test_run`, this creates one run per upload, so it is limited to **2
 
 ### Running From CI (GitHub Actions)
 
-Import feature files whenever changes are merged into `main`. Batching of large feature sets requires a CLI release that includes it (later than 1.2.10); pin the version in `npx` once one is published, rather than relying on whatever `latest` resolves to.
+Import feature files whenever changes are merged into `main`. Batching of large feature sets needs CLI 1.3.0 or later. Pin the version in `npx` rather than relying on whatever `latest` resolves to.
 
 ```yaml
 on:
@@ -177,9 +177,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      # Needs a @testquality/cli release newer than 1.2.10 for batching;
-      # pin it (npx @testquality/cli@<version>) once that release is out.
-      - run: npx @testquality/cli upload_feature 'features/**/*.feature' --project_id=${{ vars.TQ_PROJECT_ID }}
+      - run: npx @testquality/cli@1.3.0 upload_feature 'features/**/*.feature' --project_id=${{ vars.TQ_PROJECT_ID }}
         env:
           TQ_ACCESS_TOKEN: ${{ secrets.TQ_ACCESS_TOKEN }}
 ```
