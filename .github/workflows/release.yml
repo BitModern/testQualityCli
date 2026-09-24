@@ -6,6 +6,13 @@ on:
       - 'v*'
   workflow_dispatch:
 
+# npm trusted publishing (OIDC): npm trusts this workflow in the Release
+# environment directly, so there is no NPM_TOKEN to expire or leak. Configured
+# on npmjs.com under @testquality/cli -> Settings -> Trusted Publisher.
+permissions:
+  contents: write # attach binaries to the GitHub release
+  id-token: write # OIDC token for npm trusted publishing
+
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
@@ -15,13 +22,15 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          # Trusted publishing needs Node >= 22.14 and npm >= 11.5.1. Node 24 is
+          # what pkg was verified on; the binaries still embed node16 (pkg target).
+          node-version: 24
+      - name: Update npm for trusted publishing
+        run: npm install -g npm@latest
       - name: Enable Corepack
         run: corepack enable
       - name: Set Yarn version
         run: corepack prepare yarn@4.9.2 --activate
-      - name: Create .npmrc file
-        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
       - run: yarn install --immutable
 
       - name: Build library
@@ -29,8 +38,6 @@ jobs:
 
       - name: Publish to npm
         run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Build binaries
         run: yarn package
