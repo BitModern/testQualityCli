@@ -5,6 +5,11 @@ import { glob } from 'glob';
 import * as fs from 'fs';
 import { getResponse } from '@testquality/sdk';
 import FormData from 'form-data';
+import {
+  appendFiles,
+  assertRunUploadByteLimit,
+  assertRunUploadFileLimit,
+} from './uploadFiles';
 
 export class UploadFeatureResultsCommand extends Command {
   constructor() {
@@ -84,6 +89,9 @@ export class UploadFeatureResultsCommand extends Command {
     matches: string[],
     projectId?: number,
   ): Promise<any> {
+    // One request creates one run, so these files cannot be batched.
+    assertRunUploadFileLimit(matches.length);
+    assertRunUploadByteLimit(matches);
     const data = new FormData();
 
     if (projectId) {
@@ -111,10 +119,7 @@ export class UploadFeatureResultsCommand extends Command {
       data.append('suite_id', args.folder_id);
     }
     if (matches.length > 1) {
-      data.append(
-        'files[]',
-        matches.map((f) => fs.createReadStream(f)),
-      );
+      appendFiles(data, matches);
       if (args.verbose) {
         console.log('Matching files: ', matches);
         console.log('Form data to send: ', data);

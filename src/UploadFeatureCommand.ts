@@ -5,6 +5,15 @@ import { glob } from 'glob';
 import * as fs from 'fs';
 import FormData from 'form-data';
 import { getResponse } from '@testquality/sdk';
+import { logger } from './Logger';
+import {
+  appendFiles,
+  batchFiles,
+  formatMB,
+  MAX_BYTES_PER_REQUEST,
+  MAX_FILES_PER_REQUEST,
+  statFiles,
+} from './uploadFiles';
 
 export class UploadFeatureCommand extends Command {
   constructor() {
@@ -41,6 +50,11 @@ export class UploadFeatureCommand extends Command {
             alias: 'fi',
             describe: 'Folder id',
             type: 'string',
+          })
+          .option('batch_size', {
+            describe: `Files sent per request (1-${MAX_FILES_PER_REQUEST}); larger sets are uploaded in sequential batches`,
+            type: 'number',
+            default: MAX_FILES_PER_REQUEST,
           });
       },
       async (args: Arguments) => {
@@ -65,11 +79,7 @@ export class UploadFeatureCommand extends Command {
     );
   }
 
-  private async uploadFeatureFiles(
-    args: Arguments,
-    matches: string[],
-    projectId?: number,
-  ): Promise<any> {
+  private buildForm(args: Arguments, projectId?: number): FormData {
     const data = new FormData();
 
     if (projectId) {
@@ -88,26 +98,89 @@ export class UploadFeatureCommand extends Command {
     if (args.folder_id) {
       data.append('suite_id', args.folder_id);
     }
-    if (matches.length > 1) {
-      data.append(
-        'files[]',
-        matches.map((f) => fs.createReadStream(f)),
-      );
-      if (args.verbose) {
-        console.log('Matching files: ', matches);
-        console.log('Form data to send: ', data);
-      }
-    } else if (matches.length === 1) {
-      data.append('file', fs.createReadStream(matches[0]));
-    } else {
-      throw Error('No matching files');
-    }
+    return data;
+  }
 
+  private async post(data: FormData): Promise<any> {
     return await getResponse(this.client.api, {
       url: `/import_feature`,
       method: 'POST',
       data,
       headers: data.getHeaders(),
     });
+  }
+
+  private async uploadFeatureFiles(
+    args: Arguments,
+    matches: string[],
+    projectId?: number,
+  ): Promise<any> {
+    if (matches.length === 0) {
+      throw Error('No matching files');
+    }
+    const batchSize = Number(args.batch_size ?? MAX_FILES_PER_REQUEST);
+    if (
+      !Number.isInteger(batchSize) ||
+      batchSize < 1 ||
+      batchSize > MAX_FILES_PER_REQUEST
+    ) {
+      throw new Error(
+        `--batch_size must be an integer between 1 and ${MAX_FILES_PER_REQUEST}, got ${String(args.batch_size)}`,
+      );
+    }
+
+    // Stat once and batch by both count and bytes. This also rejects any
+    // single file too large to send, before anything goes over the wire.
+    const batches = batchFiles(
+      statFiles(matches),
+      batchSize,
+      MAX_BYTES_PER_REQUEST,
+    );
+
+    if (matches.length === 1) {
+      const data = this.buildForm(args, projectId);
+      data.append('file', fs.createReadStream(matches[0]));
+      return await this.post(data);
+    }
+
+    if (args.verbose) {
+      console.log('Matching files: ', matches);
+    }
+    if (batches.length > 1) {
+      console.log(
+        `Uploading ${matches.length} files in ${batches.length} batches of up to ${batchSize} files / ${formatMB(MAX_BYTES_PER_REQUEST)}`,
+      );
+    }
+
+    const responses: any[] = [];
+    for (const [index, batch] of batches.entries()) {
+      const label = `Batch ${index + 1}/${batches.length}`;
+      const data = appendFiles(this.buildForm(args, projectId), batch);
+      try {
+        responses.push(await this.post(data));
+      } catch (error) {
+        const uploaded = batches
+          .slice(0, index)
+          .reduce((sum, b) => sum + b.length, 0);
+        logger.error(
+          `${label} failed (${batch.length} files). ` +
+            `${uploaded} of ${matches.length} files were uploaded by earlier batches; ` +
+            'this batch and any after it were not. Files in the failed batch:\n' +
+            batch.map((f) => `  ${f}`).join('\n'),
+        );
+        throw error;
+      }
+      if (batches.length > 1) {
+        console.log(`${label} uploaded (${batch.length} files)`);
+      }
+    }
+
+    if (batches.length === 1) {
+      return responses[0];
+    }
+    console.log(
+      `Uploaded ${matches.length} files in ${batches.length} batches`,
+    );
+    return responses;
   }
 }

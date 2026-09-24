@@ -14,6 +14,7 @@ import {
 import { EnvStorage } from './EnvStorage';
 import { type HasId } from 'HasId';
 import { logError } from './logError';
+import { matchProjectByName } from './matchProjectByName';
 
 import Debug from 'debug';
 const debug = Debug('tq:cli:Command');
@@ -65,20 +66,20 @@ export class Command {
       this.reLogin(args).then(() => {
         const projectName = args.project_name as string;
         if (projectName) {
-          projectGetMany().then((projectList) => {
-            const project = projectList.data.find(
-              (p) => p.name.toLowerCase() === projectName.toLowerCase(),
-            );
-            if (project) {
-              this.projectId = project.id;
-              if (args.save) {
-                env.variables.projectId = this.projectId.toString();
-                saveEnv();
-              }
-              resolve(this.projectId);
-            } else {
-              resolve(undefined);
+          projectGetMany({ params: { per_page: -1 } }).then((projectList) => {
+            let project;
+            try {
+              project = matchProjectByName(projectList.data, projectName);
+            } catch (error) {
+              reject(error);
+              return;
             }
+            this.projectId = project.id;
+            if (args.save) {
+              env.variables.projectId = this.projectId.toString();
+              saveEnv();
+            }
+            resolve(this.projectId);
           }, reject);
         } else {
           const value = (args.project_id as string) || env.variables.projectId;
