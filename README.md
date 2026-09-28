@@ -152,6 +152,54 @@ testquality upload_feature 'features/**/*.feature' --project_id=1234
 - Use `--folder_id` to import into a specific folder.
 - Large sets of feature files are uploaded automatically in batches of up to 200 files and 32 MB per request (the server's per-request limits); a new batch starts when either limit would be exceeded. A single file larger than 32 MB cannot be uploaded and fails before anything is sent. Batches are sent one after another; if one fails, the command stops, reports which batch and files were not uploaded, and exits non-zero. Files in earlier batches have already been imported. Use `--batch_size=<n>` (1-200) to send smaller batches.
 
+### Keeping TestQuality in step with your repository (`--write_tags`, `--sync`)
+
+If your `.feature` files in Git are the source of truth, a sync keeps one TestQuality folder in step with them: edited steps update the existing test, a renamed scenario keeps its test and history, and a deleted scenario is archived rather than destroyed. It needs the server that shipped with CLI 1.4.0.
+
+**1. Give every scenario its TestQuality key, once, locally.** A tag such as `@TC6865` above a scenario is its identity: rename the scenario, move it to another file or rename its `Feature:` and it is still the same test.
+
+```sh
+testquality upload_feature 'features/**/*.feature' --project_id=1234 --folder_id=5678 --write_tags --dry-run   # preview
+testquality upload_feature 'features/**/*.feature' --project_id=1234 --folder_id=5678 --write_tags
+git diff        # one @TC<key> line above each scenario that had none
+git commit -am "Add TestQuality keys to scenarios"
+```
+
+- `--write_tags` is a real import: scenarios without a key become tests, and their new keys are written back. Run it again at any time; tagged scenarios are left alone, so it only adds what is missing.
+- It writes nothing unless every batch was imported, only where the reported line is still that scenario, and never into a file that changed since it was read. Indentation and line endings are kept.
+- It refuses to run under CI (`CI` set) and cannot be combined with `--sync`: tag locally, review, commit.
+- `--dry-run` imports and lists `file:line → @TC<key>` without writing any file.
+
+**2. Sync from CI after every merge.** `--sync` requires `--folder_id`: a folder that holds only these tests (not the project root).
+
+```sh
+testquality upload_feature 'features/**/*.feature' --project_id=1234 --folder_id=5678 --sync
+```
+
+- A sync spans every batch of the run. Scenarios no longer in the files are archived only once the server has every batch, the file count and the content digest: a failed or partial run archives nothing.
+- Archiving moves a test into an `Archived` folder under the sync folder, with the `removed-from-source` label; its run history stays with it. Put the scenario back with its `@TC` tag and it is restored.
+- Only folders the sync created or that hold only imported tests are managed. A test made by hand in TestQuality is never archived.
+- If a sync would archive more than 50 tests, or more than 20% of the folder's tests (and more than 5), it is refused and lists what it would archive. That usually means the glob was narrowed by mistake; if the scenarios really were removed, run again with `--force`.
+- `--sync --dry-run` reports what would be created, updated and archived, and changes nothing.
+- A folder left empty (for example after a `Feature:` is renamed) is kept and reported, not deleted.
+
+**What happens to your tests:**
+
+| Change in Git | Tagged `@TC` | Untagged |
+|---|---|---|
+| Step edited, inserted, reordered or removed | Updated in place; results stay attached | Same, while its name matches |
+| Scenario renamed | Same test, renamed | New test; the old one is archived |
+| File moved | No change | No change |
+| `Feature:` renamed | Tests move to the new folder; the old folder is kept | New tests; the old ones are archived |
+| Scenario deleted | Archived | Archived |
+| Scenario restored | Moved back from `Archived` | New test |
+
+Notes:
+
+- A step's recorded results stay attached when you edit its text, and show against the current text. A removed step loses its per-step results; the test's result for the run is kept.
+- An outline may have only one `Examples:` table; a file with several is refused, naming the scenario.
+- `Rule:` blocks are not supported. A file that cannot be parsed is named in the error.
+
 ### Upload Feature Results
 
 Upload Cucumber JSON results for your feature files:
@@ -164,7 +212,9 @@ Like `upload_test_run`, this creates one run per upload, so it is limited to **2
 
 ### Running From CI (GitHub Actions)
 
-Import feature files whenever changes are merged into `main`. Batching of large feature sets needs CLI 1.3.0 or later. Pin the version in `npx` rather than relying on whatever `latest` resolves to.
+Sync feature files whenever changes are merged into `main`. `--sync` needs CLI 1.4.0 or later. Pin the version in `npx` rather than relying on whatever `latest` resolves to.
+
+Run it only from the default branch, and give it a `concurrency` group so two merges never sync the same folder at once. The server refuses an overlapping sync with a 409; the group makes the second one wait instead.
 
 ```yaml
 on:
@@ -172,12 +222,18 @@ on:
     branches: [main]
     paths: ['**/*.feature']
 
+concurrency:
+  group: tq-sync-${{ vars.TQ_FOLDER_ID }}
+  cancel-in-progress: false
+
 jobs:
   sync-features:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: npx @testquality/cli@1.3.0 upload_feature 'features/**/*.feature' --project_id=${{ vars.TQ_PROJECT_ID }}
+      - run: >
+          npx @testquality/cli@1.4.0 upload_feature 'features/**/*.feature'
+          --project_id=${{ vars.TQ_PROJECT_ID }} --folder_id=${{ vars.TQ_FOLDER_ID }} --sync
         env:
           TQ_ACCESS_TOKEN: ${{ secrets.TQ_ACCESS_TOKEN }}
 ```
