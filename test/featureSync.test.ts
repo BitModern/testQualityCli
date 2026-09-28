@@ -19,6 +19,20 @@ const sent: Req[] = [];
 let respond: (req: Req, index: number) => Promise<any> = async () => ({});
 let nextKey = 1000;
 
+// fs passes through to the real module, except that a test can make the
+// final rename fail (an editor or virus scanner holding the file on Windows).
+const renameControl = vi.hoisted(() => ({ fail: false }));
+vi.mock('fs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('fs')>();
+  const renameSync: typeof actual.renameSync = (from, to) => {
+    if (renameControl.fail) {
+      throw new Error('EBUSY: resource busy or locked, rename');
+    }
+    actual.renameSync(from, to);
+  };
+  return { ...actual, default: { ...actual, renameSync }, renameSync };
+});
+
 vi.mock('@testquality/sdk', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@testquality/sdk')>();
   return {
@@ -33,6 +47,8 @@ vi.mock('@testquality/sdk', async (importOriginal) => {
 });
 
 const { UploadFeatureCommand } = await import('../src/UploadFeatureCommand');
+const { HttpError } = await import('@testquality/sdk');
+const { manifestDigest } = await import('../src/featureSnapshot');
 const { logger } = await import('../src/Logger');
 
 let dir: string;
@@ -87,15 +103,43 @@ const SCENARIO =
   /^[ \t]*(Scenario Outline|Scenario Template|Scenario|Example):[ \t]*(.*?)[ \t]*$/;
 
 /** Answer as the server does, reading each uploaded path back from disk. */
+/** The files in a request, as uploaded: filepaths[] paired with files[] bytes. */
+function uploadedFiles(body: string): Array<{ rel: string; content: string }> {
+  const contents = [
+    ...body.matchAll(
+      /name="files\[\]"; filename="[^"]*"\r\n(?:[^\r\n]+\r\n)*\r\n([\s\S]*?)\r\n--/g,
+    ),
+  ].map((m) => m[1]);
+  return allValues(body, 'filepaths[]').map((rel, i) => ({
+    rel,
+    content: contents[i],
+  }));
+}
+
+const STEP = /^(Given|When|Then|And|But|\*|Examples|Scenarios)\b/;
+
+/**
+ * Answer as the server does, from the bytes uploaded (not the files on disk).
+ * Like Behat, a scenario's title carries its description lines after a
+ * newline, and a scenario with no title reports null.
+ */
 function serverLike(keys: Record<string, number> = {}) {
   return async (req: Req) => {
     const scenarios: any[] = [];
-    for (const rel of allValues(req.body, 'filepaths[]')) {
-      const lines = fs.readFileSync(path.join(dir, rel), 'utf8').split(/\r?\n/);
+    for (const { rel, content } of uploadedFiles(req.body)) {
+      const lines = content.split(/\r\n|\n|\r/);
       const feature = lines.find((l) => l.trim().startsWith('Feature:'));
       lines.forEach((line, i) => {
         const m = SCENARIO.exec(line);
         if (!m) return;
+        const description: string[] = [];
+        for (let j = i + 1; j < lines.length; j++) {
+          const text = lines[j].trim();
+          if (text === '' || STEP.test(text) || /^[@#]/.test(text)) break;
+          description.push(text);
+        }
+        const title =
+          [m[2], ...description].join('\n').replace(/^\n+/, '') || null;
         let tagLines = '';
         for (let j = i - 1; j >= 0 && lines[j].trim().startsWith('@'); j--) {
           tagLines += ' ' + lines[j];
@@ -108,7 +152,7 @@ function serverLike(keys: Record<string, number> = {}) {
           line: i + 1,
           keyword: m[1],
           feature: feature?.replace(/^\s*Feature:\s*/, ''),
-          scenario: m[2],
+          scenario: title,
           supplied_key: supplied,
           resolved_key: key,
           status: supplied ? 'resolved' : 'created',
@@ -188,12 +232,14 @@ describe('upload_feature --sync', () => {
     expect(fieldValue(first, 'manifest_digest')).toBeUndefined();
     expect(fieldValue(last, 'sync_final')).toBe('1');
     expect(fieldValue(last, 'file_count_total')).toBe('3');
-    const lines = Object.entries(contents)
-      .map(([rel, c]) => `${rel}:${sha(c)}`)
-      .sort();
+    // sub/c.feature changed before its batch was read: it is uploaded as it
+    // was then, and the digest covers exactly the bytes that were uploaded.
+    const sentBytes = sent.flatMap((r) => uploadedFiles(r.body));
+    expect(sentBytes.find((f) => f.rel === 'sub/c.feature')?.content).toBe(
+      'Feature: Changed\n',
+    );
+    const lines = sentBytes.map((f) => `${f.rel}:${sha(f.content)}`).sort();
     expect(fieldValue(last, 'manifest_digest')).toBe(sha(lines.join('\n')));
-    expect(last).toContain('Feature: C');
-    expect(last).not.toContain('Feature: Changed');
   });
 
   it('passes --force and --dry-run to the server', async () => {
@@ -208,21 +254,37 @@ describe('upload_feature --sync', () => {
     expect(fieldValue(sent[0].body, 'sync_dry_run')).toBe('1');
   });
 
+  it('refuses --dry-run without --sync or --write_tags, since that upload would be a real import', async () => {
+    const file = write('a.feature', 'Feature: A\n');
+    await expect(upload([file], { 'dry-run': true })).rejects.toThrow(
+      /--dry-run needs --sync or --write_tags/,
+    );
+    await expect(upload([file], { force: true })).rejects.toThrow(
+      /--force only applies to --sync/,
+    );
+    expect(sent).toHaveLength(0);
+  });
+
   it('prints the list a threshold refusal would have archived', async () => {
     const file = write('a.feature', 'Feature: A\n');
+    // What the SDK's interceptor actually throws: an HttpError whose `data`
+    // is the response body's `data` key.
     respond = async () => {
-      const error: any = new Error('Request failed with status code 409');
-      error.response = {
-        status: 409,
-        data: {
-          message: 'This sync would archive 8 of the 10 tests in "Synced"',
+      throw new HttpError(
+        'This sync would archive 8 of the 10 tests in "Synced"',
+        undefined,
+        undefined,
+        409,
+        undefined,
+        '/import_feature',
+        undefined,
+        {
           archive: [
             { key: 12, name: 'Scenario: Old one', folder: 'Feature: Alpha' },
             { key: 13, name: 'Scenario: Old two', folder: 'Feature: Alpha' },
           ],
         },
-      };
-      throw error;
+      );
     };
     await expect(
       upload([file], { sync: true, folder_id: '9' }),
@@ -232,6 +294,22 @@ describe('upload_feature --sync', () => {
     expect(out).toContain('TC12');
     expect(out).toContain('Scenario: Old two');
     expect(out).toContain('--force');
+  });
+});
+
+describe('manifest digest', () => {
+  it('matches the digest the server computes, byte-sorted like PHP', () => {
+    // Generated by the server's SyncSession::digest for this manifest.
+    const files = [
+      ['features/a.feature', 'a'],
+      ['features/😀.feature', 'b'],
+      ['features/Ａ.feature', 'c'],
+      ['features/A b.feature', 'd'],
+      ['42', 'e'],
+    ].map(([relPath, c]) => ({ file: relPath, relPath, sha256: c.repeat(64) }));
+    expect(manifestDigest(files)).toBe(
+      '3cb22fc6c3654db7bc763d0940648855b25f97b009e62793ef60edfa3f4fdfda',
+    );
   });
 });
 
@@ -359,6 +437,24 @@ describe('upload_feature --write_tags', () => {
     expect(text).toContain('  @TC1002\n  Scenario: Three');
   });
 
+  it('warns about a key that did not resolve, and adds none', async () => {
+    const content =
+      'Feature: U\n\n  @TC999999\n  Scenario: Unknown\n    When a\n';
+    const file = write('u.feature', content);
+    const base = respond;
+    respond = async (req, index) => {
+      const answer = await base(req, index);
+      answer.scenarios[0].status = 'unknown';
+      answer.scenarios[0].resolved_key = 1000; // the fallback test it landed on
+      return answer;
+    };
+    await upload([file], { write_tags: true });
+    expect(fs.readFileSync(file, 'utf8')).toBe(content);
+    expect(logs.join('\n')).toMatch(
+      /u\.feature:4 "Unknown" carries a key that did not resolve \(unknown\)/,
+    );
+  });
+
   it('respects a key on any of the tag lines above a scenario', async () => {
     const content =
       'Feature: T\n\n  @TC77\n  @smoke\n  Scenario: Keyed\n    When a\n';
@@ -381,6 +477,108 @@ describe('upload_feature --write_tags', () => {
     expect(fs.readFileSync(file, 'utf8')).toBe(content);
   });
 
+  it('keeps the file permissions', async () => {
+    const file = write(
+      't.feature',
+      'Feature: T\n\n  Scenario: One\n    When a\n',
+    );
+    fs.chmodSync(file, 0o640);
+    await upload([file], { write_tags: true });
+    expect(fs.readFileSync(file, 'utf8')).toContain('@TC1000');
+    expect(fs.statSync(file).mode & 0o777).toBe(0o640);
+  });
+
+  it('leaves a file it cannot write untouched, with no temp file behind', async () => {
+    const sub = path.join(dir, 'locked');
+    const file = write(
+      'locked/t.feature',
+      'Feature: T\n\n  Scenario: One\n    When a\n',
+    );
+    fs.chmodSync(sub, 0o555);
+    try {
+      await upload([file], { write_tags: true });
+      expect(fs.readFileSync(file, 'utf8')).toBe(
+        'Feature: T\n\n  Scenario: One\n    When a\n',
+      );
+      expect(fs.readdirSync(sub)).toEqual(['t.feature']);
+      expect(logs.join('\n')).toMatch(
+        /locked\/t\.feature: could not be written/,
+      );
+    } finally {
+      fs.chmodSync(sub, 0o755);
+    }
+  });
+
+  it('removes its temp file when the final rename fails', async () => {
+    const content = 'Feature: R\n\n  Scenario: One\n    When a\n';
+    const file = write('r.feature', content);
+    renameControl.fail = true;
+    try {
+      await upload([file], { write_tags: true });
+    } finally {
+      renameControl.fail = false;
+    }
+    expect(fs.readFileSync(file, 'utf8')).toBe(content);
+    expect(fs.readdirSync(dir)).toEqual(['r.feature']);
+    expect(logs.join('\n')).toMatch(/r\.feature: could not be written \(EBUSY/);
+  });
+
+  it('keeps mixed line endings line by line', async () => {
+    const content = 'Feature: M\n\n  Scenario: One\r\n    When a\n';
+    const file = write('m.feature', content);
+    await upload([file], { write_tags: true });
+    expect(fs.readFileSync(file, 'utf8')).toBe(
+      'Feature: M\n\n  @TC1000\r\n  Scenario: One\r\n    When a\n',
+    );
+  });
+
+  it('tags a scenario whose line above is a comment mentioning @TC', async () => {
+    const file = write(
+      'c.feature',
+      'Feature: C\n\n  # see @TC12 for history\n  Scenario: One\n    When a\n',
+    );
+    await upload([file], { write_tags: true });
+    expect(fs.readFileSync(file, 'utf8')).toBe(
+      'Feature: C\n\n  # see @TC12 for history\n  @TC1000\n  Scenario: One\n    When a\n',
+    );
+  });
+
+  it('reports paths relative to --base_dir through symlinks', async () => {
+    const file = write(
+      'features/s.feature',
+      'Feature: S\n\n  Scenario: One\n    When a\n',
+    );
+    await upload([fs.realpathSync(file)], { write_tags: true });
+    expect(allValues(sent[0].body, 'filepaths[]')).toEqual([
+      'features/s.feature',
+    ]);
+    expect(fs.readFileSync(file, 'utf8')).toContain('@TC1000');
+  });
+
+  it('refuses to claim success against a server that does not report scenarios', async () => {
+    const file = write(
+      't.feature',
+      'Feature: T\n\n  Scenario: One\n    When a\n',
+    );
+    respond = async () => ({ counts: { created: 1 } });
+    await expect(upload([file], { write_tags: true })).rejects.toThrow(
+      /predates --write_tags/,
+    );
+    expect(fs.readFileSync(file, 'utf8')).toBe(
+      'Feature: T\n\n  Scenario: One\n    When a\n',
+    );
+  });
+
+  it('treats CI=false as not CI', async () => {
+    const file = write(
+      't.feature',
+      'Feature: T\n\n  Scenario: One\n    When a\n',
+    );
+    process.env.CI = 'false';
+    await upload([file], { write_tags: true });
+    expect(fs.readFileSync(file, 'utf8')).toContain('@TC1000');
+  });
+
   it('writes nothing when a later batch fails', async () => {
     const files = ['a', 'b', 'c'].map((n) =>
       write(`${n}.feature`, `Feature: ${n}\n\n  Scenario: ${n}\n    When x\n`),
@@ -395,6 +593,25 @@ describe('upload_feature --write_tags', () => {
       upload(files, { write_tags: true, batch_size: 2 }),
     ).rejects.toThrow('simulated failure');
     expect(files.map((f) => fs.readFileSync(f, 'utf8'))).toEqual(before);
+  });
+
+  it('tags a scenario with a description, whose reported title carries the description lines', async () => {
+    // Behat's ScenarioNode title is the keyword-line text plus every
+    // description line under it, and null when the title is empty.
+    const content =
+      'Feature: T\n\n  Scenario: One\n    Some description\n    of the scenario\n    When a\n\n  Scenario:\n    When b\n';
+    const file = write('t.feature', content);
+    const base = respond;
+    respond = async (req, index) => {
+      const answer = await base(req, index);
+      answer.scenarios[0].scenario = 'One\nSome description\nof the scenario';
+      answer.scenarios[1].scenario = null;
+      return answer;
+    };
+    await upload([file], { write_tags: true });
+    const text = fs.readFileSync(file, 'utf8');
+    expect(text).toContain('  @TC1000\n  Scenario: One\n    Some description');
+    expect(text).toContain('  @TC1001\n  Scenario:\n');
   });
 
   it('refuses under CI, and together with --sync, before anything is sent', async () => {
@@ -416,5 +633,6 @@ describe('upload_feature --write_tags', () => {
     const out = logs.join('\n');
     expect(out).toContain('t.feature:3 → @TC1000');
     expect(out).toContain('t.feature:15 → @TC1003');
+    expect(out).toContain('real import');
   });
 });

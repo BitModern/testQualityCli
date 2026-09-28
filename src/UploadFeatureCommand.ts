@@ -13,10 +13,11 @@ import {
 } from './uploadFiles';
 import {
   appendSnapshots,
-  batchSnapshots,
-  type FeatureSnapshot,
+  batchFeatureFiles,
+  listFeatureFiles,
   manifestDigest,
-  snapshotFiles,
+  readSnapshots,
+  type UploadedFile,
 } from './featureSnapshot';
 import { type ScenarioReport, writeTags } from './writeTags';
 
@@ -89,6 +90,7 @@ export class UploadFeatureCommand extends Command {
       },
       async (args: Arguments) => {
         try {
+          this.validateFlags(args);
           const projectId = await this.getProjectId(args);
 
           if (args.files) {
@@ -147,12 +149,22 @@ export class UploadFeatureCommand extends Command {
         '--sync needs --folder_id: the folder kept in step with these files. Create a folder for them and pass its id.',
       );
     }
+    if (args['dry-run'] && !args.sync && !args.write_tags) {
+      // Without --sync or --write_tags nothing reads --dry-run, and the
+      // upload would be a real import.
+      throw new Error(
+        '--dry-run needs --sync or --write_tags. Without them the upload is a real import, so it was not sent.',
+      );
+    }
+    if (args.force && !args.sync) {
+      throw new Error('--force only applies to --sync.');
+    }
     if (args.write_tags && args.sync) {
       throw new Error(
         '--write_tags cannot be combined with --sync. Tag the files once locally, commit them, then sync from CI.',
       );
     }
-    if (args.write_tags && process.env.CI) {
+    if (args.write_tags && isCI()) {
       throw new Error(
         '--write_tags edits your .feature files, so it will not run under CI. Run it locally, review the diff and commit it.',
       );
@@ -179,13 +191,16 @@ export class UploadFeatureCommand extends Command {
       );
     }
 
-    // Read every file once, up front: the same bytes are uploaded, go into
-    // the sync digest, and are compared before --write_tags edits a file.
-    const snapshots = snapshotFiles(
+    // Batch on sizes from stat, so an oversized file is refused before
+    // anything is read or sent. Each batch is read once when it is sent: those
+    // bytes are uploaded, and their hashes feed the sync digest and the
+    // --write_tags check. Only one batch's bytes are in memory at a time.
+    const files = listFeatureFiles(
       matches,
       (args.base_dir as string) ?? process.cwd(),
     );
-    const batches = batchSnapshots(snapshots, batchSize, MAX_BYTES_PER_REQUEST);
+    const batches = batchFeatureFiles(files, batchSize, MAX_BYTES_PER_REQUEST);
+    const uploaded: UploadedFile[] = [];
     const dryRun = Boolean(args['dry-run']);
     const syncId = args.sync
       ? crypto.randomBytes(16).toString('hex')
@@ -203,6 +218,14 @@ export class UploadFeatureCommand extends Command {
     const responses: any[] = [];
     for (const [index, batch] of batches.entries()) {
       const label = `Batch ${index + 1}/${batches.length}`;
+      const snapshots = readSnapshots(batch, MAX_BYTES_PER_REQUEST);
+      uploaded.push(
+        ...snapshots.map(({ file, relPath, sha256 }) => ({
+          file,
+          relPath,
+          sha256,
+        })),
+      );
       const data = this.buildForm(args, projectId);
       if (syncId) {
         this.appendSyncFields(
@@ -211,23 +234,23 @@ export class UploadFeatureCommand extends Command {
           syncId,
           index,
           batches.length,
-          snapshots,
+          uploaded,
         );
       }
       if (args.write_tags) {
         data.append('write_tags', 'true');
       }
-      appendSnapshots(data, batch);
+      appendSnapshots(data, snapshots);
       try {
         responses.push(await this.post(data));
       } catch (error) {
         reportArchiveRefusal(error);
-        const uploaded = batches
+        const sentBefore = batches
           .slice(0, index)
           .reduce((sum, b) => sum + b.length, 0);
         logger.error(
           `${label} failed (${batch.length} files). ` +
-            `${uploaded} of ${matches.length} files were uploaded by earlier batches; ` +
+            `${sentBefore} of ${matches.length} files were uploaded by earlier batches; ` +
             'this batch and any after it were not. Files in the failed batch:\n' +
             batch.map((f) => `  ${f.file}`).join('\n') +
             (args.write_tags ? '\nNo file was tagged.' : ''),
@@ -242,7 +265,7 @@ export class UploadFeatureCommand extends Command {
     // Only after every batch succeeded: a tag is only ever written from a
     // complete, successful import.
     if (args.write_tags) {
-      this.writeTagsFrom(responses, snapshots, dryRun);
+      this.writeTagsFrom(responses, uploaded, dryRun);
     }
 
     if (batches.length === 1) {
@@ -260,15 +283,16 @@ export class UploadFeatureCommand extends Command {
     syncId: string,
     index: number,
     total: number,
-    snapshots: FeatureSnapshot[],
+    uploaded: UploadedFile[],
   ): void {
     data.append('sync_id', syncId);
     data.append('batch_index', String(index));
     data.append('batch_total', String(total));
     if (index === total - 1) {
       data.append('sync_final', '1');
-      data.append('file_count_total', String(snapshots.length));
-      data.append('manifest_digest', manifestDigest(snapshots));
+      // The last batch is sent last, so by now every file has been read.
+      data.append('file_count_total', String(uploaded.length));
+      data.append('manifest_digest', manifestDigest(uploaded));
     }
     if (args.force) {
       data.append('force', '1');
@@ -280,13 +304,17 @@ export class UploadFeatureCommand extends Command {
 
   private writeTagsFrom(
     responses: any[],
-    snapshots: FeatureSnapshot[],
+    uploaded: UploadedFile[],
     dryRun: boolean,
   ): void {
-    const scenarios: ScenarioReport[] = responses.flatMap(
-      (r) => r?.scenarios ?? [],
-    );
-    const result = writeTags(snapshots, scenarios, dryRun);
+    if (responses.some((r) => !Array.isArray(r?.scenarios))) {
+      throw new Error(
+        'The server did not report where each scenario is, so it predates --write_tags. ' +
+          'The files were imported, but no tag was written.',
+      );
+    }
+    const scenarios: ScenarioReport[] = responses.flatMap((r) => r.scenarios);
+    const result = writeTags(uploaded, scenarios, dryRun);
     for (const tag of result.tags) {
       console.log(
         `${tag.relPath}:${tag.line} → @TC${tag.key}  ${tag.scenario}`,
@@ -297,7 +325,8 @@ export class UploadFeatureCommand extends Command {
     }
     if (dryRun) {
       console.log(
-        `Dry run: ${result.tags.length} tag(s) would be written; no file was changed.`,
+        `Dry run: the files were imported into TestQuality (a real import), ` +
+          `and ${result.tags.length} tag(s) would be written; no file was changed.`,
       );
     } else {
       console.log(
@@ -312,13 +341,20 @@ export class UploadFeatureCommand extends Command {
  * would have archived, so the user can tell a real removal from a bad glob.
  */
 function reportArchiveRefusal(error: any): void {
-  const data = error?.response?.data;
-  if (error?.response?.status !== 409 || !Array.isArray(data?.archive)) {
+  // The SDK turns an error response into an HttpError whose `data` is the
+  // body's `data` key; the server sends the list there (and at the top level).
+  const status = error?.status ?? error?.response?.status;
+  const archive =
+    error?.data?.archive ??
+    error?.response?.data?.data?.archive ??
+    error?.response?.data?.archive;
+  if (status !== 409 || !Array.isArray(archive)) {
     return;
   }
+  const message = error?.response?.data?.message ?? error?.message;
   logger.error(
-    `${String(data.message)}\nWould archive:\n` +
-      data.archive
+    `${String(message)}\nWould archive:\n` +
+      archive
         .map(
           (t: any) =>
             `  TC${String(t.key)}  ${String(t.name)}  (${String(t.folder)})`,
@@ -326,6 +362,12 @@ function reportArchiveRefusal(error: any): void {
         .join('\n') +
       '\nIf these scenarios really were removed, run again with --force.',
   );
+}
+
+/** CI is set to something other than an explicit false. */
+function isCI(): boolean {
+  const value = (process.env.CI ?? '').trim().toLowerCase();
+  return value !== '' && value !== 'false' && value !== '0';
 }
 
 /** Totals across batches: the server reports each request on its own. */
