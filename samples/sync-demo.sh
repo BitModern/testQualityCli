@@ -56,7 +56,10 @@ say 'Create a demo project and a sync folder'
 NAME="Sync demo $(date +%H%M%S)"
 PROJECT="$(api POST project "{\"name\":\"$NAME\"}" | jq -r '.id')"
 ROOT_PLAN="$(api GET "plan?project_id=$PROJECT&per_page=100" | jq -r '[.data[] | select(.is_root)][0].id')"
-FOLDER="$(api POST suite "{\"project_id\":$PROJECT,\"plan_id\":$ROOT_PLAN,\"name\":\"Synced features\"}" | jq -r '.id')"
+# A sync needs a folder of its own, as a child of the project's root folder
+# (the UI creates folders there too; a folder with no parent is not shown).
+ROOT_FOLDER="$(api GET "suite?project_id=$PROJECT&per_page=100" | jq -r '[.data[] | select(.is_root)][0].id')"
+FOLDER="$(api POST suite "{\"project_id\":$PROJECT,\"plan_id\":$ROOT_PLAN,\"name\":\"Synced features\",\"plan_suite\":{\"parent_id\":$ROOT_FOLDER}}" | jq -r '.id')"
 echo "project $PROJECT \"$NAME\", folder $FOLDER \"Synced features\""
 
 cat > features/checkout.feature <<'EOF'
