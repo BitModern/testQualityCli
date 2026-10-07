@@ -50,6 +50,7 @@ const { UploadFeatureCommand } = await import('../src/UploadFeatureCommand');
 const { HttpError } = await import('@testquality/sdk');
 const { manifestDigest } = await import('../src/featureSnapshot');
 const { logger } = await import('../src/Logger');
+const { logError } = await import('../src/logError');
 
 let dir: string;
 let logs: string[];
@@ -294,8 +295,78 @@ describe('upload_feature --sync', () => {
     expect(out).toContain('TC12');
     expect(out).toContain('Scenario: Old two');
     expect(out).toContain('--force');
+    expect(out).toContain('Nothing was imported or archived.');
+    // One batch: no batch wording, and the refusal is printed once.
+    expect(out).not.toContain('Batch 1/1');
+    expect(out).not.toContain('earlier batches');
+    expect(out.split('would archive 8').length - 1).toBe(1);
+  });
+
+  it('logs a refusal once: the top-level handler only sets the exit code', async () => {
+    const file = write('a.feature', 'Feature: A\n');
+    respond = async () => {
+      throw refusal();
+    };
+    const error = await upload([file], { sync: true, folder_id: '9' }).catch(
+      (e: unknown) => e,
+    );
+    logs.length = 0;
+    process.exitCode = undefined;
+    logError(error);
+    expect(logs).toEqual([]);
+    expect(process.exitCode).toBe(1);
+    process.exitCode = undefined;
+  });
+
+  it('says which batches were imported when the last of several is refused', async () => {
+    const files = ['a', 'b', 'c'].map((n) =>
+      write(`${n}.feature`, `Feature: ${n}\n`),
+    );
+    const base = respond;
+    respond = async (entry, i) => {
+      if (i === 1) throw refusal();
+      return await base(entry, i);
+    };
+    await expect(
+      upload(files, { sync: true, folder_id: '9', batch_size: 2 }),
+    ).rejects.toThrow();
+    const out = logs.join('\n');
+    expect(out).toContain(
+      'Nothing was archived. The last batch was not imported; the 2 files in earlier batches were.',
+    );
+    expect(out).not.toContain('Batch 2/2 failed');
+  });
+
+  it('keeps the batch report for a failure that is not a refusal', async () => {
+    const files = ['a', 'b', 'c'].map((n) =>
+      write(`${n}.feature`, `Feature: ${n}\n`),
+    );
+    const base = respond;
+    respond = async (entry, i) => {
+      if (i === 1) throw new Error('boom');
+      return await base(entry, i);
+    };
+    await expect(
+      upload(files, { sync: true, folder_id: '9', batch_size: 2 }),
+    ).rejects.toThrow('boom');
+    expect(logs.join('\n')).toContain(
+      'Batch 2/2 failed (1 files). 2 of 3 files were uploaded by earlier batches',
+    );
   });
 });
+
+function refusal() {
+  return new HttpError(
+    'This sync would archive 8 of the 10 tests in "Synced"',
+    undefined,
+    undefined,
+    409,
+    undefined,
+    '/import_feature',
+    undefined,
+    { archive: [{ key: 12, name: 'Scenario: Old one', folder: 'Feature: A' }] },
+  );
+}
 
 describe('manifest digest', () => {
   it('matches the digest the server computes, byte-sorted like PHP', () => {

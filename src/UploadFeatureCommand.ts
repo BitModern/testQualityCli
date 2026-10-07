@@ -1,6 +1,6 @@
 import { Command } from './Command';
 import { type Arguments, type Argv } from 'yargs';
-import { logError } from './logError';
+import { logError, markReported } from './logError';
 import { glob } from 'glob';
 import * as crypto from 'crypto';
 import FormData from 'form-data';
@@ -244,17 +244,30 @@ export class UploadFeatureCommand extends Command {
       try {
         responses.push(await this.post(data));
       } catch (error) {
-        reportArchiveRefusal(error);
         const sentBefore = batches
           .slice(0, index)
           .reduce((sum, b) => sum + b.length, 0);
-        logger.error(
-          `${label} failed (${batch.length} files). ` +
-            `${sentBefore} of ${matches.length} files were uploaded by earlier batches; ` +
-            'this batch and any after it were not. Files in the failed batch:\n' +
-            batch.map((f) => `  ${f.file}`).join('\n') +
-            (args.write_tags ? '\nNo file was tagged.' : ''),
-        );
+        const untagged = args.write_tags ? '\nNo file was tagged.' : '';
+        if (reportArchiveRefusal(error)) {
+          // The server rolls back the refused batch; earlier ones stay imported.
+          logger.error(
+            (sentBefore > 0
+              ? `Nothing was archived. The last batch was not imported; the ${sentBefore} files in earlier batches were.`
+              : 'Nothing was imported or archived.') + untagged,
+          );
+          throw markReported(error);
+        }
+        if (batches.length > 1) {
+          logger.error(
+            `${label} failed (${batch.length} files). ` +
+              `${sentBefore} of ${matches.length} files were uploaded by earlier batches; ` +
+              'this batch and any after it were not. Files in the failed batch:\n' +
+              batch.map((f) => `  ${f.file}`).join('\n') +
+              untagged,
+          );
+        } else if (untagged) {
+          logger.error(untagged.trim());
+        }
         throw error;
       }
       if (batches.length > 1) {
@@ -340,7 +353,7 @@ export class UploadFeatureCommand extends Command {
  * A sync the server refused because it would archive too much: show what it
  * would have archived, so the user can tell a real removal from a bad glob.
  */
-function reportArchiveRefusal(error: any): void {
+function reportArchiveRefusal(error: any): boolean {
   // The SDK turns an error response into an HttpError whose `data` is the
   // body's `data` key; the server sends the list there (and at the top level).
   const status = error?.status ?? error?.response?.status;
@@ -349,7 +362,7 @@ function reportArchiveRefusal(error: any): void {
     error?.response?.data?.data?.archive ??
     error?.response?.data?.archive;
   if (status !== 409 || !Array.isArray(archive)) {
-    return;
+    return false;
   }
   const message = error?.response?.data?.message ?? error?.message;
   logger.error(
@@ -362,6 +375,7 @@ function reportArchiveRefusal(error: any): void {
         .join('\n') +
       '\nIf these scenarios really were removed, run again with --force.',
   );
+  return true;
 }
 
 /** CI is set to something other than an explicit false. */
