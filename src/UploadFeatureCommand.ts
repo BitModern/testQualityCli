@@ -249,11 +249,13 @@ export class UploadFeatureCommand extends Command {
           .reduce((sum, b) => sum + b.length, 0);
         const untagged = args.write_tags ? '\nNo file was tagged.' : '';
         if (reportArchiveRefusal(error)) {
-          // The server rolls back the refused batch; earlier ones stay imported.
+          // Only the final batch can be refused. The server rolls it back;
+          // earlier batches stay imported unless this is a dry run. A refusal
+          // needs --sync, which excludes --write_tags.
           logger.error(
-            (sentBefore > 0
+            sentBefore > 0 && !dryRun
               ? `Nothing was archived. The last batch was not imported; the ${sentBefore} files in earlier batches were.`
-              : 'Nothing was imported or archived.') + untagged,
+              : 'Nothing was imported or archived.',
           );
           throw markReported(error);
         }

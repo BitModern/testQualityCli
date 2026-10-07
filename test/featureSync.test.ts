@@ -296,10 +296,9 @@ describe('upload_feature --sync', () => {
     expect(out).toContain('Scenario: Old two');
     expect(out).toContain('--force');
     expect(out).toContain('Nothing was imported or archived.');
-    // One batch: no batch wording, and the refusal is printed once.
+    // One batch: no batch wording.
     expect(out).not.toContain('Batch 1/1');
     expect(out).not.toContain('earlier batches');
-    expect(out.split('would archive 8').length - 1).toBe(1);
   });
 
   it('logs a refusal once: the top-level handler only sets the exit code', async () => {
@@ -335,6 +334,50 @@ describe('upload_feature --sync', () => {
       'Nothing was archived. The last batch was not imported; the 2 files in earlier batches were.',
     );
     expect(out).not.toContain('Batch 2/2 failed');
+  });
+
+  it('a dry run refused across batches imported nothing', async () => {
+    const files = ['a', 'b', 'c'].map((n) =>
+      write(`${n}.feature`, `Feature: ${n}\n`),
+    );
+    const base = respond;
+    respond = async (entry, i) => {
+      if (i === 1) throw refusal();
+      return await base(entry, i);
+    };
+    await expect(
+      upload(files, {
+        sync: true,
+        folder_id: '9',
+        batch_size: 2,
+        'dry-run': true,
+      }),
+    ).rejects.toThrow();
+    const out = logs.join('\n');
+    expect(out).toContain('Nothing was imported or archived.');
+    expect(out).not.toContain('earlier batches were');
+  });
+
+  it('a single-batch failure that is not a refusal has no batch report', async () => {
+    const file = write('a.feature', 'Feature: A\n');
+    respond = async () => {
+      throw new Error('boom');
+    };
+    await expect(
+      upload([file], { sync: true, folder_id: '9' }),
+    ).rejects.toThrow('boom');
+    expect(logs.join('\n')).not.toContain('Batch 1/1');
+  });
+
+  it('a single-batch --write_tags failure says no file was tagged', async () => {
+    const file = write('a.feature', 'Feature: A\n');
+    respond = async () => {
+      throw new Error('boom');
+    };
+    await expect(upload([file], { write_tags: true })).rejects.toThrow('boom');
+    const out = logs.join('\n');
+    expect(out).toContain('No file was tagged.');
+    expect(out).not.toContain('Batch 1/1');
   });
 
   it('keeps the batch report for a failure that is not a refusal', async () => {
