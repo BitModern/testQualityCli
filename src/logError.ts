@@ -1,8 +1,19 @@
 import { logger } from './Logger';
 
+const REPORTED = Symbol('reported');
+
+/** The error was already explained to the user: logError only sets the exit code. */
+export const markReported = <T>(err: T): T => {
+  if (err && typeof err === 'object') {
+    (err as any)[REPORTED] = true;
+  }
+  return err;
+};
+
 export const logError = (err: any) => {
   if (!err) return;
   process.exitCode = 1;
+  if (err[REPORTED]) return;
 
   if (
     // got 401, tried to refresh token, didn't find (ReturnToken.)refresh_token
